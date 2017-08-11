@@ -1,10 +1,22 @@
 var playerSprite;
+var thrustForwardSprite;
+var thrustBackwardSprite;
+
 var playerId = -1;
 var destX = 0;
 var destY = 0;
 
-function setLocalPlayerSprite(sprite) {
-	playerSprite = sprite;
+var controls = {
+	thrustForward: false,
+	thrustBackward: false,
+	thrustLeft: false,
+	thrustRight: false
+};
+
+function setLocalPlayerSprites(__playerSprite, __thrustForwardSprite, __thrustBackwardSprite) {
+	playerSprite = __playerSprite;
+	thrustForwardSprite = __thrustForwardSprite;
+	thrustBackwardSprite = __thrustBackwardSprite;
 }
 
 function setLocalPlayerId(id) {
@@ -46,13 +58,23 @@ function updateLocalPlayer() {
 		playerSprite.y = lerp(playerSprite.y, destY, 0.075);
 	}
 
-	centerViewOnPlayer();
+	thrustForwardSprite.x = playerSprite.x;
+	thrustForwardSprite.y = playerSprite.y;
+	thrustForwardSprite.rotation = playerSprite.rotation;
+	thrustForwardSprite.visible = controls.thrustForward;
+
+	thrustBackwardSprite.x = playerSprite.x;
+	thrustBackwardSprite.y = playerSprite.y;
+	thrustBackwardSprite.rotation = playerSprite.rotation;
+	thrustBackwardSprite.visible = controls.thrustBackward;
+
+	centerViewOnLocalPlayer();
 }
 
 $(function() {
 	$(window).mousemove(function(event) {
 		if (playerSprite != undefined) {
-			playerSprite.rotation = getPlayerAngle();
+			playerSprite.rotation = getLocalPlayerAngle();
 		}
 	});
 
@@ -62,18 +84,22 @@ $(function() {
 			case "w":
 			case "W":
 				sendControl("thrustForward", true);
+				controls.thrustForward = true;
 				break;
 			case "s":
 			case "S":
 				sendControl("thrustBackward", true);
+				controls.thrustBackward = true;
 				break;
 			case "a":
 			case "A":
-				sendControl("thrustForward", true);
+				sendControl("thrustLeft", true);
+				controls.thrustLeft = true;
 				break;
 			case "d":
 			case "D":
-				sendControl("thrustBackward", true);
+				sendControl("thrustRight", true);
+				controls.thrustRight = true;
 				break;
 		}
 	});
@@ -84,25 +110,29 @@ $(function() {
 			case "w":
 			case "W":
 				sendControl("thrustForward", false);
+				controls.thrustForward = false;
 				break;
 			case "s":
 			case "S":
 				sendControl("thrustBackward", false);
+				controls.thrustBackward = false;
 				break;
 			case "a":
 			case "A":
-				sendControl("thrustForward", false);
+				sendControl("thrustLeft", false);
+				controls.thrustLeft = false;
 				break;
 			case "d":
 			case "D":
-				sendControl("thrustBackward", false);
+				sendControl("thrustRight", false);
+				controls.thrustRight = false;
 				break;
 		}
 	});
 
 	setInterval(function() {
 		if (playerSprite != undefined) {
-			var angle = getPlayerAngle();
+			var angle = getLocalPlayerAngle();
 			sendAngle(angle);
 		}
 	}, 1000 / 8);

@@ -1,7 +1,9 @@
 var renderer;
 var stage;
 
-var ship;
+var localPlayerSprite;
+var thrustForwardSprite;
+var thrustBackwardSprite;
 var placeholder;
 
 $(function() {
@@ -25,22 +27,37 @@ function resizeRenderer() {
 function loadContent() {
 	PIXI.loader
 		.add("./img/ships/default.svg")
+		.add("./img/thrust/default/forward.svg")
+		.add("./img/thrust/default/backward.svg")
 		.add("./img/placeholder.png")
 		.load(setup);
 }
 
 function setup() {
-	ship = new PIXI.Sprite(PIXI.loader.resources["./img/ships/default.svg"].texture);
-	ship.anchor.set(0.675, 0.5); // TO DO: Set anchor to SVG origin
-	ship.width = 32;
-	ship.height = 32;
+	localPlayerSprite = new PIXI.Sprite(PIXI.loader.resources["./img/ships/default.svg"].texture);
+	localPlayerSprite.anchor.set(0.678, 0.5); // TO DO: Set anchor to SVG origin
+	localPlayerSprite.width = 32;
+	localPlayerSprite.height = 32;
+
+	thrustForwardSprite = new PIXI.Sprite(PIXI.loader.resources["./img/thrust/default/forward.svg"].texture);
+	thrustForwardSprite.anchor.set(0.475, 0.5);
+	thrustForwardSprite.width = 44;
+	thrustForwardSprite.height = 32;
+
+	thrustBackwardSprite = new PIXI.Sprite(PIXI.loader.resources["./img/thrust/default/backward.svg"].texture);
+	thrustBackwardSprite.anchor.set(0.678, 0.5);
+	thrustBackwardSprite.width = 32;
+	thrustBackwardSprite.height = 32;
 
 	placeholder = new PIXI.Sprite(PIXI.loader.resources["./img/placeholder.png"].texture);
 	placeholder.anchor.set(0.5, 0.5);
 
-	setLocalPlayerSprite(ship);
+	setLocalPlayerSprites(localPlayerSprite, thrustForwardSprite, thrustBackwardSprite);
+
 	stage.addChild(placeholder);
-	stage.addChild(ship);
+	stage.addChild(localPlayerSprite);
+	stage.addChild(thrustForwardSprite);
+	stage.addChild(thrustBackwardSprite);
 
 	window.requestAnimationFrame(update);
 }
