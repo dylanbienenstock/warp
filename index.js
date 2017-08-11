@@ -45,7 +45,6 @@ function onConnect(socket) {
 
 	socket.on("control up", function(control) {
 		player.controls[control] = false;
-		console.log("asdasd")
 	});
 
 	socket.on("my angle", function(angle) {
@@ -87,9 +86,8 @@ function createPlayer(socket) {
 
 	nextId++;
 }
-
+  
 setInterval(update, 1000 / 64);
-
 setInterval(networkUpdates, 1000 / 32);
 
 var speed = 3;
@@ -98,10 +96,30 @@ function update() {
 	for (playerSocketId in players) {
 		if (players.hasOwnProperty(playerSocketId)) {
 			var player = players[playerSocketId];
+			var degToRad = Math.PI / 180;
+
+			if (player.angle > 180 * degToRad) {
+				degToRad *= -1;
+			}
 
 			if (player.controls.thrustForward) {
 				player.x += -Math.cos(player.angle) * speed;
 				player.y += -Math.sin(player.angle) * speed;
+			}
+
+			if (player.controls.thrustBackward) {
+				player.x -= -Math.cos(player.angle) * speed;
+				player.y -= -Math.sin(player.angle) * speed;
+			}
+
+			if (player.controls.thrustLeft) {
+				player.x += -Math.cos(player.angle - 90 * degToRad) * speed;
+				player.y += -Math.sin(player.angle - 90 * degToRad) * speed;
+			}
+
+			if (player.controls.thrustRight) {
+				player.x += -Math.cos(player.angle + 90 * degToRad) * speed;
+				player.y += -Math.sin(player.angle + 90 * degToRad) * speed;
 			}
 		}
 	}
