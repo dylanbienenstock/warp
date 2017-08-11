@@ -2,6 +2,7 @@ var renderer;
 var stage;
 
 var ship;
+var placeholder;
 
 $(function() {
 	renderer = new PIXI.CanvasRenderer($(window).innerWidth(), $(window).innerHeight());
@@ -24,16 +25,21 @@ function resizeRenderer() {
 function loadContent() {
 	PIXI.loader
 		.add("./img/ships/default.svg")
+		.add("./img/placeholder.png")
 		.load(setup);
 }
 
 function setup() {
 	ship = new PIXI.Sprite(PIXI.loader.resources["./img/ships/default.svg"].texture);
-	ship.anchor.set(0.5, 0.5);
-	ship.width = 64;
-	ship.height = 64;
+	ship.anchor.set(0.675, 0.5); // TO DO: Set anchor to SVG origin
+	ship.width = 32;
+	ship.height = 32;
+
+	placeholder = new PIXI.Sprite(PIXI.loader.resources["./img/placeholder.png"].texture);
+	placeholder.anchor.set(0.5, 0.5);
 
 	setPlayerSprite(ship);
+	stage.addChild(placeholder);
 	stage.addChild(ship);
 
 	window.requestAnimationFrame(update);
