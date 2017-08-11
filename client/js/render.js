@@ -38,7 +38,7 @@ function setup() {
 	placeholder = new PIXI.Sprite(PIXI.loader.resources["./img/placeholder.png"].texture);
 	placeholder.anchor.set(0.5, 0.5);
 
-	setPlayerSprite(ship);
+	setLocalPlayerSprite(ship);
 	stage.addChild(placeholder);
 	stage.addChild(ship);
 
@@ -46,7 +46,7 @@ function setup() {
 }
 
 function update() {
-	updatePlayer();
+	updateLocalPlayer();
 
 	renderer.render(stage);
 	window.requestAnimationFrame(update);

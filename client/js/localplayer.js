@@ -3,32 +3,30 @@ var playerId = -1;
 var destX = 0;
 var destY = 0;
 
-function setPlayerSprite(sprite) {
+function setLocalPlayerSprite(sprite) {
 	playerSprite = sprite;
 }
 
-function setPlayerId(id) {
+function setLocalPlayerId(id) {
 	playerId = id;
 }
 
-function setPlayerPosition(x, y, vx, vy) {
+function setLocalPlayerPosition(x, y) {
 	if (playerSprite != undefined) {
 		destX = x;
 		destY = y;
-		//playerSprite.x = x;
-		//playerSprite.y = y;
 	}
 }
 
-function centerViewOnPlayer() {
+function centerViewOnLocalPlayer() {
 	centerOn(playerSprite);
 }
 
-function getPlayerId() {
+function getLocalPlayerId() {
 	return playerId;
 }
 
-function getPlayerAngle() {
+function getLocalPlayerAngle() {
 	if (playerSprite != undefined) {
 		var mousePos = getMousePosition();
 
@@ -42,7 +40,7 @@ function lerp(v0, v1, t) {
 	return (1 - t) * v0 + t * v1;
 }
 
-function updatePlayer() {
+function updateLocalPlayer() {
 	if (playerSprite != undefined) {
 		playerSprite.x = lerp(playerSprite.x, destX, 0.075);
 		playerSprite.y = lerp(playerSprite.y, destY, 0.075);
@@ -65,6 +63,18 @@ $(function() {
 			case "W":
 				sendControl("thrustForward", true);
 				break;
+			case "s":
+			case "S":
+				sendControl("thrustBackward", true);
+				break;
+			case "a":
+			case "A":
+				sendControl("thrustForward", true);
+				break;
+			case "d":
+			case "D":
+				sendControl("thrustBackward", true);
+				break;
 		}
 	});
 
@@ -74,6 +84,18 @@ $(function() {
 			case "w":
 			case "W":
 				sendControl("thrustForward", false);
+				break;
+			case "s":
+			case "S":
+				sendControl("thrustBackward", false);
+				break;
+			case "a":
+			case "A":
+				sendControl("thrustForward", false);
+				break;
+			case "d":
+			case "D":
+				sendControl("thrustBackward", false);
 				break;
 		}
 	});

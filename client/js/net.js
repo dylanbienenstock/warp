@@ -8,7 +8,7 @@ function connect() {
 	socket = io();
 
 	socket.on("your id", function(id) {
-		setPlayerId(id);
+		setLocalPlayerId(id);
 	});
 
 	socket.on("player position", function(data) {
