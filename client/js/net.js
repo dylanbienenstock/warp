@@ -12,8 +12,8 @@ function connect() {
 	});
 
 	socket.on("player position", function(data) {
-		if (data.id == getPlayerId()) {
-			setPlayerPosition(data.x, data.y, data.vx, data.vy);
+		if (data.id == getLocalPlayerId()) {
+			setLocalPlayerPosition(data.x, data.y, data.vx, data.vy);
 		}
 	});
 }
