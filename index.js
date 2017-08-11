@@ -88,9 +88,11 @@ function createPlayer(socket) {
 	nextId++;
 }
 
-setInterval(update, 1000 / 8);
+setInterval(update, 1000 / 64);
 
-var speed = 10;
+setInterval(networkUpdates, 1000 / 32);
+
+var speed = 3;
 
 function update() {
 	for (playerSocketId in players) {
@@ -101,6 +103,14 @@ function update() {
 				player.x += -Math.cos(player.angle) * speed;
 				player.y += -Math.sin(player.angle) * speed;
 			}
+		}
+	}
+}
+
+function networkUpdates() {
+	for (playerSocketId in players) {
+		if (players.hasOwnProperty(playerSocketId)) {
+			var player = players[playerSocketId];
 
 			sendPlayerPosition(player);
 		}
