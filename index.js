@@ -27,8 +27,9 @@ http.listen(app.get("port"), function(){
 -> "control down" - string: control
 -> "control up" -  string: control
 -> "my angle" - number: angle
-<- "entity create" - {}
-<- "entity set" - {}
+<- "entity create" - {} // Contains all properties of created entity
+<- "entity set" - {} 	// Contains id and properties to update 
+<- "entity set position" - { number: id, number: x, number: y }
 
 */
 

@@ -10,15 +10,9 @@ function connect() {
 
 	socket.on("entity set", function(data) {
 		ENT.getById(data.id, function(entity) {
-			entity.setProperties(data);
+			entity.setProperties(data.properties);
 		});
 	});
-
-	socket.on("entity set position", function(data) {
-		ENT.getById(data.id, function(entity) {
-			entity.setPosition(data.x, data.y);
-		});
-	});	
 }
 
 function sendControl(control, down) {

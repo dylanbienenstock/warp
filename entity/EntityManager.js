@@ -25,6 +25,7 @@ class EntityManager {
 			this.entities.push(entity);
 
 			var data = {};
+			data.id = entity.id;
 
 			for (var property in entity) {
 				if (entity.hasOwnProperty(property)) {
@@ -76,17 +77,18 @@ class EntityManager {
 	}
 
 	sendProperties(entity, data) {
-		data.id = entity.id;
+		var data2 = {};
+		data2.id = entity.id;
+		data2.properties = data;
 
-		this.io.emit("entity set", data);
+		this.io.emit("entity set", data2);
 	}
 
 	sendPositions() {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			var entity = this.entities[i];
 
-			this.io.emit("entity set position", {
-				id: entity.id,
+			this.sendProperties(entity, {
 				x: entity.x,
 				y: entity.y
 			});
