@@ -1,5 +1,9 @@
 var renderer;
-var stage;
+var baseContainer;
+var gridContainer;
+var stageContainer;
+var hudContainer;
+var grid;
 
 var localPlayerSprite;
 var thrustForwardSprite;
@@ -11,8 +15,16 @@ $(function() {
 
 	document.body.appendChild(renderer.view);
 
-	stage = new PIXI.Container();
-	renderer.render(stage);
+	baseContainer = new PIXI.Container();
+	gridContainer = new PIXI.Container();
+	stageContainer = new PIXI.Container();
+	hudContainer = new PIXI.Container();
+	baseContainer.addChild(gridContainer, stageContainer, hudContainer);
+
+	grid = new PIXI.Graphics();
+	gridContainer.addChild(grid);
+
+	ENT.stageContainer = stageContainer;
 
 	$(window).resize(resizeRenderer);
 
@@ -26,47 +38,52 @@ function resizeRenderer() {
 
 function loadContent() {
 	PIXI.loader
-		.add("./img/ships/default.svg")
-		.add("./img/thrust/default/forward.svg")
-		.add("./img/thrust/default/backward.svg")
-		.add("./img/placeholder.png")
-		.load(setup);
+		.add("ship:default", "./img/ships/default.svg")
+		.add("thrust:default:forward", "./img/thrust/default/forward.svg")
+		.add("thrust:default:backward","./img/thrust/default/backward.svg")
+		.add("placeholder", "./img/placeholder.png")
+	.load(setup);
 }
 
 function setup() {
-	localPlayerSprite = new PIXI.Sprite(PIXI.loader.resources["./img/ships/default.svg"].texture);
-	localPlayerSprite.anchor.set(0.678, 0.5); // TO DO: Set anchor to SVG origin
-	localPlayerSprite.width = 32;
-	localPlayerSprite.height = 32;
-
-	thrustForwardSprite = new PIXI.Sprite(PIXI.loader.resources["./img/thrust/default/forward.svg"].texture);
-	thrustForwardSprite.anchor.set(0.475, 0.5);
-	thrustForwardSprite.width = 44;
-	thrustForwardSprite.height = 32;
-
-	thrustBackwardSprite = new PIXI.Sprite(PIXI.loader.resources["./img/thrust/default/backward.svg"].texture);
-	thrustBackwardSprite.anchor.set(0.678, 0.5);
-	thrustBackwardSprite.width = 32;
-	thrustBackwardSprite.height = 32;
-
-	placeholder = new PIXI.Sprite(PIXI.loader.resources["./img/placeholder.png"].texture);
+	placeholder = new PIXI.Sprite(PIXI.loader.resources["placeholder"].texture);
 	placeholder.anchor.set(0.5, 0.5);
-
-	setLocalPlayerSprites(localPlayerSprite, thrustForwardSprite, thrustBackwardSprite);
-
-	stage.addChild(placeholder);
-	stage.addChild(localPlayerSprite);
-	stage.addChild(thrustForwardSprite);
-	stage.addChild(thrustBackwardSprite);
+	stageContainer.addChild(placeholder);
+	
+	connect();
 
 	window.requestAnimationFrame(update);
 }
 
 function update() {
-	updateLocalPlayer();
-
-	renderer.render(stage);
 	window.requestAnimationFrame(update);
+
+	drawGrid();
+	ENT.update();
+	
+	renderer.render(baseContainer);
+}
+
+function drawGrid() {
+	grid.clear();
+	
+	var line = grid.lineStyle(1, 0xFFFFFF, 0.5);
+	var ww = $(window).innerWidth();
+	var wh = $(window).innerHeight();
+
+	for (var x = 0; x < ww; x++) {
+		if (Math.floor(stageContainer.pivot.x + x) % 256 == 0) {
+			line.moveTo(x, 0);
+			line.lineTo(x, wh);
+		}
+	}
+
+	for (var y = 0; y < wh; y++) {
+		if (Math.floor(stageContainer.pivot.y + y) % 256 == 0) {
+			line.moveTo(0, y);
+			line.lineTo(ww, y);
+		}
+	}
 }
 
 function getRenderer() {
@@ -74,18 +91,22 @@ function getRenderer() {
 }
 
 function getStage() {
-	return stage;
+	return stageContainer;
+}
+
+function getHUD() {
+	return hudContainer;
 }
 
 function getMousePosition() {
-	return stage.toLocal(renderer.plugins.interaction.mouse.global);
+	return stageContainer.toLocal(renderer.plugins.interaction.mouse.global);
 }
 
 function centerOn(sprite) {
-	stage.position.x = renderer.width / 2;
-	stage.position.y = renderer.height / 2;
-	stage.scale.x = 2.0;
-	stage.scale.y = 2.0;
-	stage.pivot.x = sprite.position.x;
-	stage.pivot.y = sprite.position.y;
+	stageContainer.position.x = renderer.width / 2;
+	stageContainer.position.y = renderer.height / 2;
+	stageContainer.scale.x = 2.0;
+	stageContainer.scale.y = 2.0;
+	stageContainer.pivot.x = sprite.position.x;
+	stageContainer.pivot.y = sprite.position.y;
 }

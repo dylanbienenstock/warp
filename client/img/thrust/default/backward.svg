@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    sodipodi:docname="backward.svg"
-   inkscape:version="0.92.1 r15371">
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,17 +25,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="175.75282"
-     inkscape:cy="526.4298"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="16.072346"
+     inkscape:cy="187.07736"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1366"
-     inkscape:window-height="721"
+     inkscape:window-width="1920"
+     inkscape:window-height="1031"
      inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
      showguides="false"
      inkscape:pagecheckerboard="true">
     <inkscape:grid
@@ -64,60 +64,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-34.395832,-133.1875)">
-    <rect
-       ry="7.6974626"
-       y="34.532543"
-       x="-218.12288"
-       height="65.428406"
-       width="30.196077"
-       id="rect4693"
-       style="fill:#cccccc;fill-opacity:1;stroke-width:0.15894796"
-       transform="rotate(-89.941158)" />
-    <rect
-       style="fill:#cccccc;fill-opacity:1;stroke-width:0.27045009"
-       id="rect4644"
-       width="63.137253"
-       height="90.59317"
-       x="-234.59346"
-       y="83.939369"
-       ry="10.658026"
-       transform="rotate(-89.941158)" />
-    <rect
-       ry="7.6974626"
-       y="109.10413"
-       x="-273.02484"
-       height="65.428406"
-       width="30.196077"
-       id="rect4693-2"
-       style="fill:#cccccc;fill-opacity:1;stroke-width:0.15894796"
-       transform="rotate(-89.941158)" />
-    <rect
-       ry="7.6974626"
-       y="109.10413"
-       x="-163.22092"
-       height="65.428406"
-       width="30.196077"
-       id="rect4693-5"
-       style="fill:#cccccc;fill-opacity:1;stroke-width:0.15894796"
-       transform="rotate(-89.941158)" />
-    <rect
-       ry="1.2533042"
-       y="137.24675"
-       x="-245.57385"
-       height="10.653081"
-       width="85.09803"
-       id="rect4693-4"
-       style="fill:#cccccc;fill-opacity:1;stroke-width:0.10766981"
-       transform="rotate(-89.941158)" />
-    <rect
-       style="fill:#8c8c8c;fill-opacity:1;stroke-width:0.27103665"
-       id="rect4767"
-       width="52.156864"
-       height="29.295986"
-       x="-229.10327"
-       y="89.307838"
-       ry="6.5132413"
-       transform="rotate(-89.941158)" />
     <path
        style="fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 95.702243,273.18749 c -10.000004,0.0106 -35.010551,-9.96299 -45.015827,-14.95242 9.994705,-5.01057 34.984111,-15.037 44.984115,-15.04756 11.180309,-0.0118 11.212009,29.98816 0.03171,29.99998 z"
