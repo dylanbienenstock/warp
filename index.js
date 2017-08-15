@@ -34,12 +34,17 @@ http.listen(app.get("port"), function(){
 */
 
 function onConnect(socket) {
-	console.log("Player connected.")
+	ENT.sendAllEntities(socket);
 
 	var player = new ENT.EntityPlayer();
 	ENT.create(player, socket); 
 
-	socket.emit("your id", player.id);
+	console.log("+ Player connected. (ID: " + player.id + ")");
+
+	socket.on("disconnect", function() {
+		console.log("- Player disconnected. (ID: " + player.id + ")");
+		ENT.remove(player);
+	});
 
 	socket.on("control down", function(control) {
 		player.controls[control] = true;
@@ -57,12 +62,12 @@ function onConnect(socket) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
   
 setInterval(update, 1000 / 64);
-setInterval(networkUpdates, 1000 / 32);
+setInterval(network, 1000 / 32);
 
 function update() {
 	ENT.update();
 }
 
-function networkUpdates() { // TEMPORARY
-	ENT.sendPositions();
+function network() {
+	ENT.network();
 }

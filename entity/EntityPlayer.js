@@ -42,4 +42,13 @@ module.exports = class EntityPlayer extends EntityBase {
 			this.y += -Math.sin(this.angle + 90 * degToRad) * this.speed;
 		}
 	}
+
+	network(ENT) {
+		ENT.sendProperties(this, {
+			x: this.x,
+			y: this.y,
+			angle: this.angle,
+			controls: this.controls
+		});
+	}
 }

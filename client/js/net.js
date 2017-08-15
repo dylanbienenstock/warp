@@ -3,9 +3,18 @@ var socket;
 function connect() {
 	socket = io();
 
+	socket.on("entity list", function(data) {
+		for (var i = data.length - 1; i >= 0; i--) {
+			ENT.create(ENT.new(data[i]));
+		}
+	});
+
 	socket.on("entity create", function(data) {
-		console.log("entity create ", data);
 		ENT.create(ENT.new(data));
+	});
+
+	socket.on("entity remove", function(id) {
+		ENT.removeById(id);
 	});
 
 	socket.on("entity set", function(data) {
@@ -29,8 +38,6 @@ $(function() {
 			var mousePos = getMousePosition();
 			ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - mousePos.y,
 														 ENT.localPlayer.sprite.position.x - mousePos.x);
-
-			/////
 		}
 	});
 

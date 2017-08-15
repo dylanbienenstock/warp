@@ -1,4 +1,5 @@
-const lerpFactor = 0.075;
+const lerpFactorPosition = 0.075;
+const lerpFactorAngle = 0.2;
 
 class EntityPlayer extends EntityBase {
 	constructor(data) {
@@ -6,8 +7,9 @@ class EntityPlayer extends EntityBase {
 
 		this.name = data.name;
 		this.isLocalPlayer = false;
-		this.destX = 0;
-		this.destY = 0;
+		this.x = 0;
+		this.y = 0;
+		this.angle = 0;
 		this.controls = {
 			thrustForward: false,
 			thrustBackward: false,
@@ -43,11 +45,13 @@ class EntityPlayer extends EntityBase {
 	}
 
 	update() {
-		this.sprite.x = (1 - lerpFactor) * this.sprite.x + lerpFactor * this.x;
-		this.sprite.y = (1 - lerpFactor) * this.sprite.y + lerpFactor * this.y;
+		this.sprite.x = lerp(this.sprite.x, this.x, lerpFactorPosition);
+		this.sprite.y = lerp(this.sprite.y, this.y, lerpFactorPosition);
 
 		if (this.isLocalPlayer) {
 			centerOn(this.sprite);
+		} else {
+			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.angle, lerpFactorAngle);
 		}
 
 		this.thrustSprites.forward.visible = this.controls.thrustForward;
@@ -60,5 +64,11 @@ class EntityPlayer extends EntityBase {
 
 		this.thrustSprites.forward.rotation = this.sprite.rotation;
 		this.thrustSprites.backward.rotation = this.sprite.rotation;
+	}
+
+	remove() {
+		ENT.stageContainer.removeChild(this.sprite,
+									this.thrustSprites.forward,
+									this.thrustSprites.backward);
 	}
 }

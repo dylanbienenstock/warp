@@ -13,6 +13,7 @@ class EntityManager {
 		this.io = io;
 		this.entities = [];
 		this.players = {};
+		this.nextId = 0;
 
 		this.EntityBase = require("../entity/EntityBase.js");
 		this.EntityPlayer = require("../entity/EntityPlayer.js");
@@ -20,12 +21,11 @@ class EntityManager {
 
 	create(entity, playerSocket) {
 		if (entity.className != undefined) {
-			//entity.ENT = this;
-			entity.id = this.entities.length;
+			entity.id = this.nextId;
 			this.entities.push(entity);
+			this.nextId++;
 
 			var data = {};
-			data.id = entity.id;
 
 			for (var property in entity) {
 				if (entity.hasOwnProperty(property)) {
@@ -46,42 +46,107 @@ class EntityManager {
 		}
 	}
 
+	remove(entity) {
+		this.io.emit("entity remove", entity.id);
+
+		for (var i = this.entities.length - 1; i >= 0; i--) {
+			if (this.entities[i].id == entity.id) {
+				this.entities.splice(i, 1);
+
+				break;
+			}
+		}
+
+		for (var socketid in this.players) {
+			if (this.players.hasOwnProperty(socketid)) {
+				if (this.players[socketid].id == entity.id) {
+					delete this.players[socketid];
+
+					break;
+				}
+			}
+		}
+	}
+
 	update() {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			this.entities[i].update();
 		}
 	}
 
-	getById(id) {
+	network() {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
-			if (this.entities[i].id == id) {
-				return this.entities[i];
-			}
+			this.entities[i].network(this);
 		}
 	}
 
-	getByClassName(className) {
-		var ents = [];
+	getPlayerById(id, callback) { // Callback returns socketid
+		for (var socketid in this.players) {
+			if (this.players.hasOwnProperty(socketid)) {
+				if (this.players[socketid].id == id) {
+					callback(socketid);
 
-		for (var i = this.entities.length - 1; i >= 0; i--) {
-			if (this.entities[i].className == className) {
-				ents.push(this.entities[i]);
+					return this.players[socketid];
+				}
 			}
 		}
 
-		return ents;
+		return null;
+	}
+
+	getById(id, callback) {
+		for (var i = this.entities.length - 1; i >= 0; i--) {
+			if (this.entities[i].id == id) {
+				callback(this.entities[i]);
+
+				return this.entities[i];
+			}
+		}
+
+		return null;
+	}
+
+	getByClassName(className, callback) {
+		for (var i = this.entities.length - 1; i >= 0; i--) {
+			if (this.entities[i].className == className) {
+				callback(this.entities[i]);
+
+				return this.entities[i];
+			}
+		}
+
+		return null;
 	}
 
 	getAll() {
 		return this.entities;
 	}
 
-	sendProperties(entity, data) {
+	sendAllEntities(socket) {
+		var allData = [];
+
+		for (var i = this.entities.length - 1; i >= 0; i--) {
+			var entity = this.entities[i];
+			var data = {};
+
+			for (var property in entity) {
+				if (entity.hasOwnProperty(property)) {
+					data[property] = entity[property];
+				}
+			}
+
+			allData.push(data);
+		}
+
+		socket.emit("entity list", allData);
+	}
+
+	sendProperties(entity, data, to) {
 		var data2 = {};
 		data2.id = entity.id;
 		data2.properties = data;
 
-		this.io.emit("entity set", data2);
+		(to || this.io).emit("entity set", data2);
 	}
 
 	sendPositions() {

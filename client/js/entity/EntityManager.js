@@ -24,6 +24,17 @@ ENT.create = function(entity) {
 	}
 }
 
+ENT.removeById = function(id) {
+	for (var i = entities.length - 1; i >= 0; i--) {
+		if (entities[i].id == id) {
+			entities[i].remove();
+			entities.splice(i, 1);
+
+			break;
+		}
+	}
+}
+
 ENT.update = function() {
 	for (var i = entities.length - 1; i >= 0; i--) {
 		entities[i].update();
@@ -40,4 +51,8 @@ ENT.getById = function(id, callback) {
 	}
 
 	return null;
+}
+
+ENT.remove = function(entity) {
+
 }

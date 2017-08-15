@@ -15,6 +15,10 @@ class EntityBase {
 		}
 	}
 
+	remove() {
+		
+	}
+
 	setProperties(data) {
 		for (var property in data) {
 			if (data.hasOwnProperty(property) && this.hasOwnProperty(property)) {
