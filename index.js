@@ -54,7 +54,7 @@ function onConnect(socket) {
 		player.controls[control] = false;
 	});
 
-	socket.on("my angle", function(angle) {
+	socket.on("angle", function(angle) {
 		player.angle = angle;
 	});
 }

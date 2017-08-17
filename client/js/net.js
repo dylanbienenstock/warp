@@ -29,7 +29,7 @@ function sendControl(control, down) {
 }
 
 function sendAngle(angle) {
-	socket.emit("my angle", angle);
+	socket.emit("angle", angle);
 }
 
 $(function() {
