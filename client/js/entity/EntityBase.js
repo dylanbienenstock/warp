@@ -1,17 +1,17 @@
 class EntityBase {
-	constructor(className, x, y, lerpFactor) {
+	constructor(data) {
 		this.id = -1;
-		this.className = className;
+		this.className = data.className;
 		this.sprite = null;
-		this.x = x;
-		this.y = y;
-		this.lerpFactor = lerpFactor | 0.075;
+		this.x = data.x || 0;
+		this.y = data.y || 0;
+		this.radius = data.radius || 16;
 	}
 
 	update() {
 		if (this.sprite != undefined) {
-			this.sprite.x = lerp(this.sprite.x, this.x, this.lerpFactor);
-			this.sprite.y = lerp(this.sprite.y, this.y, this.lerpFactor);
+			this.sprite.x = lerp(this.sprite.x, this.x, ENT.lerpFactorPosition);
+			this.sprite.y = lerp(this.sprite.y, this.y, ENT.lerpFactorPosition);
 		}
 	}
 

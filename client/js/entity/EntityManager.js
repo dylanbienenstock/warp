@@ -2,6 +2,9 @@ window.ENT = {};
 
 var entities = [];
 
+ENT.lerpFactorPosition = 0.075;
+ENT.lerpFactorAngle = 0.2;
+
 ENT.stageContainer;
 ENT.localPlayer;
 
@@ -15,6 +18,7 @@ ENT.new = function(data) {
 	}
 
 	entity.setProperties(data);
+	
 	return entity;
 }
 
