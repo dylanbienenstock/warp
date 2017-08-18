@@ -1,22 +1,30 @@
-/*
+var io;
+var PHYS;
 
-/!\ PACKET FORMATS /!\
-(client to server: ->, server to client: <-)
--------------------------------------------- 
--> "entity create"
-<- "entity properties"
+module.exports = function(__io, __PHYS) {
+	io = __io;
+	PHYS = __PHYS;
 
-*/
+	return new EntityManager();
+}
 
 class EntityManager {
-	constructor(io) {
-		this.io = io;
+	constructor() {
 		this.entities = [];
 		this.players = {};
 		this.nextId = 0;
+	}
 
-		this.EntityBase = require("../entity/EntityBase.js");
-		this.EntityPlayer = require("../entity/EntityPlayer.js");
+	getNetworkableProperties(entity) {
+		var data = {};
+
+		for (var property in entity) {
+			if (entity.hasOwnProperty(property) && !(entity[property] instanceof PHYS.PhysicsObject)) {
+				data[property] = entity[property];
+			}
+		}
+
+		return data;
 	}
 
 	create(entity, playerSocket) {
@@ -25,13 +33,7 @@ class EntityManager {
 			this.entities.push(entity);
 			this.nextId++;
 
-			var data = {};
-
-			for (var property in entity) {
-				if (entity.hasOwnProperty(property)) {
-					data[property] = entity[property];
-				}
-			}
+			var data = this.getNetworkableProperties(entity);
 
 			if (playerSocket != undefined && playerSocket != null) {
 				playerSocket.broadcast.emit("entity create", data);
@@ -41,13 +43,13 @@ class EntityManager {
 				playerSocket.emit("entity create", data);
 				this.players[playerSocket.id] = entity;
 			} else {
-				this.io.emit("entity create", data);
+				io.emit("entity create", data);
 			}
 		}
 	}
 
 	remove(entity) {
-		this.io.emit("entity remove", entity.id);
+		io.emit("entity remove", entity.id);
 
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i].id == entity.id) {
@@ -126,16 +128,7 @@ class EntityManager {
 		var allData = [];
 
 		for (var i = this.entities.length - 1; i >= 0; i--) {
-			var entity = this.entities[i];
-			var data = {};
-
-			for (var property in entity) {
-				if (entity.hasOwnProperty(property)) {
-					data[property] = entity[property];
-				}
-			}
-
-			allData.push(data);
+			allData.push(this.getNetworkableProperties(this.entities[i]));
 		}
 
 		socket.emit("entity list", allData);
@@ -146,7 +139,7 @@ class EntityManager {
 		data2.id = entity.id;
 		data2.properties = data;
 
-		(to || this.io).emit("entity set", data2);
+		(to || io).emit("entity set", data2);
 	}
 
 	sendPositions() {
@@ -159,8 +152,4 @@ class EntityManager {
 			});
 		}
 	}
-}
-
-module.exports = function(io) {
-	return new EntityManager(io);
 }
