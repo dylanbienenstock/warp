@@ -2,7 +2,10 @@ var express = require("express");
 var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
-var ENT = require("./entity/EntityManager.js")(io);
+
+var PHYS = require("./physics/PhysicsManager.js")(io);
+var ENT = require("./entity/EntityManager.js")(io, PHYS);
+var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
 
 app.set("port", (process.env.PORT || 8080));
 
@@ -36,7 +39,7 @@ http.listen(app.get("port"), function(){
 function onConnect(socket) {
 	ENT.sendAllEntities(socket);
 
-	var player = new ENT.EntityPlayer();
+	var player = new Entity.Player();
 	ENT.create(player, socket); 
 
 	console.log("+ Player connected. (ID: " + player.id + ")");
