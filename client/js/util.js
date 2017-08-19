@@ -11,3 +11,9 @@ function shortAngleDist(a0,a1) {
 function lerpAngle(a0,a1,t) {
     return a0 + shortAngleDist(a0, a1) * t;
 }
+
+PIXI.Sprite.prototype.attach = function(sprite) {
+	sprite.x = this.x;
+	sprite.y = this.y;
+	sprite.rotation = this.rotation;
+}

@@ -53,13 +53,8 @@ class EntityPlayer extends EntityBase {
 		this.thrustSprites.forward.visible = this.controls.thrustForward;
 		this.thrustSprites.backward.visible = this.controls.thrustBackward;
 
-		this.thrustSprites.forward.x = this.sprite.x;
-		this.thrustSprites.forward.y = this.sprite.y;
-		this.thrustSprites.backward.x = this.sprite.x;
-		this.thrustSprites.backward.y = this.sprite.y;
-
-		this.thrustSprites.forward.rotation = this.sprite.rotation;
-		this.thrustSprites.backward.rotation = this.sprite.rotation;
+		this.sprite.attach(this.thrustSprites.forward);
+		this.sprite.attach(this.thrustSprites.backward);
 	}
 
 	remove() {
