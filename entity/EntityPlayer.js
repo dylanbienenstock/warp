@@ -13,8 +13,21 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				thrustRight: false
 			};
 
-			this.physicsObject = new PHYS.PhysicsObject(0, 0, -6, -16, 16, 32);
-			this.physicsObject.addChild(new PHYS.PhysicsObject(0, 0, -22, -5, 16, 10));
+			this.physicsObject = new PHYS.PhysicsObject({
+				localX: -6,
+				localY: -16,
+				width: 16,
+				height: 32,
+				velocityX: 5
+			});
+
+			this.physicsObject.addChild(new PHYS.PhysicsObject(
+			{
+				localX: -22,
+				localY: -5,
+				width: 16,
+				height: 10
+			}));
 
 			PHYS.create(this.physicsObject);
 		}
