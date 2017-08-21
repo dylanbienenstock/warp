@@ -2,7 +2,7 @@ window.ENT = {};
 
 var entities = [];
 
-ENT.lerpFactorPosition = 0.075;
+ENT.lerpFactorPosition = 0.15;
 ENT.lerpFactorAngle = 0.2;
 
 ENT.stageContainer;
@@ -14,6 +14,9 @@ ENT.new = function(data) {
 	switch (data.className) {
 		case "Player":
 			entity = new EntityPlayer(data);
+			break;
+		case "PhysicsDebug":
+			entity = new EntityPhysicsDebug(data);
 			break;
 	}
 
