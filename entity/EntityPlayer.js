@@ -1,47 +1,65 @@
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityPlayer extends EntityBase {
-		constructor(name) {
-			super("Player", 0, 0);
+		constructor(data) {
+			super("Player");
 
-			this.name = name;
-			this.rotation = 0;
 			this.speed = 3;
+			this.lastFirePrimary = 0;
+
 			this.controls = {
 				thrustForward: false,
 				thrustBackward: false,
 				thrustLeft: false,
-				thrustRight: false
+				thrustRight: false,
+				firePrimary: false,
+				fireSecondary: false
 			};
 
 			this.physicsObject = new PHYS.PhysicsObject({
 				localX: -6,
 				localY: -16,
 				width: 16,
-				height: 32,
-				velocityX: 5
+				height: 32
 			});
 
-			this.physicsObject.addChild(new PHYS.PhysicsObject(
-			{
+			this.physicsObject.addChild(new PHYS.PhysicsObject({
 				localX: -22,
 				localY: -5,
 				width: 16,
 				height: 10
 			}));
-
-			PHYS.create(this.physicsObject);
 		}
 
 		create() {
+			if (this.physicsObject != undefined && this.physicsObject != null) {
+				PHYS.create(this, this.physicsObject);
+			}
+		}
+
+		collideWith(entity) {
 
 		}
 
 		update() {
-			var degToRad = Math.PI / 180;
+			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 100) {
+				var laser = ENT.create(ENT.new({
+					className: "Laser",
+					ownerId: this.id,
+					x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
+					y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
+					rotation: this.physicsObject.rotation,
+					thrustX: -Math.cos(this.physicsObject.rotation) * 24 + this.physicsObject.totalVelocityX,
+					thrustY: -Math.sin(this.physicsObject.rotation) * 24 + this.physicsObject.totalVelocityY
+				}));
 
-			if (this.rotation > 180 * degToRad) {
-				degToRad *= -1;
+				this.lastFirePrimary = Date.now();
 			}
+
+			this.move();
+		}
+
+		move() {
+			var degToRad = Math.PI / 180;
 
 			this.physicsObject.thrustX = 0;
 			this.physicsObject.thrustY = 0;
