@@ -7,11 +7,14 @@ class EntityPlayer extends EntityBase {
 		this.x = 0;
 		this.y = 0;
 		this.rotation = 0;
+
 		this.controls = {
 			thrustForward: false,
 			thrustBackward: false,
 			thrustLeft: false,
-			thrustRight: false
+			thrustRight: false,
+			firePrimary: false,
+			fireSecondary: false
 		};
 
 		if (data.isLocalPlayer) {

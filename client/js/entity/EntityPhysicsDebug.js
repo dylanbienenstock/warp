@@ -10,6 +10,7 @@ class EntityPhysicsDebug extends EntityBase {
 	update() {
 		super.update();
 
+		this.graphics.visible = ENT.physicsDebug;
 		this.graphics.clear();
 		this.graphics.lineStyle(1, 0x00FF00, 1);
 

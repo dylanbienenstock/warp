@@ -10,6 +10,7 @@ function connect() {
 	});
 
 	socket.on("entity create", function(data) {
+		console.log(data);
 		ENT.create(ENT.new(data));
 	});
 
@@ -105,7 +106,44 @@ $(function() {
 					sendControl("thrustRight", false);
 					ENT.localPlayer.controls.thrustRight = false;
 					break;
+				case "p":
+				case "P":
+					ENT.physicsDebug = !ENT.physicsDebug;
 			}
+		}
+	});
+
+	$(window).mousedown(function(event) {
+		switch (event.which) {
+			case (1):
+				if (!ENT.localPlayer.controls.firePrimary) {
+					sendControl("firePrimary", true);
+					ENT.localPlayer.controls.firePrimary = true;
+				}
+
+				break;
+			case (3):
+				if (!ENT.localPlayer.controls.fireSecondary) {
+					sendControl("fireSecondary", true);
+					ENT.localPlayer.controls.fireSecondary = true;
+				}
+
+				break;
+		}
+	});
+
+	$(window).mouseup(function(event) {
+		switch (event.which) {
+			case (1):
+				sendControl("firePrimary", false);
+				ENT.localPlayer.controls.firePrimary = false;
+
+				break;
+			case (3):
+				sendControl("fireSecondary", false);
+				ENT.localPlayer.controls.fireSecondary = false;
+
+				break;
 		}
 	});
 
@@ -113,5 +151,5 @@ $(function() {
 		if (ENT.localPlayer != undefined) {
 			sendAngle(ENT.localPlayer.sprite.rotation);
 		}
-	}, 1000 / 8);
+	}, 1000 / 32);
 });
