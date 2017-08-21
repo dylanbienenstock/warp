@@ -1,13 +1,20 @@
 var ENT;
 
 class EntityBase {
-	constructor(className, x, y, radius) {
+	constructor(className, x, y) {
 		this.id = -1;
 		this.className = className;
 		this.x = x || 0;
 		this.y = y || 0;
 		this.rotation = 0;
-		this.radius = radius || 16;
+	}
+
+	create() {
+
+	}
+
+	remove() {
+
 	}
 }
 
