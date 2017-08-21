@@ -1,9 +1,10 @@
 var io;
 var PHYS;
+var physicsDebug;
 
-module.exports = function(__io, __PHYS) {
+module.exports = function(__io, __physicsDebug) {
 	io = __io;
-	PHYS = __PHYS;
+	physicsDebug = __physicsDebug;
 
 	return new EntityManager();
 }
@@ -13,13 +14,14 @@ class EntityManager {
 		this.entities = [];
 		this.players = {};
 		this.nextId = 0;
+		this.Entity = null;
 	}
 
 	getNetworkableProperties(entity) {
 		var data = {};
 
 		for (var property in entity) {
-			if (entity.hasOwnProperty(property) && !(entity[property] instanceof PHYS.PhysicsObject)) {
+			if (entity.hasOwnProperty(property) && !this.doNotNetwork) {
 				data[property] = entity[property];
 			}
 		}
@@ -27,7 +29,22 @@ class EntityManager {
 		return data;
 	}
 
-	create(entity, playerSocket) {
+	new(data) {
+		var entity;
+
+		switch (data.className) {
+			case "Player":
+				entity = new this.Entity.Player(data);
+				break;
+			case "PhysicsDebug":
+				entity = new this.Entity.PhysicsDebug(data);
+				break;
+		}
+	
+		return entity;
+	}
+
+	create(entity, playerSocket, creatingEntityPhysicsDebug) {
 		if (entity.className != undefined) {
 			entity.id = this.nextId;
 			this.entities.push(entity);
@@ -45,11 +62,28 @@ class EntityManager {
 			} else {
 				io.emit("entity create", data);
 			}
+
+			entity.create();
+
+			if (physicsDebug && !creatingEntityPhysicsDebug && entity.physicsObject != undefined) {
+				entity.physicsObject.debugEntity = this.create(this.new({
+					className: "PhysicsDebug",
+					physicsObject: entity.physicsObject
+				}), null, true);
+			}
+
+			return entity;
 		}
 	}
 
-	remove(entity) {
+	remove(entity, removingEntityPhysicsDebug) {
 		io.emit("entity remove", entity.id);
+		
+		if (physicsDebug && !removingEntityPhysicsDebug && entity.physicsObject != undefined) {
+			this.remove(entity.physicsObject.debugEntity, true);
+		}
+
+		entity.remove();
 
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i].id == entity.id) {
