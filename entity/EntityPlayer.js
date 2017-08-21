@@ -1,11 +1,10 @@
 module.exports = function(EntityBase, ENT, PHYS) {
-
 	return class EntityPlayer extends EntityBase {
 		constructor(name) {
-			super("Player", 0, 0, 24);
+			super("Player", 0, 0);
 
 			this.name = name;
-			this.angle = 0;
+			this.rotation = 0;
 			this.speed = 3;
 			this.controls = {
 				thrustForward: false,
@@ -14,42 +13,52 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				thrustRight: false
 			};
 
-			this.physicsObject = new PHYS.PhysicsObject(-8, -8, 16, 16);
+			this.physicsObject = new PHYS.PhysicsObject(0, 0, -6, -16, 16, 32);
+			this.physicsObject.addChild(new PHYS.PhysicsObject(0, 0, -22, -5, 16, 10));
+
+			PHYS.create(this.physicsObject);
+		}
+
+		create() {
+
 		}
 
 		update() {
 			var degToRad = Math.PI / 180;
 
-			if (this.angle > 180 * degToRad) {
+			if (this.rotation > 180 * degToRad) {
 				degToRad *= -1;
 			}
 
+			this.physicsObject.thrustX = 0;
+			this.physicsObject.thrustY = 0;
+
 			if (this.controls.thrustForward) {
-				this.x += -Math.cos(this.angle) * this.speed;
-				this.y += -Math.sin(this.angle) * this.speed;
+				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation) * this.speed;
+				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation) * this.speed;
 			}
 
 			if (this.controls.thrustBackward) {
-				this.x -= -Math.cos(this.angle) * this.speed;
-				this.y -= -Math.sin(this.angle) * this.speed;
+				this.physicsObject.thrustX -= -Math.cos(this.physicsObject.rotation) * this.speed;
+				this.physicsObject.thrustY -= -Math.sin(this.physicsObject.rotation) * this.speed;
 			}
 
 			if (this.controls.thrustLeft) {
-				this.x += -Math.cos(this.angle - 90 * degToRad) * this.speed;
-				this.y += -Math.sin(this.angle - 90 * degToRad) * this.speed;
+				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation - 90 * degToRad) * this.speed;
+				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation - 90 * degToRad) * this.speed;
 			}
 
 			if (this.controls.thrustRight) {
-				this.x += -Math.cos(this.angle + 90 * degToRad) * this.speed;
-				this.y += -Math.sin(this.angle + 90 * degToRad) * this.speed;
+				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation + 90 * degToRad) * this.speed;
+				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation + 90 * degToRad) * this.speed;
 			}
 		}
 
 		network(ENT) {
 			ENT.sendProperties(this, {
-				x: this.x,
-				y: this.y,
-				angle: this.angle,
+				x: this.physicsObject.x,
+				y: this.physicsObject.y,
+				rotation: this.physicsObject.rotation,
 				controls: this.controls
 			});
 		}
