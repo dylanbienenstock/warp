@@ -33,11 +33,14 @@ class EntityManager {
 		var entity;
 
 		switch (data.className) {
+			case "PhysicsDebug":
+				entity = new this.Entity.PhysicsDebug(data);
+				break;
 			case "Player":
 				entity = new this.Entity.Player(data);
 				break;
-			case "PhysicsDebug":
-				entity = new this.Entity.PhysicsDebug(data);
+			case "Laser":
+				entity = new this.Entity.Laser(data);
 				break;
 		}
 	
@@ -46,6 +49,10 @@ class EntityManager {
 
 	create(entity, playerSocket, creatingEntityPhysicsDebug) {
 		if (entity.className != undefined) {
+			if (entity.lifespan != undefined && entity.lifespan != null) {
+				entity.createdTime = Date.now();
+			}
+
 			entity.id = this.nextId;
 			this.entities.push(entity);
 			this.nextId++;
@@ -106,13 +113,21 @@ class EntityManager {
 
 	update() {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
-			this.entities[i].update();
+			var entity = this.entities[i];
+
+			entity.update();
+
+			if (entity.lifespan != undefined && entity.lifespan != null && Date.now() - entity.createdTime >= entity.lifespan) {
+				this.remove(entity);
+			}
 		}
 	}
 
 	network() {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
-			this.entities[i].network(this);
+			if (this.entities[i] != undefined) {
+				this.entities[i].network(this);
+			}
 		}
 	}
 
