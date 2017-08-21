@@ -1,4 +1,8 @@
+var lineIntersect = require("line-intersect");
 var io;
+
+const boundaryRadius = 1024;
+const velocityDampeningFactor = 0.975;
 
 module.exports = function(__io) {
 	io = __io;
@@ -10,15 +14,23 @@ class PhysicsManager {
 	constructor() {
 		this.nextId = 0;
 		this.physicsObjects = [];
+		this.physicsObjectOwners = {};
 
-		this.PhysicsObject = require("../physics/PhysicsObject.js")();
+		this.PhysicsObject = require("../physics/PhysicsObject.js")(this);
 	}
 
-	create(physicsObject) {
+	create(entity, physicsObject) {
+		physicsObject.id = this.nextId;
+
 		this.physicsObjects.push(physicsObject);
+		this.physicsObjectOwners[physicsObject.id] = entity;
+
+		this.nextId++;
 	}
 
 	remove(physicsObject) {
+		delete this.physicsObjectOwners[physicsObject.id];
+
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			if (this.physicsObjects[i].id == physicsObject.id) {
 				this.physicsObjects.splice(i, 1);
@@ -90,7 +102,6 @@ class PhysicsManager {
 
 				allLines.push(line);
 			}
-
 		}
 
 		return {
@@ -109,15 +120,83 @@ class PhysicsManager {
 	}
 
 	checkForCollisions() {
+		var collisions = [];
 
+		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
+			var physicsObject = this.physicsObjects[i];
+
+			for (var i2 = this.physicsObjects.length - 1; i2 >= 0; i2--) {
+				if (physicsObject.id == this.physicsObjects[i2].id) {
+					continue;
+				}
+
+				var physicsObject2 = this.physicsObjects[i2];
+				var collision = false;
+
+				for (var i3 = physicsObject.info.lines.length - 1; i3 >= 0; i3--) {
+					var line = physicsObject.info.lines[i3];
+
+					for (var i4 = physicsObject2.info.lines.length - 1; i4 >= 0; i4--) {
+						var line2 = physicsObject2.info.lines[i4];
+
+						var result = lineIntersect.checkIntersection(
+						  line.start.x, line.start.y, line.end.x, line.end.y,
+						  line2.start.x, line2.start.y, line2.end.x, line2.end.y
+						);
+
+						if (result.type == "intersecting") {
+							// var angle = Math.atan2(result.point.y - physicsObject.y, physicsObject.x - result.point.x);
+							// var opposingDirection = { x: Math.cos(angle), y: Math.sin(angle) };
+
+							collisions.push({
+								physicsObject: physicsObject,
+								with: physicsObject2
+							});
+
+							collision = true;
+							break;
+						}
+					}
+
+					if (collision) {
+						break;
+					}
+				}
+			}
+		}
+
+		for (var i = collisions.length - 1; i >= 0; i--) {
+			var collision = collisions[i];
+			var entity = this.physicsObjectOwners[collision.physicsObject.id];
+			var withEntity = this.physicsObjectOwners[collision.with.id];
+
+			if (entity != undefined && withEntity != undefined) {
+				entity.collideWith(withEntity);
+			}
+		}
 	}
 
 	update() {
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			var physicsObject = this.physicsObjects[i];
 
+			physicsObject.info = this.getPhysicsInfo(physicsObject);
+
 			physicsObject.x += physicsObject.totalVelocityX;
 			physicsObject.y += physicsObject.totalVelocityY;
+
+			physicsObject.velocityX *= velocityDampeningFactor;
+			physicsObject.velocityY *= velocityDampeningFactor;
+
+			if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
+				physicsObject.velocityX = Math.max(Math.min(physicsObject.velocityX + physicsObject.thrustX, 0), 0);
+			}
+
+			if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
+				physicsObject.velocityY = Math.max(Math.min(physicsObject.velocityY + physicsObject.thrustY, 0), 0);
+			}
 		}
+
+		this.checkForCollisions();
 	}
 }

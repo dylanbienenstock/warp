@@ -1,6 +1,9 @@
-module.exports = function() {
+var PHYS;
+
+module.exports = function(__PHYS) {
+	PHYS = __PHYS;
+
 	return class PhysicsObject {
-		//constructor(x, y, localX, localY, width, height) {
 		constructor(data) {
 			this.id = -1;
 			this.x = data.x || 0;

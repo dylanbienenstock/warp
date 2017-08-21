@@ -66,7 +66,7 @@ function onConnect(socket) {
 }
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////
-  
+
 setInterval(update, 1000 / 64);
 setInterval(network, 1000 / 32);
 
