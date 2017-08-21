@@ -2,21 +2,26 @@ window.ENT = {};
 
 var entities = [];
 
-ENT.lerpFactorPosition = 0.3;
+ENT.lerpFactorPosition = 0.375;
 ENT.lerpFactorAngle = 0.2;
 
 ENT.stageContainer;
 ENT.localPlayer;
 
+ENT.physicsDebug = true;
+
 ENT.new = function(data) {
 	var entity;
 
 	switch (data.className) {
+		case "PhysicsDebug":
+			entity = new EntityPhysicsDebug(data);
+			break;
 		case "Player":
 			entity = new EntityPlayer(data);
 			break;
-		case "PhysicsDebug":
-			entity = new EntityPhysicsDebug(data);
+		case "Laser":
+			entity = new EntityLaser(data);
 			break;
 	}
 
@@ -58,6 +63,18 @@ ENT.getById = function(id, callback) {
 	}
 
 	return null;
+}
+
+ENT.getAllByClassName = function(className) {
+	var entities2 = [];
+
+	for (var i = entities.length - 1; i >= 0; i--) {
+		if (entities[i].className == className) {
+			entities2.push(entities[i]);
+		}
+	}
+
+	return entities2;
 }
 
 ENT.remove = function(entity) {
