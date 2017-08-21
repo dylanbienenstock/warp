@@ -1,6 +1,6 @@
 window.zoom = 2;
 
-const boundaryRadius = 512;
+const boundaryRadius = 1024;
 
 var renderer;
 var baseContainer;
@@ -38,6 +38,15 @@ $(function() {
 	ENT.stageContainer = stageContainer;
 
 	$(window).resize(resizeRenderer);
+
+	$(window).mousewheel(function(event) {
+    	if (event.deltaY > 0) {
+    		window.zoom = Math.min(window.zoom + 0.25, 3);
+    	}
+    	else if (event.deltaY < 0) {
+    		window.zoom = Math.max(window.zoom - 0.25, 1);
+    	}
+	});
 
 	resizeRenderer();
 	loadContent();
