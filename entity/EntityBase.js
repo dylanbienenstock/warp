@@ -1,12 +1,10 @@
 var ENT;
+var PHYS;
 
 class EntityBase {
-	constructor(className, x, y) {
+	constructor(className) {
 		this.id = -1;
 		this.className = className;
-		this.x = x || 0;
-		this.y = y || 0;
-		this.rotation = 0;
 	}
 
 	create() {
@@ -14,12 +12,27 @@ class EntityBase {
 	}
 
 	remove() {
+		if (this.physicsObject != undefined && this.physicsObject != null) {
+			PHYS.remove(this.physicsObject);
+		}
+	}
+
+	update() {
+		
+	}
+
+	network() {
+
+	}
+
+	collideWith(entity) {
 
 	}
 }
 
-module.exports = function(__ENT) {
+module.exports = function(__ENT, __PHYS) {
 	ENT = __ENT;
+	PHYS = __PHYS;
 
 	return EntityBase;
 }
