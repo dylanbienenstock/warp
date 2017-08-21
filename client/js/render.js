@@ -1,8 +1,12 @@
+window.zoom = 2;
+
+const boundaryRadius = 512;
+
 var renderer;
 var baseContainer;
 var gridContainer;
 var stageContainer;
-var hudContainer;
+var boundaryContainer;
 var grid;
 
 var localPlayerSprite;
@@ -18,11 +22,18 @@ $(function() {
 	baseContainer = new PIXI.Container();
 	gridContainer = new PIXI.Container();
 	stageContainer = new PIXI.Container();
-	hudContainer = new PIXI.Container();
-	baseContainer.addChild(gridContainer, stageContainer, hudContainer);
+	boundaryContainer = new PIXI.Container();
+
+	baseContainer.addChild(gridContainer, stageContainer, boundaryContainer);
 
 	grid = new PIXI.Graphics();
 	gridContainer.addChild(grid);
+
+	boundary = new PIXI.Graphics();
+	boundaryContainer.addChild(boundary)
+
+	boundary.lineStyle(1, 0xFFFFFF, 1);
+	boundary.drawCircle(0, 0, boundaryRadius);
 
 	ENT.stageContainer = stageContainer;
 
@@ -49,10 +60,10 @@ function setup() {
 	placeholder = new PIXI.Sprite(PIXI.loader.resources["placeholder"].texture);
 	placeholder.anchor.set(0.5, 0.5);
 	stageContainer.addChild(placeholder);
-	
-	connect();
 
-	window.requestAnimationFrame(update);
+	setupHUD(baseContainer);
+	connect();
+	update();
 }
 
 function update() {
@@ -60,6 +71,7 @@ function update() {
 
 	drawGrid();
 	ENT.update();
+	drawHUD();
 	
 	renderer.render(baseContainer);
 }
@@ -105,8 +117,15 @@ function getMousePosition() {
 function centerOn(sprite) {
 	stageContainer.position.x = renderer.width / 2;
 	stageContainer.position.y = renderer.height / 2;
-	stageContainer.scale.x = 2.0;
-	stageContainer.scale.y = 2.0;
+	stageContainer.scale.x = window.zoom;
+	stageContainer.scale.y = window.zoom;
 	stageContainer.pivot.x = sprite.position.x;
 	stageContainer.pivot.y = sprite.position.y;
+
+	boundaryContainer.position.x = renderer.width / 2;
+	boundaryContainer.position.y = renderer.height / 2;
+	boundaryContainer.scale.x = window.zoom;
+	boundaryContainer.scale.y = window.zoom;
+	boundaryContainer.pivot.x = sprite.position.x;
+	boundaryContainer.pivot.y = sprite.position.y;
 }
