@@ -3,9 +3,12 @@ var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 
+const physicsDebug = true;
+
 var PHYS = require("./physics/PhysicsManager.js")(io);
-var ENT = require("./entity/EntityManager.js")(io, PHYS);
+var ENT = require("./entity/EntityManager.js")(io, physicsDebug);
 var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
+ENT.Entity = Entity;
 
 app.set("port", (process.env.PORT || 8080));
 
@@ -58,7 +61,7 @@ function onConnect(socket) {
 	});
 
 	socket.on("angle", function(angle) {
-		player.angle = angle;
+		player.physicsObject.rotation = angle;
 	});
 }
 
@@ -68,6 +71,7 @@ setInterval(update, 1000 / 64);
 setInterval(network, 1000 / 32);
 
 function update() {
+	PHYS.update();
 	ENT.update();
 }
 
