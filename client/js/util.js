@@ -17,3 +17,17 @@ PIXI.Sprite.prototype.attach = function(sprite) {
 	sprite.y = this.y;
 	sprite.rotation = this.rotation;
 }
+
+function cartesianToPolar(x, y) {
+	return {
+		radius: Math.sqrt(x * x + y * y),
+		angle: Math.atan2(y, x)
+	};
+}
+
+function polarToCartesian(radius, angle) {
+	return {
+		x: radius * Math.cos(angle),
+		y: radius * Math.sin(angle)
+	};
+}
