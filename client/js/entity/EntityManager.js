@@ -2,7 +2,7 @@ window.ENT = {};
 
 var entities = [];
 
-ENT.lerpFactorPosition = 0.15;
+ENT.lerpFactorPosition = 0.3;
 ENT.lerpFactorAngle = 0.2;
 
 ENT.stageContainer;

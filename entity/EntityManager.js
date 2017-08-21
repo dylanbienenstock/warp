@@ -21,7 +21,7 @@ class EntityManager {
 		var data = {};
 
 		for (var property in entity) {
-			if (entity.hasOwnProperty(property) && !this.doNotNetwork) {
+			if (entity.hasOwnProperty(property) && entity[property] != undefined && !entity[property].doNotNetwork) {
 				data[property] = entity[property];
 			}
 		}
