@@ -6,7 +6,7 @@ class EntityPlayer extends EntityBase {
 		this.isLocalPlayer = false;
 		this.x = 0;
 		this.y = 0;
-		this.angle = 0;
+		this.rotation = 0;
 		this.controls = {
 			thrustForward: false,
 			thrustBackward: false,
@@ -47,7 +47,7 @@ class EntityPlayer extends EntityBase {
 		if (this.isLocalPlayer) {
 			centerOn(this.sprite);
 		} else {
-			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.angle, ENT.lerpFactorAngle);
+			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}
 
 		this.thrustSprites.forward.visible = this.controls.thrustForward;
