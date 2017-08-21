@@ -1,5 +1,11 @@
 var io;
 
+module.exports = function(__io) {
+	io = __io;
+
+	return new PhysicsManager();
+}
+
 class PhysicsManager {
 	constructor() {
 		this.nextId = 0;
@@ -10,6 +16,16 @@ class PhysicsManager {
 
 	create(physicsObject) {
 		this.physicsObjects.push(physicsObject);
+	}
+
+	remove(physicsObject) {
+		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
+			if (this.physicsObjects[i].id == physicsObject.id) {
+				this.physicsObjects.splice(i, 1);
+
+				break;
+			}
+		}
 	}
 
 	rectangleToCorners(x, y, width, height) {
@@ -40,45 +56,68 @@ class PhysicsManager {
    		};
 	}
 
-	getPhysicsInfo(physicsObject, x, y, rotation) {
+	getPhysicsInfo(physicsObject) {
 		var minX = 0;
 		var minY = 0;
 		var maxX = 0;
 		var maxY = 0;
 
-		var lines = [];
+		var allLines = [];
 
 		for (var i = physicsObject.children.length; i >= 0; i--) {
-			var rectangle = (i == physicsObject.children.length ? physicsObject : physicsObject.children[i]);
-			var corners = rectangleToCorners(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+			var physicsObjectI = (i == physicsObject.children.length ? physicsObject : physicsObject.children[i]);
+			var corners = this.rectangleToCorners(physicsObjectI.localX, physicsObjectI.localY, physicsObjectI.width, physicsObjectI.height);
 
-			for (var i = corners.length - 1; i >= 0; i--) {
-				var corner = corners[i];
-				corner = rotatePoint(corner.x, corner.y, rotation);
+			for (var i2 = corners.length - 1; i2 >= 0; i2--) {
+				corners[i2] = this.rotatePoint(corners[i2].x, corners[i2].y, physicsObject.rotation);
+				var corner = corners[i2];
 
 				minX = Math.min(corner.x, minX);
-				minY = Math.min(corner.y, miny);
+				minY = Math.min(corner.y, minY);
 				maxX = Math.max(corner.x, maxX);
 				maxY = Math.max(corner.y, maxY);
 			}
 
-			lines.push(cornersToLines(corners));
+			var lines = this.cornersToLines(corners);
+
+			for (var i3 = lines.length - 1; i3 >= 0; i3--) {
+				var line = lines[i3];
+
+				line.start.x += physicsObject.x / 2;
+				line.start.y += physicsObject.y / 2;
+				line.end.x += physicsObject.x / 2;
+				line.end.y += physicsObject.y / 2;
+
+				allLines.push(line);
+			}
+
 		}
 
 		return {
-			lines: lines,
+			lines: allLines,
+			origin: {
+				x: physicsObject.x,
+				y: physicsObject.y
+			},
 			bounds: {
-				minX: minX,
-				minY: minY,
-				maxX: maxX,
-				maxY: maxY
+				minX: minX += physicsObject.x,
+				minY: minY += physicsObject.y,
+				maxX: maxX += physicsObject.x,
+				maxY: maxY += physicsObject.y
 			}
 		};
 	}
-}
 
-module.exports = function(__io) {
-	io = __io;
+	checkForCollisions() {
 
-	return new PhysicsManager();
+	}
+
+	update() {
+		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
+			var physicsObject = this.physicsObjects[i];
+
+			physicsObject.x += physicsObject.totalVelocityX;
+			physicsObject.y += physicsObject.totalVelocityY;
+		}
+	}
 }
