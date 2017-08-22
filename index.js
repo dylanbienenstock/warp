@@ -67,14 +67,15 @@ function onConnect(socket) {
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
-setInterval(update, 1000 / 64);
-setInterval(network, 1000 / 32);
+setInterval(update, 1000 / 32);
+//setInterval(network, 1000 / 32);
 
 function update() {
 	PHYS.update();
 	ENT.update();
-}
-
-function network() {
 	ENT.network();
 }
+
+// function network() {
+// 	ENT.network();
+// }
