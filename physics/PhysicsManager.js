@@ -185,16 +185,16 @@ class PhysicsManager {
 			physicsObject.x += physicsObject.totalVelocityX * timeMult;
 			physicsObject.y += physicsObject.totalVelocityY * timeMult;
 
-			physicsObject.velocityX *= velocityDampeningFactor * timeMult;
-			physicsObject.velocityY *= velocityDampeningFactor * timeMult;
+			physicsObject.velocityX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+			physicsObject.velocityY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
 
-			if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
-				physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
-			}
+			// if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
+			// 	physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
+			// }
 
-			if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
-				physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
-			}
+			// if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
+			// 	physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
+			// }
 		}
 
 		this.checkForCollisions();
