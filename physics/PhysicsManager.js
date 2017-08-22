@@ -176,24 +176,24 @@ class PhysicsManager {
 		}
 	}
 
-	update() {
+	update(timeMult) {
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			var physicsObject = this.physicsObjects[i];
 
 			physicsObject.info = this.getPhysicsInfo(physicsObject);
 
-			physicsObject.x += physicsObject.totalVelocityX;
-			physicsObject.y += physicsObject.totalVelocityY;
+			physicsObject.x += physicsObject.totalVelocityX * timeMult;
+			physicsObject.y += physicsObject.totalVelocityY * timeMult;
 
-			physicsObject.velocityX *= velocityDampeningFactor;
-			physicsObject.velocityY *= velocityDampeningFactor;
+			physicsObject.velocityX *= velocityDampeningFactor * timeMult;
+			physicsObject.velocityY *= velocityDampeningFactor * timeMult;
 
 			if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
-				physicsObject.velocityX = Math.max(Math.min(physicsObject.velocityX + physicsObject.thrustX, 0), 0);
+				physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
 			}
 
 			if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
-				physicsObject.velocityY = Math.max(Math.min(physicsObject.velocityY + physicsObject.thrustY, 0), 0);
+				physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
 			}
 		}
 

@@ -67,15 +67,24 @@ function onConnect(socket) {
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
-setInterval(update, 1000 / 32);
-//setInterval(network, 1000 / 32);
+update();
+
+var desiredUpdateDuration = 1000 / 32;
+var lastUpdate = 0;//Date.now();
 
 function update() {
-	PHYS.update();
-	ENT.update();
-	ENT.network();
-}
+	var lastUpdateDuration = Date.now() - lastUpdate;
+	var timeMult = lastUpdateDuration / desiredUpdateDuration;
 
-// function network() {
-// 	ENT.network();
-// }
+	PHYS.update(timeMult);
+	ENT.update(timeMult);
+	ENT.network();
+
+	lastUpdate = Date.now();
+
+	if (lastUpdateDuration >= desiredUpdateDuration) {
+		process.nextTick(update);
+	} else {
+		setTimeout(update, desiredUpdateDuration - lastUpdateDuration);
+	}
+}
