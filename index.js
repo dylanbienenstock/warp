@@ -70,7 +70,7 @@ function onConnect(socket) {
 update();
 
 var desiredUpdateDuration = 1000 / 32;
-var lastUpdate = 0;//Date.now();
+var lastUpdate = 0;
 
 function update() {
 	var lastUpdateDuration = Date.now() - lastUpdate;

@@ -3,7 +3,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super("Player");
 
-			this.speed = 3;
+			this.speed = 6;
 			this.lastFirePrimary = 0;
 
 			this.controls = {
