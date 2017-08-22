@@ -34,6 +34,8 @@ ENT.create = function(entity) {
 	if (entity.className != undefined) {
 		entities.push(entity);
 	}
+
+	return entity;
 }
 
 ENT.removeById = function(id) {

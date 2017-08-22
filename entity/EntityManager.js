@@ -15,6 +15,7 @@ class EntityManager {
 		this.players = {};
 		this.nextId = 0;
 		this.Entity = null;
+		this.toNetwork = null;
 	}
 
 	getNetworkableProperties(entity) {
@@ -59,16 +60,11 @@ class EntityManager {
 
 			var data = this.getNetworkableProperties(entity);
 
-			if (playerSocket != undefined && playerSocket != null) {
-				playerSocket.broadcast.emit("entity create", data);
-
-				data.isLocalPlayer = true;
-
-				playerSocket.emit("entity create", data);
-				this.players[playerSocket.id] = entity;
-			} else {
-				io.emit("entity create", data);
+			if (playerSocket != null) {
+				data.playerSocketId = playerSocket.id;
 			}
+
+			io.emit("entity create", data);
 
 			entity.create();
 
@@ -124,11 +120,17 @@ class EntityManager {
 	}
 
 	network() {
+		this.toNetwork = [];
+
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i] != undefined) {
 				this.entities[i].network(this);
 			}
 		}
+
+		io.emit("entity set", this.toNetwork);
+
+		//(to || io).emit("entity set", data2);
 	}
 
 	getPlayerById(id, callback) { // Callback returns socketid
@@ -183,12 +185,12 @@ class EntityManager {
 		socket.emit("entity list", allData);
 	}
 
-	sendProperties(entity, data, to) {
+	sendProperties(entity, data) {
 		var data2 = {};
 		data2.id = entity.id;
 		data2.properties = data;
 
-		(to || io).emit("entity set", data2);
+		this.toNetwork.push(data2);
 	}
 
 	sendPositions() {

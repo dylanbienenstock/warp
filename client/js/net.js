@@ -10,8 +10,12 @@ function connect() {
 	});
 
 	socket.on("entity create", function(data) {
-		console.log(data);
-		ENT.create(ENT.new(data));
+		var entity = ENT.create(ENT.new(data));
+
+		if (data.playerSocketId == socket.id) {
+			ENT.localPlayer = entity;
+			entity.isLocalPlayer = true;
+		}
 	});
 
 	socket.on("entity remove", function(id) {
@@ -19,9 +23,13 @@ function connect() {
 	});
 
 	socket.on("entity set", function(data) {
-		ENT.getById(data.id, function(entity) {
-			entity.setProperties(data.properties);
-		});
+		for (var i = data.length - 1; i >= 0; i--) {
+			var data2 = data[i];
+
+			ENT.getById(data2.id, function(entity) {
+				entity.setProperties(data2.properties);
+			});
+		}
 	});
 }
 

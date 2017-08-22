@@ -17,11 +17,6 @@ class EntityPlayer extends EntityBase {
 			fireSecondary: false
 		};
 
-		if (data.isLocalPlayer) {
-			this.isLocalPlayer = true;
-			ENT.localPlayer = this;
-		}
-
 		this.sprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
 		this.sprite.anchor.set(0.678, 0.5);
 		this.sprite.width = 32;
