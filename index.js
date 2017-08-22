@@ -67,24 +67,30 @@ function onConnect(socket) {
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
-update();
+//update();
 
-var desiredUpdateDuration = 1000 / 32;
-var lastUpdate = 0;
+// var desiredUpdateDuration = 1000 / 32;
+// var lastUpdate = 0;
 
-function update() {
-	var lastUpdateDuration = Date.now() - lastUpdate;
-	var timeMult = lastUpdateDuration / desiredUpdateDuration;
+// function update() {
+// 	var lastUpdateDuration = Date.now() - lastUpdate;
+// 	var timeMult = lastUpdateDuration / desiredUpdateDuration;
 
-	PHYS.update(timeMult);
-	ENT.update(timeMult);
+// 	PHYS.update(timeMult);
+// 	ENT.update(timeMult);
+// 	ENT.network();
+
+// 	lastUpdate = Date.now();
+
+// 	if (lastUpdateDuration >= desiredUpdateDuration) {
+// 		process.nextTick(update);
+// 	} else {
+// 		setTimeout(update, desiredUpdateDuration - lastUpdateDuration);
+// 	}
+// }
+
+setInterval(function() {
+	PHYS.update(1);
+	ENT.update(1);
 	ENT.network();
-
-	lastUpdate = Date.now();
-
-	if (lastUpdateDuration >= desiredUpdateDuration) {
-		process.nextTick(update);
-	} else {
-		setTimeout(update, desiredUpdateDuration - lastUpdateDuration);
-	}
-}
+}, 1000 / 32);
