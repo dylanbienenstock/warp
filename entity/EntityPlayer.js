@@ -41,15 +41,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		update() {
-			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 100) {
+			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 500) {
 				var laser = ENT.create(ENT.new({
 					className: "Laser",
 					ownerId: this.id,
 					x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
 					y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
 					rotation: this.physicsObject.rotation,
-					thrustX: -Math.cos(this.physicsObject.rotation) * 24 + this.physicsObject.totalVelocityX,
-					thrustY: -Math.sin(this.physicsObject.rotation) * 24 + this.physicsObject.totalVelocityY
+					thrustX: -Math.cos(this.physicsObject.rotation) * 30 + this.physicsObject.totalVelocityX,
+					thrustY: -Math.sin(this.physicsObject.rotation) * 30 + this.physicsObject.totalVelocityY
 				}));
 
 				this.lastFirePrimary = Date.now();

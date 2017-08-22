@@ -38,8 +38,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		collideWith(entity) {
 			if (entity.className == "Player" && entity.id != this.ownerId) {
-				entity.physicsObject.velocityX = this.physicsObject.thrustX / 10;
-				entity.physicsObject.velocityY = this.physicsObject.thrustY / 10;
+				entity.physicsObject.velocityX = this.physicsObject.thrustX / 3;
+				entity.physicsObject.velocityY = this.physicsObject.thrustY / 3;
 
 				ENT.remove(this);
 			}
