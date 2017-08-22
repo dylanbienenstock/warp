@@ -61,7 +61,7 @@ class EntityManager {
 			var data = this.getNetworkableProperties(entity);
 
 			if (playerSocket != null) {
-				data.playerSocketId = playerSocket.id;
+				data.playerSocketId = playerSocket.client.id;
 			}
 
 			io.emit("entity create", data);
