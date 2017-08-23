@@ -131,6 +131,15 @@ class PhysicsManager {
 				}
 
 				var physicsObject2 = this.physicsObjects[i2];
+
+				if (physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
+					physicsObject2.info.bounds.minX > physicsObject.info.bounds.maxX ||
+					physicsObject.info.bounds.minY > physicsObject2.info.bounds.maxY ||
+					physicsObject2.info.bounds.minY > physicsObject.info.bounds.maxY) {
+					
+					continue;
+				}
+
 				var collision = false;
 
 				for (var i3 = physicsObject.info.lines.length - 1; i3 >= 0; i3--) {
