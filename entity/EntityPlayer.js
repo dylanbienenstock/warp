@@ -41,7 +41,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		update() {
-			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 500) {
+			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
 				var laser = ENT.create(ENT.new({
 					className: "Laser",
 					ownerId: this.id,
