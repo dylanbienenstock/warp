@@ -31,6 +31,14 @@ function connect() {
 			});
 		}
 	});
+
+	socket.on("entity trigger", function(data) {
+		ENT.getById(data.id, function(entity) {
+			if (entity.triggers.hasOwnProperty(data.trigger)) {
+				entity.triggers[data.trigger](data.triggerData);
+			}
+		});
+	});
 }
 
 function sendControl(control, down) {

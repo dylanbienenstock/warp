@@ -97,11 +97,11 @@ class EntityManager {
 		}
 	}
 
-	update() {
+	update(timeMult) {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			var entity = this.entities[i];
 
-			entity.update();
+			entity.update(timeMult);
 
 			if (entity.lifespan != undefined && entity.lifespan != null && Date.now() - entity.createdTime >= entity.lifespan) {
 				this.remove(entity);
@@ -119,15 +119,23 @@ class EntityManager {
 		}
 
 		io.emit("entity set", this.toNetwork);
+	}
 
-		//(to || io).emit("entity set", data2);
+	trigger(entity, trigger, data) {
+		io.emit("entity trigger", {
+			id: entity.id,
+			trigger: trigger,
+			triggerData: data
+		});
 	}
 
 	getPlayerById(id, callback) { // Callback returns socketid
 		for (var socketid in this.players) {
 			if (this.players.hasOwnProperty(socketid)) {
 				if (this.players[socketid].id == id) {
-					callback(socketid);
+					if (callback instanceof Function) {
+						callback(socketid);
+					}
 
 					return this.players[socketid];
 				}
@@ -140,7 +148,9 @@ class EntityManager {
 	getById(id, callback) {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i].id == id) {
-				callback(this.entities[i]);
+				if (callback instanceof Function) {
+					callback(entities[i]);
+				}
 
 				return this.entities[i];
 			}
@@ -152,7 +162,9 @@ class EntityManager {
 	getByClassName(className, callback) {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i].className == className) {
-				callback(this.entities[i]);
+				if (callback instanceof Function) {
+					callback(this.entities[i]);
+				}
 
 				return this.entities[i];
 			}

@@ -6,6 +6,7 @@ class EntityBase {
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.rotation = data.rotation || 0;
+		this.triggers = {};
 	}
 
 	update() {
