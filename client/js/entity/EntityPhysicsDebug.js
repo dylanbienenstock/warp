@@ -21,6 +21,12 @@ class EntityPhysicsDebug extends EntityBase {
 			this.graphics.lineTo(line.end.x, line.end.y);
 		}
 
+		for (var i = this.info.circles.length - 1; i >= 0; i--) {
+			var circle = this.info.circles[i];
+
+			this.graphics.drawCircle(circle.position.x, circle.position.y, circle.radius);
+		}
+
 		this.graphics.lineStyle(1, 0xFFFF00, 0.5);
 
 		this.graphics.moveTo(this.info.bounds.minX, this.info.bounds.minY);
