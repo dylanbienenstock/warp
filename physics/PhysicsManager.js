@@ -2,7 +2,6 @@ var lineIntersect = require("line-intersect");
 var lineCircleIntersect = require("line-circle-collision");
 var io;
 
-const boundaryRadius = 1024;
 const velocityDampeningFactor = 0.975;
 
 module.exports = function(__io) {
@@ -16,6 +15,7 @@ class PhysicsManager {
 		this.Physics = null;
 
 		this.nextId = 0;
+		this.boundaryRadius = 1024;
 		this.physicsObjects = [];
 		this.physicsObjectOwners = {};
 	}
@@ -26,11 +26,10 @@ class PhysicsManager {
 
 	create(entity, physicsObject) {
 		physicsObject.id = this.nextId;
+		this.nextId++;
 
 		this.physicsObjects.push(physicsObject);
 		this.physicsObjectOwners[physicsObject.id] = entity;
-
-		this.nextId++;
 	}
 
 	remove(physicsObject) {
@@ -120,8 +119,8 @@ class PhysicsManager {
 				allCircles.push({
 					radius: physicsObjectI.radius,
 					position: {
-						x: physicsObjectI.x,
-						y: physicsObjectI.y
+						x: physicsObject.x + physicsObjectI.localX,
+						y: physicsObject.y + physicsObjectI.localY
 					}
 				});
 			}
@@ -135,10 +134,14 @@ class PhysicsManager {
 				y: physicsObject.y
 			},
 			bounds: {
-				minX: minX += physicsObject.x,
-				minY: minY += physicsObject.y,
-				maxX: maxX += physicsObject.x,
-				maxY: maxY += physicsObject.y
+				center: {
+					x: (minX + (maxX - minX) / 2) + physicsObject.x,
+					y: (minY + (maxY - minY) / 2) + physicsObject.y
+				},
+				minX: minX + physicsObject.x,
+				minY: minY + physicsObject.y,
+				maxX: maxX + physicsObject.x,
+				maxY: maxY + physicsObject.y,
 			}
 		};
 	}
@@ -181,10 +184,7 @@ class PhysicsManager {
 										[ circle.position.x, circle.position.y ], 
 										circle.radius, nearestPoint);
 
-				if (lineCircleIntersect([ line.start.x, line.start.y, ],
-										[ line.end.x, line.end.y, ],
-										[ circle.position.x, circle.position.y ], 
-										circle.radius, nearestPoint))
+				if (lineCircleIntersectResult)
 				{
 					return {
 						position: {
@@ -224,6 +224,7 @@ class PhysicsManager {
 
 	checkForCollisions() {
 		var collisions = [];
+		var alreadyChecked = [];
 
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			var physicsObject = this.physicsObjects[i];
@@ -231,7 +232,8 @@ class PhysicsManager {
 			for (var i2 = this.physicsObjects.length - 1; i2 >= 0; i2--) {
 				var physicsObject2 = this.physicsObjects[i2];
 
-				if (physicsObject.id == physicsObject2.id || 
+				if (alreadyChecked.includes(physicsObject2.id) ||
+					physicsObject.id == physicsObject2.id || 
 					physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
 					physicsObject2.info.bounds.minX > physicsObject.info.bounds.maxX ||
 					physicsObject.info.bounds.minY > physicsObject2.info.bounds.maxY ||
@@ -265,6 +267,8 @@ class PhysicsManager {
 					break;
 				}
 			}
+
+			alreadyChecked.push(physicsObject.id);
 		}
 
 		for (var i = collisions.length - 1; i >= 0; i--) {
@@ -274,6 +278,13 @@ class PhysicsManager {
 
 			if (entity != undefined && withEntity != undefined) {
 				entity.collideWith(withEntity, collision);
+
+				collision.__physicsObject = collision.physicsObject;
+				collision.physicsObject = collision.with;
+				collision.with = collision.__physicsObject;
+				collision.angle *= -1;
+
+				withEntity.collideWith(entity, collision);
 			}
 		}
 	}
