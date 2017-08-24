@@ -11,10 +11,11 @@ module.exports = function(__io, __physicsDebug) {
 
 class EntityManager {
 	constructor() {
+		this.Entity = null;
+
 		this.entities = [];
 		this.players = {};
 		this.nextId = 0;
-		this.Entity = null;
 		this.toNetwork = null;
 	}
 
@@ -30,8 +31,10 @@ class EntityManager {
 		return data;
 	}
 
-	new(data) {
-		return new this.Entity[data.className](data);
+	new(className, data) {
+		data.className = className;
+		
+		return new this.Entity[className](data);
 	}
 
 	type(className) {
@@ -59,8 +62,7 @@ class EntityManager {
 			entity.create();
 
 			if (physicsDebug && !creatingEntityPhysicsDebug && entity.physicsObject != undefined) {
-				entity.physicsObject.debugEntity = this.create(this.new({
-					className: "PhysicsDebug",
+				entity.physicsObject.debugEntity = this.create(this.new("PhysicsDebug", {
 					physicsObject: entity.physicsObject
 				}), null, true);
 			}
@@ -149,7 +151,7 @@ class EntityManager {
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i].id == id) {
 				if (callback instanceof Function) {
-					callback(entities[i]);
+					callback(this.entities[i]);
 				}
 
 				return this.entities[i];
