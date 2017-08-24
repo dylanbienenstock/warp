@@ -6,6 +6,9 @@ var io = require("socket.io")(http);
 const physicsDebug = true;
 
 var PHYS = require("./physics/PhysicsManager.js")(io);
+var Physics = require("./physics/Physics.js")(PHYS);
+PHYS.Physics = Physics;
+
 var ENT = require("./entity/EntityManager.js")(io, physicsDebug);
 var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
 ENT.Entity = Entity;
