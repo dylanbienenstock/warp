@@ -8,6 +8,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.ownerId = data.ownerId;
 			this.thickness = data.thickness || 2;
 			this.color = data.color || 0xFF0000;
+			this.length = data.length || 64;
 			this.x = data.x;
 			this.y = data.y;
 			this.rotation = data.rotation;
@@ -15,10 +16,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.physicsObject = PHYS.new("Box", {
 				x: data.x,
 				y: data.y,
-				localX: -48,
-				localY: -4,
-				width: 48,
-				height: 8,
+				localX: -this.length,
+				localY: -9,
+				width: this.length,
+				height: 18,
 				rotation: data.rotation,
 				thrustX: data.thrustX,
 				thrustY: data.thrustY
@@ -26,9 +27,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		create() {
-			if (this.physicsObject != undefined && this.physicsObject != null) {
-				PHYS.create(this, this.physicsObject);
-			}
+			PHYS.create(this, this.physicsObject);
 		}
 
 		network() {
@@ -43,22 +42,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				var damage = entity.takeDamage(10, this, collision);
 
 				if (damage > 0) {
-					ENT.getById(entity.ownerId, function(entity) {
-						entity.takeDamage(damage, collision);
+					ENT.getById(entity.ownerId, function(player) {
+						player.takeDamage(damage, collision);
 					});
-
-					ENT.remove(this);
-				}
-
-				ENT.remove(this);
-			}
-
-			if (entity instanceof ENT.type("Player") && entity.id != this.ownerId) {
-				var damage = entity.takeDamage(10, collision);
-
-				if (damage > 0) {
-					entity.physicsObject.velocityX += this.physicsObject.thrustX / 16;
-					entity.physicsObject.velocityY += this.physicsObject.thrustY / 16;
 				}
 
 				ENT.remove(this);
