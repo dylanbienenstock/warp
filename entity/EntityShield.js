@@ -13,37 +13,49 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				left: 100,
 				right: 100
 			}
+
+			this.physicsObject = PHYS.new("Circle", {
+				radius: 30
+			});
 		}
 
-		takeDamage(damage, collision) {
-			var angleDegrees = collision.angle * (180 / Math.PI);
-			angleDegrees = ((angleDegrees % 360) + 360) % 360;
+		create() {
+			PHYS.create(this, this.physicsObject);
+		}
 
-			damage *= this.damageFactor;
-			damage = Math.max(damage, 0);
+		takeDamage(damage, entity, collision) {
+			var owner = ENT.getById(this.ownerId);
 
-			var side;
+			if (owner != undefined) {
+				var angleDegrees = (collision.angle - owner.physicsObject.rotation) * (180 / Math.PI);
+				angleDegrees = ((angleDegrees % 360) + 360) % 360;
 
-			if (angleDegrees >= 315 || angleDegrees < 45) {
-				side = "front";
-			} 
-			else if (angleDegrees >= 45 && angleDegrees < 135) {
-				side = "right";
-			} 
-			else if (angleDegrees >= 135 && angleDegrees < 225) {
-				side = "back";
-			}
-			else if (angleDegrees >= 225 && angleDegrees < 315) {
-				side = "left";
-			}
+				damage *= this.damageFactor;
+				damage = Math.max(damage, 0);
 
-			this.power[side] -= damage;
+				var side;
 
-			if (this.power[side] < 0) {
-				var hullDamage = -this.power[side];
-				this.power[side] = 0;
+				if (angleDegrees >= 315 || angleDegrees < 45) {
+					side = "front";
+				} 
+				else if (angleDegrees >= 45 && angleDegrees < 135) {
+					side = "right";
+				} 
+				else if (angleDegrees >= 135 && angleDegrees < 225) {
+					side = "back";
+				}
+				else if (angleDegrees >= 225 && angleDegrees < 315) {
+					side = "left";
+				}
+				
+				this.power[side] -= damage;
 
-				return hullDamage;
+				if (this.power[side] < 0) {
+					var hullDamage = -this.power[side];
+					this.power[side] = 0;
+
+					return hullDamage;
+				}
 			}
 
 			ENT.trigger(this, "hit", {
@@ -55,6 +67,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		update(timeMult) {
+			var owner = ENT.getById(this.ownerId);
+
+			if (owner != undefined) {
+				this.physicsObject.x = owner.physicsObject.x;
+				this.physicsObject.y = owner.physicsObject.y;
+			}
+
 			this.power.front = Math.min(this.power.front + 0.1 * timeMult, 100);
 			this.power.back = Math.min(this.power.back + 0.1 * timeMult, 100);
 			this.power.left = Math.min(this.power.left + 0.1 * timeMult, 100);

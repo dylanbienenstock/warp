@@ -6,11 +6,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lifespan = 3000;
 
 			this.ownerId = data.ownerId;
+			this.thickness = data.thickness || 2;
+			this.color = data.color || 0xFF0000;
 			this.x = data.x;
 			this.y = data.y;
 			this.rotation = data.rotation;
 
-			this.physicsObject = new PHYS.PhysicsObject({
+			this.physicsObject = PHYS.new("Box", {
 				x: data.x,
 				y: data.y,
 				localX: -48,
@@ -37,6 +39,20 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		collideWith(entity, collision) {
+			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId) {
+				var damage = entity.takeDamage(10, this, collision);
+
+				if (damage > 0) {
+					ENT.getById(entity.ownerId, function(entity) {
+						entity.takeDamage(damage, collision);
+					});
+
+					ENT.remove(this);
+				}
+
+				ENT.remove(this);
+			}
+
 			if (entity instanceof ENT.type("Player") && entity.id != this.ownerId) {
 				var damage = entity.takeDamage(10, collision);
 
