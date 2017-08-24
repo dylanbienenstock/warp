@@ -50,6 +50,7 @@ class EntityShield extends EntityBase {
 
 				if (timeSinceHit >= hitDuration) {
 					ENT.stageContainer.removeChild(hit.sprite);
+					this.hits[i].sprite.destroy();
 					toRemove.push(i);
 
 					continue;
@@ -82,6 +83,9 @@ class EntityShield extends EntityBase {
 	remove() {
 		for (var i = this.hits.length - 1; i >= 0; i--) {
 			ENT.stageContainer.removeChild(this.hits[i].sprite);
+			this.hits[i].sprite.destroy();
 		}
+
+		delete this.hits;
 	}
 }
