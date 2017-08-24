@@ -47,7 +47,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				else if (angleDegrees >= 225 && angleDegrees < 315) {
 					side = "left";
 				}
-				
+
 				this.power[side] -= damage;
 
 				if (this.power[side] < 0) {
@@ -70,8 +70,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			var owner = ENT.getById(this.ownerId);
 
 			if (owner != undefined) {
-				this.physicsObject.x = owner.physicsObject.x;
-				this.physicsObject.y = owner.physicsObject.y;
+				this.physicsObject.x = owner.physicsObject.info.bounds.center.x + this.physicsObject.totalVelocityX;
+				this.physicsObject.y = owner.physicsObject.info.bounds.center.y + this.physicsObject.totalVelocityY;
 			}
 
 			this.power.front = Math.min(this.power.front + 0.1 * timeMult, 100);
