@@ -52,6 +52,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			if (damage > 0) {
 				ENT.trigger(this, "hit");
 			}
+
+			return damage;
 		}
 
 		update() {

@@ -38,10 +38,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		collideWith(entity, collision) {
 			if (entity instanceof ENT.type("Player") && entity.id != this.ownerId) {
-				entity.takeDamage(10, collision);
+				var damage = entity.takeDamage(10, collision);
 
-				//entity.physicsObject.velocityX += this.physicsObject.thrustX / 10;
-				//entity.physicsObject.velocityY += this.physicsObject.thrustY / 10;
+				if (damage > 0) {
+					entity.physicsObject.velocityX += this.physicsObject.thrustX / 16;
+					entity.physicsObject.velocityY += this.physicsObject.thrustY / 16;
+				}
 
 				ENT.remove(this);
 			}
