@@ -50,6 +50,22 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			return damage;
 		}
 
+		keepInBounds() {
+			for (var i = this.physicsObject.info.lines.length - 1; i >= 0; i--) {
+				var line = this.physicsObject.info.lines[i];
+
+				if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= PHYS.boundaryRadius ||
+					Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= PHYS.boundaryRadius) {
+
+					var angle = Math.atan2(-this.physicsObject.y, -this.physicsObject.x);
+					this.physicsObject.thrustX += Math.cos(angle) * 10;
+					this.physicsObject.thrustY += Math.sin(angle) * 10;
+
+					break;
+				}
+			}
+		}
+
 		update() {
 			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
 				ENT.create(ENT.new("Laser", {
@@ -57,8 +73,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
 					y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
 					rotation: this.physicsObject.rotation,
-					thrustX: -Math.cos(this.physicsObject.rotation) * 30 + this.physicsObject.totalVelocityX,
-					thrustY: -Math.sin(this.physicsObject.rotation) * 30 + this.physicsObject.totalVelocityY
+					thrustX: -Math.cos(this.physicsObject.rotation) * 40 + this.physicsObject.totalVelocityX,
+					thrustY: -Math.sin(this.physicsObject.rotation) * 40 + this.physicsObject.totalVelocityY
 				}));
 
 				this.lastFirePrimary = Date.now();
@@ -73,13 +89,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 					ENT.create(ENT.new("Laser", {
 						ownerId: this.id,
-						thickness: 1,
+						thickness: 3,
 						color: 0x00FF00,
+						length: 32,
 						x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
 						y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
 						rotation: origin + offset,
-						thrustX: -Math.cos(origin + offset) * 30 + this.physicsObject.totalVelocityX,
-						thrustY: -Math.sin(origin + offset) * 30 + this.physicsObject.totalVelocityY
+						thrustX: -Math.cos(origin + offset) * 30,
+						thrustY: -Math.sin(origin + offset) * 30
 					}));
 				}
 
@@ -87,6 +104,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			}
 
 			this.move();
+			this.keepInBounds();
 		}
 
 		move() {
