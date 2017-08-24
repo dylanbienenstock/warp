@@ -25,7 +25,7 @@ class EntityBase {
 
 	}
 
-	collideWith(entity) {
+	collideWith(entity, collision) {
 
 	}
 }
