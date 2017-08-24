@@ -6,6 +6,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.shield = null;
 			this.speed = 6;
 			this.lastFirePrimary = 0;
+			this.lastFireSecondary = 0;
 
 			this.controls = {
 				thrustForward: false,
@@ -16,14 +17,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				fireSecondary: false
 			};
 
-			this.physicsObject = new PHYS.PhysicsObject({
+			this.physicsObject = PHYS.new("Box", {
 				localX: -6,
 				localY: -16,
 				width: 16,
 				height: 32
 			});
 
-			this.physicsObject.addChild(new PHYS.PhysicsObject({
+			this.physicsObject.addChild(PHYS.new("Box", {
 				localX: -22,
 				localY: -5,
 				width: 16,
@@ -32,12 +33,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		create() {
-			if (this.physicsObject != undefined && this.physicsObject != null) {
-				PHYS.create(this, this.physicsObject);
-			}
+			PHYS.create(this, this.physicsObject);
 
-			this.shield = ENT.create(ENT.new({
-				className: "Shield",
+			this.shield = ENT.create(ENT.new("Shield", {
 				ownerId: this.id
 			}));
 		}
@@ -47,19 +45,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		takeDamage(damage, collision) {
-			var damage = this.shield.takeDamage(damage, collision);
-
-			if (damage > 0) {
-				ENT.trigger(this, "hit");
-			}
+			ENT.trigger(this, "hit");
 
 			return damage;
 		}
 
 		update() {
 			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
-				var laser = ENT.create(ENT.new({
-					className: "Laser",
+				ENT.create(ENT.new("Laser", {
 					ownerId: this.id,
 					x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
 					y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
@@ -69,6 +62,28 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				}));
 
 				this.lastFirePrimary = Date.now();
+			}
+
+			if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
+				var angleIncrement = 5 * Math.PI / 180;
+				var origin = this.physicsObject.rotation - angleIncrement * 2;
+
+				for (var i = 0; i < 5; i++) {
+					var offset = i * angleIncrement;
+
+					ENT.create(ENT.new("Laser", {
+						ownerId: this.id,
+						thickness: 1,
+						color: 0x00FF00,
+						x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
+						y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
+						rotation: origin + offset,
+						thrustX: -Math.cos(origin + offset) * 30 + this.physicsObject.totalVelocityX,
+						thrustY: -Math.sin(origin + offset) * 30 + this.physicsObject.totalVelocityY
+					}));
+				}
+
+				this.lastFireSecondary = Date.now();
 			}
 
 			this.move();
