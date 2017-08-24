@@ -65,10 +65,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			}
 
 			if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
-				var angleIncrement = 5 * Math.PI / 180;
-				var origin = this.physicsObject.rotation - angleIncrement * 2;
+				var angleIncrement = 8 * Math.PI / 180;
+				var origin = this.physicsObject.rotation - angleIncrement * 1.5;
 
-				for (var i = 0; i < 5; i++) {
+				for (var i = 0; i < 4; i++) {
 					var offset = i * angleIncrement;
 
 					ENT.create(ENT.new("Laser", {
