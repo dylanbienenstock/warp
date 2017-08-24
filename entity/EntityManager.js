@@ -31,21 +31,11 @@ class EntityManager {
 	}
 
 	new(data) {
-		var entity;
+		return new this.Entity[data.className](data);
+	}
 
-		switch (data.className) {
-			case "PhysicsDebug":
-				entity = new this.Entity.PhysicsDebug(data);
-				break;
-			case "Player":
-				entity = new this.Entity.Player(data);
-				break;
-			case "Laser":
-				entity = new this.Entity.Laser(data);
-				break;
-		}
-	
-		return entity;
+	type(className) {
+		return this.Entity[className];
 	}
 
 	create(entity, playerSocket, creatingEntityPhysicsDebug) {

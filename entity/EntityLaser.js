@@ -37,7 +37,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		collideWith(entity) {
-			if (entity.className == "Player" && entity.id != this.ownerId) {
+			if (entity instanceof ENT.type("Player") && entity.id != this.ownerId) {
 				entity.physicsObject.velocityX = this.physicsObject.thrustX / 3;
 				entity.physicsObject.velocityY = this.physicsObject.thrustY / 3;
 
