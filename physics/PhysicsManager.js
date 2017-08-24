@@ -126,17 +126,14 @@ class PhysicsManager {
 			var physicsObject = this.physicsObjects[i];
 
 			for (var i2 = this.physicsObjects.length - 1; i2 >= 0; i2--) {
-				if (physicsObject.id == this.physicsObjects[i2].id) {
-					continue;
-				}
-
 				var physicsObject2 = this.physicsObjects[i2];
 
-				if (physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
+				if (physicsObject.id == physicsObject2.id || 
+					physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
 					physicsObject2.info.bounds.minX > physicsObject.info.bounds.maxX ||
 					physicsObject.info.bounds.minY > physicsObject2.info.bounds.maxY ||
 					physicsObject2.info.bounds.minY > physicsObject.info.bounds.maxY) {
-					
+
 					continue;
 				}
 
@@ -154,12 +151,16 @@ class PhysicsManager {
 						);
 
 						if (result.type == "intersecting") {
-							// var angle = Math.atan2(result.point.y - physicsObject.y, physicsObject.x - result.point.x);
-							// var opposingDirection = { x: Math.cos(angle), y: Math.sin(angle) };
+							var angle = Math.atan2((physicsObject2.y - physicsObject2.totalVelocityY) - physicsObject.y, (physicsObject2.x - physicsObject2.totalVelocityX) - physicsObject.x);
 
 							collisions.push({
 								physicsObject: physicsObject,
-								with: physicsObject2
+								with: physicsObject2,
+								angle: angle,
+								position: {
+									x: result.point.x,
+									y: result.point.y
+								}
 							});
 
 							collision = true;
@@ -180,7 +181,7 @@ class PhysicsManager {
 			var withEntity = this.physicsObjectOwners[collision.with.id];
 
 			if (entity != undefined && withEntity != undefined) {
-				entity.collideWith(withEntity);
+				entity.collideWith(withEntity, collision);
 			}
 		}
 	}
@@ -197,13 +198,13 @@ class PhysicsManager {
 			physicsObject.velocityX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
 			physicsObject.velocityY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
 
-			// if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
-			// 	physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
-			// }
+			if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
+				physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
+			}
 
-			// if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
-			// 	physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
-			// }
+			if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
+				physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
+			}
 		}
 
 		this.checkForCollisions();
