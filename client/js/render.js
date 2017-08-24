@@ -1,5 +1,3 @@
-window.zoom = 2;
-
 const boundaryRadius = 1024;
 
 var renderer;
@@ -13,6 +11,9 @@ var localPlayerSprite;
 var thrustForwardSprite;
 var thrustBackwardSprite;
 var placeholder;
+
+window.renderer = renderer;
+window.zoom = 2;
 
 $(function() {
 	renderer = new PIXI.CanvasRenderer($(window).innerWidth(), $(window).innerHeight());
@@ -61,6 +62,7 @@ function loadContent() {
 		.add("ship:default", "./img/ships/default.svg")
 		.add("thrust:default:forward", "./img/thrust/default/forward.svg")
 		.add("thrust:default:backward","./img/thrust/default/backward.svg")
+		.add("shield", "./img/shield.svg")
 		.add("placeholder", "./img/placeholder.png")
 	.load(setup);
 }
