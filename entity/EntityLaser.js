@@ -13,9 +13,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.physicsObject = new PHYS.PhysicsObject({
 				x: data.x,
 				y: data.y,
-				localX: -12,
+				localX: -48,
 				localY: -4,
-				width: 24,
+				width: 48,
 				height: 8,
 				rotation: data.rotation,
 				thrustX: data.thrustX,
@@ -36,10 +36,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			});
 		}
 
-		collideWith(entity) {
+		collideWith(entity, collision) {
 			if (entity instanceof ENT.type("Player") && entity.id != this.ownerId) {
-				entity.physicsObject.velocityX = this.physicsObject.thrustX / 3;
-				entity.physicsObject.velocityY = this.physicsObject.thrustY / 3;
+				entity.takeDamage(10, collision);
+
+				//entity.physicsObject.velocityX += this.physicsObject.thrustX / 10;
+				//entity.physicsObject.velocityY += this.physicsObject.thrustY / 10;
 
 				ENT.remove(this);
 			}

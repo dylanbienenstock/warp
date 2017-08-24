@@ -2,7 +2,7 @@ class EntityLaser extends EntityBase {
 	constructor(data) {
 		super(data);
 
-		this.lerpFactorPosition = 0.6;
+		this.lerpFactorPosition = 0.8;
 
 		this.graphics = new PIXI.Graphics();
 		this.graphics.x = this.x;
