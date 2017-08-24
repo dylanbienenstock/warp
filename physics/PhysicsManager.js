@@ -1,4 +1,5 @@
 var lineIntersect = require("line-intersect");
+var lineCircleIntersect = require("line-circle-collision");
 var io;
 
 const boundaryRadius = 1024;
@@ -12,11 +13,15 @@ module.exports = function(__io) {
 
 class PhysicsManager {
 	constructor() {
+		this.Physics = null;
+
 		this.nextId = 0;
 		this.physicsObjects = [];
 		this.physicsObjectOwners = {};
+	}
 
-		this.PhysicsObject = require("../physics/PhysicsObject.js")(this);
+	new(className, data) {
+		return new this.Physics[className](data);
 	}
 
 	create(entity, physicsObject) {
@@ -75,37 +80,56 @@ class PhysicsManager {
 		var maxY = 0;
 
 		var allLines = [];
+		var allCircles = [];
 
 		for (var i = physicsObject.children.length; i >= 0; i--) {
 			var physicsObjectI = (i == physicsObject.children.length ? physicsObject : physicsObject.children[i]);
-			var corners = this.rectangleToCorners(physicsObjectI.localX, physicsObjectI.localY, physicsObjectI.width, physicsObjectI.height);
 
-			for (var i2 = corners.length - 1; i2 >= 0; i2--) {
-				corners[i2] = this.rotatePoint(corners[i2].x, corners[i2].y, physicsObject.rotation);
-				var corner = corners[i2];
+			if (physicsObjectI instanceof this.Physics.Box) {
+				var corners = this.rectangleToCorners(physicsObjectI.localX, physicsObjectI.localY, physicsObjectI.width, physicsObjectI.height);
 
-				minX = Math.min(corner.x, minX);
-				minY = Math.min(corner.y, minY);
-				maxX = Math.max(corner.x, maxX);
-				maxY = Math.max(corner.y, maxY);
+				for (var i2 = corners.length - 1; i2 >= 0; i2--) {
+					corners[i2] = this.rotatePoint(corners[i2].x, corners[i2].y, physicsObject.rotation);
+					var corner = corners[i2];
+
+					minX = Math.min(corner.x, minX);
+					minY = Math.min(corner.y, minY);
+					maxX = Math.max(corner.x, maxX);
+					maxY = Math.max(corner.y, maxY);
+				}
+
+				var lines = this.cornersToLines(corners);
+
+				for (var i3 = lines.length - 1; i3 >= 0; i3--) {
+					var line = lines[i3];
+
+					line.start.x += physicsObject.x / 2;
+					line.start.y += physicsObject.y / 2;
+					line.end.x += physicsObject.x / 2;
+					line.end.y += physicsObject.y / 2;
+
+					allLines.push(line);
+				}
 			}
+			else if (physicsObjectI instanceof this.Physics.Circle) {
+				minX = Math.min(physicsObjectI.localX - physicsObjectI.radius, minX);
+				minY = Math.min(physicsObjectI.localY - physicsObjectI.radius, minY);
+				maxX = Math.max(physicsObjectI.localX + physicsObjectI.radius, maxX);
+				maxY = Math.max(physicsObjectI.localY + physicsObjectI.radius, maxY);
 
-			var lines = this.cornersToLines(corners);
-
-			for (var i3 = lines.length - 1; i3 >= 0; i3--) {
-				var line = lines[i3];
-
-				line.start.x += physicsObject.x / 2;
-				line.start.y += physicsObject.y / 2;
-				line.end.x += physicsObject.x / 2;
-				line.end.y += physicsObject.y / 2;
-
-				allLines.push(line);
+				allCircles.push({
+					radius: physicsObjectI.radius,
+					position: {
+						x: physicsObjectI.x,
+						y: physicsObjectI.y
+					}
+				});
 			}
 		}
 
 		return {
 			lines: allLines,
+			circles: allCircles,
 			origin: {
 				x: physicsObject.x,
 				y: physicsObject.y
@@ -117,6 +141,85 @@ class PhysicsManager {
 				maxY: maxY += physicsObject.y
 			}
 		};
+	}
+
+	checkLinesToLines(lines1, lines2) {
+		for (var i = lines1.length - 1; i >= 0; i--) {
+			var line1 = lines1[i];
+
+			for (var i2 = lines2.length - 1; i2 >= 0; i2--) {
+				var line2 = lines2[i2];
+
+				var lineIntersectResult = lineIntersect.checkIntersection(
+				  line1.start.x, line1.start.y, line1.end.x, line1.end.y,
+				  line2.start.x, line2.start.y, line2.end.x, line2.end.y
+				);
+
+				if (lineIntersectResult.type == "intersecting") {
+					return {
+						position: {
+							x: lineIntersectResult.point.x,
+							y: lineIntersectResult.point.y
+						}
+					};
+				}
+			}
+		}
+
+		return null;
+	}
+
+	checkLinesToCircles(lines, circles) {
+		for (var i = lines.length - 1; i >= 0; i--) {
+			var line = lines[i];
+			var nearestPoint = [];
+
+			for (var i2 = circles.length - 1; i2 >= 0; i2--) {
+				var circle = circles[i2];
+				var lineCircleIntersectResult = lineCircleIntersect([ line.start.x, line.start.y, ],
+										[ line.end.x, line.end.y, ],
+										[ circle.position.x, circle.position.y ], 
+										circle.radius, nearestPoint);
+
+				if (lineCircleIntersect([ line.start.x, line.start.y, ],
+										[ line.end.x, line.end.y, ],
+										[ circle.position.x, circle.position.y ], 
+										circle.radius, nearestPoint))
+				{
+					return {
+						position: {
+							x: nearestPoint[0],
+							y: nearestPoint[1]
+						}
+					};
+				}
+			}
+		}
+
+		return null;
+	}
+
+	checkCirclesToCircles(circles1, circles2) {
+		for (var i = circles1.length - 1; i >= 0; i--) {
+			var circle1 = circles1[i];
+
+			for (var i2 = circles2.length - 1; i2 >= 0; i2--) {
+				var circle2 = circles2[i2];
+				var distance = Math.sqrt(Math.pow(circle2.position.x - circle1.position.x, 2) + Math.pow(circle2.position.y - circle1.position.y, 2));
+				var angle = Math.atan2(circle2.position.y - circle1.position.y, circle2.position.x - circle1.position.x);
+
+				if (distance >= circle1.radius + circle2.radius) {
+					return {
+						position: {
+							x: -Math.cos(angle) * (distance / 2) + circle1.position.x,
+							y: -Math.sin(angle) * (distance / 2) + circle1.position.y
+						}
+					};
+				}
+			}
+		}
+
+		return null;
 	}
 
 	checkForCollisions() {
@@ -137,40 +240,29 @@ class PhysicsManager {
 					continue;
 				}
 
-				var collision = false;
+				var collision = this.checkCirclesToCircles(physicsObject.info.circles, physicsObject2.info.circles);
 
-				for (var i3 = physicsObject.info.lines.length - 1; i3 >= 0; i3--) {
-					var line = physicsObject.info.lines[i3];
+				if (collision == null) {
+					collision = this.checkLinesToCircles(physicsObject.info.lines, physicsObject2.info.circles);
+				}
 
-					for (var i4 = physicsObject2.info.lines.length - 1; i4 >= 0; i4--) {
-						var line2 = physicsObject2.info.lines[i4];
+				if (collision == null) {
+					collision = this.checkLinesToCircles(physicsObject2.info.lines, physicsObject.info.circles);
+				}
 
-						var result = lineIntersect.checkIntersection(
-						  line.start.x, line.start.y, line.end.x, line.end.y,
-						  line2.start.x, line2.start.y, line2.end.x, line2.end.y
-						);
+				if (collision == null) {
+					collision = this.checkLinesToLines(physicsObject.info.lines, physicsObject2.info.lines);
+				}
 
-						if (result.type == "intersecting") {
-							var angle = Math.atan2((physicsObject2.y - physicsObject2.totalVelocityY) - physicsObject.y, (physicsObject2.x - physicsObject2.totalVelocityX) - physicsObject.x);
+				if (collision != null) {
+					collision.physicsObject = physicsObject;
+					collision.with = physicsObject2;
+					collision.angle = Math.atan2((physicsObject2.y - physicsObject2.totalVelocityY) - physicsObject.y, 
+									 (physicsObject2.x - physicsObject2.totalVelocityX) - physicsObject.x);
 
-							collisions.push({
-								physicsObject: physicsObject,
-								with: physicsObject2,
-								angle: angle,
-								position: {
-									x: result.point.x,
-									y: result.point.y
-								}
-							});
+					collisions.push(collision);
 
-							collision = true;
-							break;
-						}
-					}
-
-					if (collision) {
-						break;
-					}
+					break;
 				}
 			}
 		}
