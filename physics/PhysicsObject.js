@@ -5,6 +5,7 @@ module.exports = function(__PHYS) {
 
 	return class PhysicsObject {
 		constructor(data) {
+			this.doNotNetwork = true;
 			this.id = -1;
 			this.x = data.x || 0;
 			this.y = data.y || 0;
@@ -18,7 +19,6 @@ module.exports = function(__PHYS) {
 			this.width = data.width || 16;
 			this.height = data.height || 16;
 			this.children = [];
-			this.doNotNetwork = true;
 		}
 
 		get totalVelocityX() {
