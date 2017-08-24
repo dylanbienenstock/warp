@@ -18,6 +18,13 @@ PIXI.Sprite.prototype.attach = function(sprite) {
 	sprite.rotation = this.rotation;
 }
 
+PIXI.Sprite.prototype.getCenter = function() {
+	return {
+		x: -Math.cos(this.rotation) * (this.width / 2) * (1 - this.anchor.x) + this.position.x,
+		y: -Math.sin(this.rotation) * (this.height / 2) * (1 - this.anchor.y) + this.position.y
+	};
+}
+
 function cartesianToPolar(x, y) {
 	return {
 		radius: Math.sqrt(x * x + y * y),
@@ -29,5 +36,12 @@ function polarToCartesian(radius, angle) {
 	return {
 		x: radius * Math.cos(angle),
 		y: radius * Math.sin(angle)
+	};
+}
+
+function rotatePoint(x, y, originX, originY, rotation) {
+	return {
+    	x: Math.cos(rotation) * (x - originX) - Math.sin(rotation) * (y - originY) + originX,
+    	y: Math.sin(rotation) * (x - originX) + Math.cos(rotation) * (y - originY) + originY
 	};
 }
