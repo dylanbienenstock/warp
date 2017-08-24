@@ -70,6 +70,7 @@ function loadContent() {
 function setup() {
 	placeholder = new PIXI.Sprite(PIXI.loader.resources["placeholder"].texture);
 	placeholder.anchor.set(0.5, 0.5);
+	placeholder.alpha = 0.25;
 	stageContainer.addChild(placeholder);
 
 	setupHUD(baseContainer);
