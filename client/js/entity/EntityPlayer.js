@@ -75,6 +75,7 @@ class EntityPlayer extends EntityBase {
 	remove() {
 		ENT.stageContainer.removeChild(this.sprite,
 									this.thrustSprites.forward,
-									this.thrustSprites.backward);
+									this.thrustSprites.backward,
+									this.overlaySprite);
 	}
 }
