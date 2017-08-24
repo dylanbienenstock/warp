@@ -8,7 +8,7 @@ class EntityLaser extends EntityBase {
 		this.graphics.x = this.x;
 		this.graphics.y = this.y;
 		this.graphics.lineStyle(data.thickness, data.color, 1);
-		this.graphics.moveTo(-40, 0);
+		this.graphics.moveTo(-data.length + 8, 0);
 		this.graphics.lineTo(-8, 0);
 		this.graphics.rotation = this.rotation;
 
