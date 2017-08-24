@@ -7,9 +7,9 @@ class EntityLaser extends EntityBase {
 		this.graphics = new PIXI.Graphics();
 		this.graphics.x = this.x;
 		this.graphics.y = this.y;
-		this.graphics.lineStyle(2, 0xFF0000, 1);
-		this.graphics.moveTo(-48, 0);
-		this.graphics.lineTo(0, 0);
+		this.graphics.lineStyle(data.thickness, data.color, 1);
+		this.graphics.moveTo(-40, 0);
+		this.graphics.lineTo(-8, 0);
 		this.graphics.rotation = this.rotation;
 
 		this.sprite = this.graphics;
