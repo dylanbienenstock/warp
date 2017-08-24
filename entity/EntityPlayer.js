@@ -3,6 +3,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super("Player");
 
+			this.shield = null;
 			this.speed = 6;
 			this.lastFirePrimary = 0;
 
@@ -34,10 +35,23 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			if (this.physicsObject != undefined && this.physicsObject != null) {
 				PHYS.create(this, this.physicsObject);
 			}
+
+			this.shield = ENT.create(ENT.new({
+				className: "Shield",
+				ownerId: this.id
+			}));
 		}
 
-		collideWith(entity) {
+		remove() {
+			ENT.remove(this.shield);
+		}
 
+		takeDamage(damage, collision) {
+			var damage = this.shield.takeDamage(damage, collision);
+
+			if (damage > 0) {
+				ENT.trigger(this, "hit");
+			}
 		}
 
 		update() {
