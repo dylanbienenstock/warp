@@ -30,8 +30,6 @@ class EntityShield extends EntityBase {
 				rotationOffset: data.angle - entity.sprite.rotation
 			};
 
-			console.log(hit);
-
 			this.hits.push(hit);
 
 			ENT.stageContainer.addChild(sprite);
@@ -83,7 +81,7 @@ class EntityShield extends EntityBase {
 
 	remove() {
 		for (var i = this.hits.length - 1; i >= 0; i--) {
-			ENT.stageContainer.remove(this.hits[i]);
+			ENT.stageContainer.removeChild(this.hits[i].sprite);
 		}
 	}
 }
