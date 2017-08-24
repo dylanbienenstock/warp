@@ -20,18 +20,25 @@ ENT.new = function(data) {
 		case "Player":
 			entity = new EntityPlayer(data);
 			break;
+		case "Shield":
+			entity = new EntityShield(data);
+			break;
 		case "Laser":
 			entity = new EntityLaser(data);
 			break;
+		default:
+			console.error("Tried to create non-existent entity:", data);
 	}
 
-	entity.setProperties(data);
+	if (entity != undefined) {
+		entity.setProperties(data);
+	}
 	
 	return entity;
 }
 
 ENT.create = function(entity) {
-	if (entity.className != undefined) {
+	if (entity != undefined) {
 		entities.push(entity);
 	}
 
@@ -58,7 +65,9 @@ ENT.update = function() {
 ENT.getById = function(id, callback) {
 	for (var i = entities.length - 1; i >= 0; i--) {
 		if (entities[i].id == id) {
-			callback(entities[i]);
+			if (callback instanceof Function) {
+				callback(entities[i]);
+			}
 
 			return entities[i];
 		}
