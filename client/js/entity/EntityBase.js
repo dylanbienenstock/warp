@@ -1,6 +1,6 @@
 class EntityBase {
 	constructor(data) {
-		this.id = -1;
+		this.id = data.id || -1;
 		this.className = data.className;
 		this.sprite = null;
 		this.x = data.x || 0;
