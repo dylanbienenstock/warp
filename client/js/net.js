@@ -51,7 +51,7 @@ function sendAngle(angle) {
 
 $(function() {
 	$(window).mousemove(function(event) {
-		if (ENT.localPlayer != undefined) {
+		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
 			var mousePos = getMousePosition();
 			ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - mousePos.y,
 														 ENT.localPlayer.sprite.position.x - mousePos.x);
