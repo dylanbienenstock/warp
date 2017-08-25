@@ -70,11 +70,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
 				ENT.create(ENT.new("Laser", {
 					ownerId: this.id,
-					x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
-					y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
+					x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
+					y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
 					rotation: this.physicsObject.rotation,
-					thrustX: -Math.cos(this.physicsObject.rotation) * 40 + this.physicsObject.totalVelocityX,
-					thrustY: -Math.sin(this.physicsObject.rotation) * 40 + this.physicsObject.totalVelocityY
+					thrustX: -Math.cos(this.physicsObject.rotation) * 32,
+					thrustY: -Math.sin(this.physicsObject.rotation) * 32
 				}));
 
 				this.lastFirePrimary = Date.now();
@@ -89,14 +89,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 					ENT.create(ENT.new("Laser", {
 						ownerId: this.id,
-						thickness: 3,
+						thickness: 4,
 						color: 0x00FF00,
 						length: 32,
-						x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 16,
-						y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 16,
+						x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
+						y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
 						rotation: origin + offset,
-						thrustX: -Math.cos(origin + offset) * 30,
-						thrustY: -Math.sin(origin + offset) * 30
+						thrustX: -Math.cos(origin + offset) * 32,
+						thrustY: -Math.sin(origin + offset) * 32
 					}));
 				}
 
