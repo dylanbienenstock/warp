@@ -3,7 +3,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super("Laser");
 
-			this.lifespan = 1000;
+			this.lifespan = data.lifespan || 1000;
 
 			this.ownerId = data.ownerId;
 			this.thickness = data.thickness || 2;
