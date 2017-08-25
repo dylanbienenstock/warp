@@ -60,6 +60,7 @@ function resizeRenderer() {
 function loadContent() {
 	PIXI.loader
 		.add("ship:default", "./img/ships/default.svg")
+		.add("ship:default:outline", "./img/ships/default-outline.svg")
 		.add("thrust:default:forward", "./img/thrust/default/forward.svg")
 		.add("thrust:default:backward","./img/thrust/default/backward.svg")
 		.add("shield", "./img/shield.svg")
