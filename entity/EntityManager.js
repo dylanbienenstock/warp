@@ -115,7 +115,7 @@ class EntityManager {
 		this.toNetwork = [];
 
 		for (var i = this.entities.length - 1; i >= 0; i--) {
-			if (this.entities[i] != undefined) {
+			if (this.entities[i] != undefined && !this.entities[i].doNotNetwork) {
 				this.entities[i].network(this);
 			}
 		}
@@ -195,16 +195,5 @@ class EntityManager {
 		data2.properties = data;
 
 		this.toNetwork.push(data2);
-	}
-
-	sendPositions() {
-		for (var i = this.entities.length - 1; i >= 0; i--) {
-			var entity = this.entities[i];
-
-			this.sendProperties(entity, {
-				x: entity.x,
-				y: entity.y
-			});
-		}
 	}
 }
