@@ -232,10 +232,15 @@ class PhysicsManager {
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			var physicsObject = this.physicsObjects[i];
 
+			if (!physicsObject.active) {
+				continue;
+			}
+
 			for (var i2 = this.physicsObjects.length - 1; i2 >= 0; i2--) {
 				var physicsObject2 = this.physicsObjects[i2];
 
 				if (alreadyChecked.includes(physicsObject2.id) ||
+					!physicsObject2.active ||
 					physicsObject.id == physicsObject2.id || 
 					physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
 					physicsObject2.info.bounds.minX > physicsObject.info.bounds.maxX ||
@@ -297,20 +302,22 @@ class PhysicsManager {
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			var physicsObject = this.physicsObjects[i];
 
-			physicsObject.info = this.getPhysicsInfo(physicsObject);
+			if (physicsObject.active) {
+				physicsObject.info = this.getPhysicsInfo(physicsObject);
 
-			physicsObject.x += physicsObject.totalVelocityX * timeMult;
-			physicsObject.y += physicsObject.totalVelocityY * timeMult;
+				physicsObject.x += physicsObject.totalVelocityX * timeMult;
+				physicsObject.y += physicsObject.totalVelocityY * timeMult;
 
-			physicsObject.velocityX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
-			physicsObject.velocityY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+				physicsObject.velocityX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+				physicsObject.velocityY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
 
-			if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
-				physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
-			}
+				if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
+					physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
+				}
 
-			if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
-				physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
+				if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
+					physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
+				}
 			}
 		}
 

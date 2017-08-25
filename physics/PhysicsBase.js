@@ -7,6 +7,7 @@ module.exports = function(__PHYS) {
 		constructor(data) {
 			this.doNotNetwork = true;
 			this.id = -1;
+			this.active = data.active;
 			this.x = data.x || 0;
 			this.y = data.y || 0;
 			this.localX = data.localX || 0;
@@ -16,6 +17,10 @@ module.exports = function(__PHYS) {
 			this.velocityX = data.velocityX || 0;
 			this.velocityY = data.velocityY || 0;
 			this.children = [];
+
+			if (this.active == undefined) {
+				this.active = true;
+			}
 		}
 
 		get totalVelocityX() {
