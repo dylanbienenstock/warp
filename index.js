@@ -52,6 +52,7 @@ function onConnect(socket) {
 
 	socket.on("disconnect", function() {
 		console.log("- Player disconnected. (ID: " + player.id + ")");
+		
 		ENT.remove(player);
 	});
 
@@ -64,7 +65,9 @@ function onConnect(socket) {
 	});
 
 	socket.on("angle", function(angle) {
-		player.physicsObject.rotation = angle;
+		if (player.alive) {
+			player.physicsObject.rotation = angle;
+		}
 	});
 }
 
