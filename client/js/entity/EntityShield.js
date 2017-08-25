@@ -1,5 +1,4 @@
 var hitDuration = 1250;
-var precise = false;
 
 class EntityShield extends EntityBase {
 	constructor(data) {
@@ -42,40 +41,24 @@ class EntityShield extends EntityBase {
 		var entity = ENT.getById(this.ownerId);
 
 		if (entity != null) {
-			var toRemove = [];
-
 			for (var i = this.hits.length - 1; i >= 0; i--) {
 				var hit = this.hits[i];
 				var timeSinceHit = Date.now() - hit.time;
 
 				if (timeSinceHit >= hitDuration) {
-					ENT.stageContainer.removeChild(hit.sprite);
+					ENT.stageContainer.removeChild(this.hits[i].sprite);
 					this.hits[i].sprite.destroy();
-					toRemove.push(i);
+					this.hits.splice(i, 1);
 
 					continue;
 				}
 
+				var center = entity.sprite.getCenter();
+
 				hit.sprite.alpha = (hitDuration - timeSinceHit) / hitDuration;
-
-				if (precise) {
-					var position = rotatePoint(entity.sprite.x + hit.offset.x, entity.sprite.y + hit.offset.y,
-											   entity.sprite.x, entity.sprite.y, entity.rotation + hit.rotationOffset);
-
-					hit.sprite.position.x = position.x;
-					hit.sprite.position.y = position.y;
-					hit.sprite.rotation = entity.rotation + hit.rotationOffset;
-				} else {
-					var center = entity.sprite.getCenter();
-
-					hit.sprite.position.x = center.x;
-					hit.sprite.position.y = center.y;
-					hit.sprite.rotation = entity.rotation + hit.rotationOffset;
-				}
-			}
-
-			for (var i = toRemove.length - 1; i >= 0; i--) {
-				this.hits.splice(toRemove[i], 1);
+				hit.sprite.position.x = center.x;
+				hit.sprite.position.y = center.y;
+				hit.sprite.rotation = entity.rotation + hit.rotationOffset;
 			}
 		}
 	}
