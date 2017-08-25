@@ -34,8 +34,8 @@ function drawHUD() {
 	var windowHeight = $(window).innerHeight();
 
 	if (ENT.localPlayer != undefined) {
-		health = lerp(health, ENT.localPlayer.health, 0.1);
-		shield = lerp(shield, ENT.localPlayer.shieldPower, 0.1);
+		health = lerp(health, (ENT.localPlayer.alive ? ENT.localPlayer.health : 0), 0.1);
+		shield = lerp(shield, (ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0), 0.1);
 
 		levels.beginFill(0x202020);
 		levels.drawRect(windowPadding, windowHeight - windowPadding - barHeight, barWidth, barHeight);
