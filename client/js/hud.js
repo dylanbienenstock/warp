@@ -9,7 +9,7 @@ var barWidth = 300;
 var barHeight = 20;
 var barPadding = 5;
 var windowPadding = 16;
-var textPadding = 2;
+var textPadding = 3;
 
 function setupHUD(baseContainer) {
 	var textStyle = new PIXI.TextStyle({
@@ -17,9 +17,7 @@ function setupHUD(baseContainer) {
 	    fontSize: 14,
 	    fontWeight: "bold",
 	    fill: "#000000",
-	    stroke: "#FFFFFF",
-	    strokeThickness: 2,
-	    letterSpacing: 0.5
+	    letterSpacing: 0.25
 	});
 
 	levels = new PIXI.Graphics();
@@ -39,6 +37,11 @@ function drawHUD() {
 		health = lerp(health, ENT.localPlayer.health, 0.1);
 		shield = lerp(shield, ENT.localPlayer.shieldPower, 0.1);
 
+		levels.beginFill(0x202020);
+		levels.drawRect(windowPadding, windowHeight - windowPadding - barHeight, barWidth, barHeight);
+		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding - barHeight * 2, barWidth, barHeight);
+		levels.endFill();
+
 		levels.beginFill(0xFFFFFF);
 		levels.drawRect(windowPadding, windowHeight - windowPadding - barHeight, health * (barWidth / barMaxValue), barHeight);
 		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding - barHeight * 2, shield * (barWidth / barMaxValue), barHeight);
@@ -48,9 +51,9 @@ function drawHUD() {
 		shieldText.text = "shield " + Math.round(ENT.localPlayer.shieldPower);
 
 		healthText.x = windowPadding + textPadding;
-		healthText.y = windowHeight - windowPadding - barHeight;
+		healthText.y = windowHeight - windowPadding - barHeight + 1;
 
 		shieldText.x = windowPadding + textPadding;
-		shieldText.y = windowHeight - windowPadding - barPadding - barHeight * 2;
+		shieldText.y = windowHeight - windowPadding - barPadding - barHeight * 2 + 1;
 	}
 }
