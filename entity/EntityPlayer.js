@@ -6,6 +6,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.shield = null;
 			this.shieldPower = 100;
 			this.health = 100;
+			this.alive = true;
 			this.speed = 6;
 			this.lastFirePrimary = 0;
 			this.lastFireSecondary = 0;
@@ -47,11 +48,24 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		takeDamage(damage, collision) {
-			ENT.trigger(this, "hit");
+			if (this.alive) {
+				ENT.trigger(this, "hit");
 
-			this.health = Math.max(this.health - damage, 0);
+				this.health = Math.max(this.health - damage, 0);
 
-			return damage;
+				if (this.health == 0) {
+					ENT.trigger(this, "death");
+
+					this.physicsObject.active = false;
+					this.shield.physicsObject.active = false;
+					this.alive = false;
+					this.doNotNetwork = true;
+				}
+
+				return damage;
+			}
+
+			return 0;
 		}
 
 		keepInBounds() {
@@ -71,46 +85,50 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		update() {
-			if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
-				ENT.create(ENT.new("Laser", {
-					ownerId: this.id,
-					x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
-					y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-					rotation: this.physicsObject.rotation,
-					thrustX: -Math.cos(this.physicsObject.rotation) * 32,
-					thrustY: -Math.sin(this.physicsObject.rotation) * 32
-				}));
+			super.update();
 
-				this.lastFirePrimary = Date.now();
-			}
-
-			if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
-				var angleIncrement = 8 * Math.PI / 180;
-				var origin = this.physicsObject.rotation - angleIncrement * 1.5;
-
-				for (var i = 0; i < 4; i++) {
-					var offset = i * angleIncrement;
-
+			if (this.alive) {
+				if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
 					ENT.create(ENT.new("Laser", {
 						ownerId: this.id,
-						thickness: 4,
-						color: 0x00FF00,
-						length: 32,
 						x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
 						y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-						rotation: origin + offset,
-						thrustX: -Math.cos(origin + offset) * 32,
-						thrustY: -Math.sin(origin + offset) * 32
+						rotation: this.physicsObject.rotation,
+						thrustX: -Math.cos(this.physicsObject.rotation) * 32,
+						thrustY: -Math.sin(this.physicsObject.rotation) * 32
 					}));
+
+					this.lastFirePrimary = Date.now();
 				}
 
-				this.lastFireSecondary = Date.now();
+				if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
+					var angleIncrement = 8 * Math.PI / 180;
+					var origin = this.physicsObject.rotation - angleIncrement * 1.5;
+
+					for (var i = 0; i < 4; i++) {
+						var offset = i * angleIncrement;
+
+						ENT.create(ENT.new("Laser", {
+							ownerId: this.id,
+							thickness: 4,
+							color: 0x00FF00,
+							length: 32,
+							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
+							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
+							rotation: origin + offset,
+							thrustX: -Math.cos(origin + offset) * 32,
+							thrustY: -Math.sin(origin + offset) * 32
+						}));
+					}
+
+					this.lastFireSecondary = Date.now();
+				}
+
+				this.shieldPower = this.shield.power;
+
+				this.move();
+				this.keepInBounds();
 			}
-
-			this.shieldPower = this.shield.power;
-
-			this.move();
-			this.keepInBounds();
 		}
 
 		move() {
