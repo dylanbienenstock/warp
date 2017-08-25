@@ -160,6 +160,7 @@ class PhysicsManager {
 
 				if (lineIntersectResult.type == "intersecting") {
 					return {
+						type: "line",
 						position: {
 							x: lineIntersectResult.point.x,
 							y: lineIntersectResult.point.y
@@ -187,6 +188,7 @@ class PhysicsManager {
 				if (lineCircleIntersectResult)
 				{
 					return {
+						type: "line-circle",
 						position: {
 							x: nearestPoint[0],
 							y: nearestPoint[1]
@@ -210,6 +212,7 @@ class PhysicsManager {
 
 				if (distance >= circle1.radius + circle2.radius) {
 					return {
+						type: "circle",
 						position: {
 							x: -Math.cos(angle) * (distance / 2) + circle1.position.x,
 							y: -Math.sin(angle) * (distance / 2) + circle1.position.y
@@ -259,8 +262,8 @@ class PhysicsManager {
 				if (collision != null) {
 					collision.physicsObject = physicsObject;
 					collision.with = physicsObject2;
-					collision.angle = Math.atan2((physicsObject2.y - physicsObject2.totalVelocityY) - physicsObject.y, 
-									 (physicsObject2.x - physicsObject2.totalVelocityX) - physicsObject.x);
+					collision.angle = Math.atan2((collision.with.info.bounds.center.y + collision.with.totalVelocityY) - (collision.physicsObject.info.bounds.center.y - collision.physicsObject.totalVelocityY), 
+									 (collision.with.info.bounds.center.x + collision.with.totalVelocityX) - (collision.physicsObject.info.bounds.center.x - collision.physicsObject.totalVelocityX));
 
 					collisions.push(collision);
 
@@ -282,7 +285,8 @@ class PhysicsManager {
 				collision.__physicsObject = collision.physicsObject;
 				collision.physicsObject = collision.with;
 				collision.with = collision.__physicsObject;
-				collision.angle *= -1;
+				collision.angle = Math.atan2((collision.with.info.bounds.center.y + collision.with.totalVelocityY) - (collision.physicsObject.info.bounds.center.y - collision.physicsObject.totalVelocityY), 
+									 (collision.with.info.bounds.center.x + collision.with.totalVelocityX) - (collision.physicsObject.info.bounds.center.x - collision.physicsObject.totalVelocityX));
 
 				withEntity.collideWith(entity, collision);
 			}
