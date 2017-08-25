@@ -21,11 +21,7 @@ class EntityShield extends EntityBase {
 		if (entity != null) {
 			var hit = {
 				time: Date.now(),
-				sprite: sprite,
-				offset: {
-					x: data.position.x - entity.sprite.x,
-					y: data.position.y - entity.sprite.y
-				},	
+				sprite: sprite,	
 				rotationOffset: data.angle - entity.sprite.rotation
 			};
 
@@ -58,7 +54,7 @@ class EntityShield extends EntityBase {
 				hit.sprite.alpha = (hitDuration - timeSinceHit) / hitDuration;
 				hit.sprite.position.x = center.x;
 				hit.sprite.position.y = center.y;
-				hit.sprite.rotation = entity.rotation + hit.rotationOffset;
+				hit.sprite.rotation = entity.sprite.rotation + hit.rotationOffset;
 			}
 		}
 	}
