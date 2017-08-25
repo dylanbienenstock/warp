@@ -4,6 +4,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super("Player");
 
 			this.shield = null;
+			this.shieldPower = 100;
+			this.health = 100;
 			this.speed = 6;
 			this.lastFirePrimary = 0;
 			this.lastFireSecondary = 0;
@@ -46,6 +48,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		takeDamage(damage, collision) {
 			ENT.trigger(this, "hit");
+
+			this.health = Math.max(this.health - damage, 0);
 
 			return damage;
 		}
@@ -103,6 +107,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.lastFireSecondary = Date.now();
 			}
 
+			this.shieldPower = this.shield.power;
+
 			this.move();
 			this.keepInBounds();
 		}
@@ -139,7 +145,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				x: this.physicsObject.x,
 				y: this.physicsObject.y,
 				rotation: this.physicsObject.rotation,
-				controls: this.controls
+				controls: this.controls,
+				health: this.health,
+				shieldPower: this.shieldPower
 			});
 		}
 	}
