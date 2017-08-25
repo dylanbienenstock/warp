@@ -5,6 +5,8 @@ class EntityPlayer extends EntityBase {
 		this.triggers.hit = this.onHit.bind(this); 
 
 		this.name = data.name;
+		this.health = 100;
+		this.shieldPower = 100;
 		this.isLocalPlayer = false;
 		this.x = 0;
 		this.y = 0;
