@@ -21,6 +21,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			};
 
 			this.physicsObject = PHYS.new("Box", {
+				restrictToMap: true,
 				x: data.x || 0,
 				y: data.y || 0,
 				localX: -6,
@@ -70,22 +71,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			return 0;
 		}
 
-		keepInBounds() {
-			for (var i = this.physicsObject.info.lines.length - 1; i >= 0; i--) {
-				var line = this.physicsObject.info.lines[i];
-
-				if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= PHYS.boundaryRadius ||
-					Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= PHYS.boundaryRadius) {
-
-					var angle = Math.atan2(-this.physicsObject.y, -this.physicsObject.x);
-					this.physicsObject.thrustX += Math.cos(angle) * 10;
-					this.physicsObject.thrustY += Math.sin(angle) * 10;
-
-					break;
-				}
-			}
-		}
-
 		update() {
 			super.update();
 
@@ -131,7 +116,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.shieldPower = this.shield.power;
 
 				this.move();
-				this.keepInBounds();
 			}
 		}
 

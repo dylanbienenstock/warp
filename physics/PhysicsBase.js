@@ -15,6 +15,9 @@ module.exports = function(__PHYS) {
 			this.localY = data.localY || 0;
 			this.thrustX = data.thrustX || 0;
 			this.thrustY = data.thrustY || 0;
+			this.restrictToMap = data.restrictToMap;
+			this.restrictX = 0;
+			this.restrictY = 0;
 			this.velocityX = data.velocityX || 0;
 			this.velocityY = data.velocityY || 0;
 			this.children = [];
@@ -25,11 +28,11 @@ module.exports = function(__PHYS) {
 		}
 
 		get totalVelocityX() {
-			return this.velocityX + this.thrustX;
+			return this.velocityX + this.thrustX + this.restrictX;
 		}
 
 		get totalVelocityY() {
-			return this.velocityY + this.thrustY;
+			return this.velocityY + this.thrustY + this.restrictY;
 		}
 
 		addChild(child) {

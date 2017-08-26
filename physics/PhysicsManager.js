@@ -2,7 +2,7 @@ var lineIntersect = require("line-intersect");
 var lineCircleIntersect = require("line-circle-collision");
 var io;
 
-const velocityDampeningFactor = 0.975;
+const velocityDampeningFactor = 0.9;
 
 module.exports = function(__io) {
 	io = __io;
@@ -15,7 +15,7 @@ class PhysicsManager {
 		this.Physics = null;
 
 		this.nextId = 0;
-		this.boundaryRadius = 1024;
+		this.boundaryRadius = 4096;
 		this.physicsObjects = [];
 		this.physicsObjectOwners = {};
 
@@ -227,6 +227,25 @@ class PhysicsManager {
 		return null;
 	}
 
+	restrictToMap(physicsObject) {
+		for (var i = physicsObject.info.lines.length - 1; i >= 0; i--) {
+			var line = physicsObject.info.lines[i];
+
+			if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= this.boundaryRadius ||
+				Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= this.boundaryRadius) {
+
+				var angle = Math.atan2(-physicsObject.y, -physicsObject.x);
+
+				physicsObject.restrictX += Math.cos(angle) * 0.05;
+				physicsObject.restrictY += Math.sin(angle) * 0.05;
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	checkForCollisions() {
 		var collisions = [];
 		var alreadyChecked = [];
@@ -315,6 +334,13 @@ class PhysicsManager {
 			if (physicsObject.active) {
 				physicsObject.info = this.getPhysicsInfo(physicsObject);
 
+				if (physicsObject.restrictToMap) {
+					if (this.restrictToMap(physicsObject)) {
+						physicsObject.restrictX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+						physicsObject.restrictY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+					}
+				}
+
 				physicsObject.x += physicsObject.totalVelocityX * timeMult;
 				physicsObject.y += physicsObject.totalVelocityY * timeMult;
 
@@ -322,11 +348,11 @@ class PhysicsManager {
 				physicsObject.velocityY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
 
 				if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
-					physicsObject.velocityX = Math.max(Math.min(physicsObject.totalVelocityX * timeMult, 0), 0);
+					physicsObject.velocityX = Math.max(Math.min((physicsObject.velocityX + physicsObject.thrustX) * timeMult, 0), 0);
 				}
 
 				if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
-					physicsObject.velocityY = Math.max(Math.min(physicsObject.totalVelocityY * timeMult, 0), 0);
+					physicsObject.velocityY = Math.max(Math.min((physicsObject.velocityY + physicsObject.thrustY) * timeMult, 0), 0);
 				}
 			}
 		}
