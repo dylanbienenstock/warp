@@ -7,10 +7,8 @@ var stageContainer;
 var boundaryContainer;
 var grid;
 
-var localPlayerSprite;
-var thrustForwardSprite;
-var thrustBackwardSprite;
-var placeholder;
+var stationOuter;
+var stationInner;
 
 window.renderer = renderer;
 window.zoom = 2;
@@ -64,15 +62,23 @@ function loadContent() {
 		.add("thrust:default:forward", "./img/thrust/default/forward.svg")
 		.add("thrust:default:backward","./img/thrust/default/backward.svg")
 		.add("shield", "./img/shield.svg")
-		.add("placeholder", "./img/placeholder.png")
+		.add("station:outer", "./img/station-outer.svg")
+		.add("station:inner", "./img/station-inner.svg")
 	.load(setup);
 }
 
 function setup() {
-	placeholder = new PIXI.Sprite(PIXI.loader.resources["placeholder"].texture);
-	placeholder.anchor.set(0.5, 0.5);
-	placeholder.alpha = 0.25;
-	stageContainer.addChild(placeholder);
+	stationOuter = new PIXI.Sprite(PIXI.loader.resources["station:outer"].texture);
+	stationOuter.width = 512;
+	stationOuter.height = 512;
+	stationOuter.anchor.set(0.5, 0.5);
+
+	stationInner = new PIXI.Sprite(PIXI.loader.resources["station:inner"].texture);
+	stationInner.width = 512;
+	stationInner.height = 512;
+	stationInner.anchor.set(0.5, 0.5);
+
+	stageContainer.addChild(stationOuter, stationInner);
 
 	setupHUD(baseContainer);
 	connect();
@@ -81,6 +87,9 @@ function setup() {
 
 function update() {
 	window.requestAnimationFrame(update);
+
+	stationOuter.rotation += 0.001;
+	stationInner.rotation += 0.00025;
 
 	drawGrid();
 	ENT.update();
