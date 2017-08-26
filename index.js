@@ -13,34 +13,28 @@ var ENT = require("./entity/EntityManager.js")(io, physicsDebug);
 var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
 ENT.Entity = Entity;
 
-app.set("port", (process.env.PORT || 8080));
+console.log("Initializing game...");
+var startTime = Date.now();
+setupGame();
+startServer(startTime);
 
-app.use(express.static("./client"));
+function startServer(startTime) {
+	app.set("port", (process.env.PORT || 8080));
 
-app.get("/", function(req, res){
-  res.sendFile("./client/index.html");
-});
+	app.use(express.static("./client"));
 
-io.on("connection", onConnect);
+	app.get("/", function(req, res){
+	  res.sendFile("./client/index.html");
+	});
 
-http.listen(app.get("port"), function(){
-  console.log("Server listening on port " + app.get("port"));
-});
+	io.on("connection", onConnect);
 
-/*
-
-/!\ PACKET FORMATS /!\
-(client to server: ->, server to client: <-)
--------------------------------------------- 
-
--> "control down" - string: control
--> "control up" -  string: control
--> "my angle" - number: angle
-<- "entity create" - {} // Contains all properties of created entity
-<- "entity set" - {} 	// Contains id and properties to update 
-<- "entity set position" - { number: id, number: x, number: y }
-
-*/
+	http.listen(app.get("port"), function(){
+		console.log("Took " + (Date.now() - startTime) + "ms to initialize game");
+		console.log("Server listening on port " + app.get("port"));
+		console.log();
+	});
+}
 
 function onConnect(socket) {
 	ENT.sendAllEntities(socket);
@@ -78,32 +72,12 @@ function onConnect(socket) {
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
-//update();
-
-// var desiredUpdateDuration = 1000 / 32;
-// var lastUpdate = 0;
-
-// function update() {
-// 	var lastUpdateDuration = Date.now() - lastUpdate;
-// 	var timeMult = lastUpdateDuration / desiredUpdateDuration;
-
-// 	PHYS.update(timeMult);
-// 	ENT.update(timeMult);
-// 	ENT.network();
-
-// 	lastUpdate = Date.now();
-
-// 	if (lastUpdateDuration >= desiredUpdateDuration) {
-// 		process.nextTick(update);
-// 	} else {
-// 		setTimeout(update, desiredUpdateDuration - lastUpdateDuration);
-// 	}
-// }
-
-ENT.create(ENT.new("Shield", {
-	radius: 256,
-	hitSize: 100
-}));
+function setupGame() {
+	ENT.create(ENT.new("Shield", {
+		radius: 256,
+		hitSize: 100
+	}));
+}
 
 setInterval(function() {
 	PHYS.update(1);
