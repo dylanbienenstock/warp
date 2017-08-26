@@ -21,11 +21,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		takeDamage(damage, entity, collision) {
 			var owner = ENT.getById(this.ownerId);
 
-			ENT.trigger(this, "hit", {
-				angle: collision.angle,
-				position: collision.position
-			});
-
 			if (owner != undefined) {
 				var angleDegrees = (collision.angle - owner.physicsObject.rotation) * (180 / Math.PI);
 				angleDegrees = ((angleDegrees % 360) + 360) % 360;
@@ -41,6 +36,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					return hullDamage;
 				}
 			}
+
+			ENT.trigger(this, "hit", {
+				angle: collision.angle,
+				position: collision.position
+			});
 
 			return 0;
 		}
