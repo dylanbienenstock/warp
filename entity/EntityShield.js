@@ -5,12 +5,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			this.doNotNetwork = true;
 			this.ownerId = data.ownerId;
-			this.radius = 32;
+			this.radius = data.radius || 32;
+			this.hitSize = data.hitSize || data.radius || 32;
 			this.damageFactor = 0.5;
 			this.power = 100;
 
 			this.physicsObject = PHYS.new("Circle", {
-				radius: 30
+				radius: this.radius
 			});
 		}
 
@@ -19,21 +20,23 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		takeDamage(damage, entity, collision) {
-			var owner = ENT.getById(this.ownerId);
+			if (this.ownerId != undefined) {
+				var owner = ENT.getById(this.ownerId);
 
-			if (owner != undefined) {
-				var angleDegrees = (collision.angle - owner.physicsObject.rotation) * (180 / Math.PI);
-				angleDegrees = ((angleDegrees % 360) + 360) % 360;
-				damage *= this.damageFactor;
-				damage = Math.max(damage, 0);
+				if (owner != undefined) {
+					var angleDegrees = (collision.angle - owner.physicsObject.rotation) * (180 / Math.PI);
+					angleDegrees = ((angleDegrees % 360) + 360) % 360;
+					damage *= this.damageFactor;
+					damage = Math.max(damage, 0);
 
-				this.power -= damage;
+					this.power -= damage;
 
-				if (this.power < 0) {
-					var hullDamage = -this.power;
-					this.power = 0;
+					if (this.power < 0) {
+						var hullDamage = -this.power;
+						this.power = 0;
 
-					return hullDamage;
+						return hullDamage;
+					}
 				}
 			}
 
@@ -46,14 +49,16 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		update(timeMult) {
-			var owner = ENT.getById(this.ownerId);
+			if (this.ownerId != undefined) {
+				var owner = ENT.getById(this.ownerId);
 
-			if (owner != undefined) {
-				this.physicsObject.x = owner.physicsObject.info.bounds.center.x + this.physicsObject.totalVelocityX;
-				this.physicsObject.y = owner.physicsObject.info.bounds.center.y + this.physicsObject.totalVelocityY;
+				if (owner != undefined) {
+					this.physicsObject.x = owner.physicsObject.info.bounds.center.x + this.physicsObject.totalVelocityX;
+					this.physicsObject.y = owner.physicsObject.info.bounds.center.y + this.physicsObject.totalVelocityY;
+				}
+
+				this.power = Math.min(this.power + 0.1 * timeMult, 100);
 			}
-
-			this.power = Math.min(this.power + 0.1 * timeMult, 100);
 		}
 
 		network() {
