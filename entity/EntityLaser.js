@@ -1,7 +1,7 @@
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityLaser extends EntityBase {
 		constructor(data) {
-			super("Laser");
+			super(data);
 
 			this.lifespan = data.lifespan || 1000;
 

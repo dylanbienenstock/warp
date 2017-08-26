@@ -1,7 +1,7 @@
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityPlayer extends EntityBase {
 		constructor(data) {
-			super("Player");
+			super(data);
 
 			this.shield = null;
 			this.shieldPower = 100;
@@ -21,6 +21,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			};
 
 			this.physicsObject = PHYS.new("Box", {
+				x: data.x || 0,
+				y: data.y || 0,
 				localX: -6,
 				localY: -16,
 				width: 16,

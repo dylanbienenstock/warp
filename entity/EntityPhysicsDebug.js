@@ -1,7 +1,7 @@
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityPhysicsDebug extends EntityBase {
 		constructor(data) {
-			super("PhysicsDebug");
+			super(data);
 
 			this.physicsObject = data.physicsObject;
 			this.info = PHYS.getPhysicsInfo(this.physicsObject);

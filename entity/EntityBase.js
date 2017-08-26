@@ -2,12 +2,12 @@ var ENT;
 var PHYS;
 
 class EntityBase {
-	constructor(className) {
+	constructor(data) {
 		this.id = -1;
-		this.className = className;
-		this.x = 0;
-		this.y = 0;
-		this.rotation = 0;
+		this.className = data.className;
+		this.x = data.x || 0;
+		this.y = data.y || 0;
+		this.rotation = data.rotation || 0;
 	}
 
 	create() {

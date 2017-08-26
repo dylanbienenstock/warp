@@ -1,7 +1,7 @@
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntitySegmentedShield extends EntityBase {
 		constructor(data) {
-			super("Shield");
+			super(data);
 
 			this.doNotNetwork = true;
 			this.ownerId = data.ownerId;
