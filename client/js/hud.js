@@ -8,10 +8,19 @@ var barMaxValue = 100;
 var barWidth = 300;
 var barHeight = 20;
 var barPadding = 5;
-var windowPadding = 16;
 var textPadding = 3;
+var windowPadding = 16;
 
-function setupHUD(baseContainer) {
+var radar;
+var radarDots = [];
+var radarRadius = 100;
+var radarProportion = radarRadius / window.boundaryRadius;
+var radarX = windowPadding + radarRadius;
+var radarY = windowPadding + radarRadius;
+
+function setupHUD(HUDContainer) {
+	radar = new PIXI.Graphics();
+
 	var textStyle = new PIXI.TextStyle({
 	    fontFamily: "Helvetica",
 	    fontSize: 14,
@@ -24,10 +33,44 @@ function setupHUD(baseContainer) {
 	healthText = new PIXI.Text("health 100", textStyle);
 	shieldText = new PIXI.Text("shield 100", textStyle);
 
-	baseContainer.addChild(levels, healthText, shieldText);
-}	
+	HUDContainer.addChild(levels, healthText, shieldText, radar);
+}
 
 function drawHUD() {
+	drawRadar();
+	drawLevels();
+}
+
+function addRadarDot(x, y, color, radius) {
+	radarDots.push({
+		x: x * radarProportion + radarX,
+		y: y * radarProportion + radarY,
+		color: color,
+		radius: radius
+	});
+}
+
+function drawRadar() {
+	radar.clear();
+	radar.lineStyle(2, 0xFFFFFF, 1);
+	radar.beginFill(0x000000, 0.5);
+	radar.drawCircle(radarX, radarY, radarRadius);
+	radar.endFill();
+	radar.drawCircle(radarX, radarY, 6);
+	radar.lineStyle();
+
+	for (var i = radarDots.length - 1; i >= 0; i--) {
+		var dot = radarDots[i];
+
+		radar.beginFill(dot.color);
+		radar.drawCircle(dot.x, dot.y, dot.radius);
+		radar.endFill();
+
+		radarDots.splice(i, 1);
+	}
+}
+
+function drawLevels() {
 	levels.clear();
 
 	var windowWidth = $(window).innerWidth();

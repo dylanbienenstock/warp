@@ -102,6 +102,10 @@ class EntityPlayer extends EntityBase {
 	update() {
 		super.update();
 
+		if (this.alive) {
+			addRadarDot(this.sprite.x, this.sprite.y, (this.isLocalPlayer ? 0x00FF00 : 0xFF0000), 2);
+		}
+
 		if (this.isLocalPlayer) {
 			centerOn(this.sprite);
 		} else {

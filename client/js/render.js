@@ -1,16 +1,15 @@
-const boundaryRadius = 1024;
-
 var renderer;
 var baseContainer;
 var gridContainer;
 var stageContainer;
 var boundaryContainer;
+var HUDContainer;
 var grid;
 
 var stationOuter;
 var stationInner;
 
-window.renderer = renderer;
+window.boundaryRadius = 4096;
 window.zoom = 2;
 
 $(function() {
@@ -22,8 +21,9 @@ $(function() {
 	gridContainer = new PIXI.Container();
 	stageContainer = new PIXI.Container();
 	boundaryContainer = new PIXI.Container();
+	HUDContainer = new PIXI.Container();
 
-	baseContainer.addChild(gridContainer, stageContainer, boundaryContainer);
+	baseContainer.addChild(gridContainer, stageContainer, boundaryContainer, HUDContainer);
 
 	grid = new PIXI.Graphics();
 	gridContainer.addChild(grid);
@@ -81,7 +81,7 @@ function setup() {
 
 	stageContainer.addChild(stationOuter, stationInner);
 
-	setupHUD(baseContainer);
+	setupHUD(HUDContainer);
 	connect();
 	update();
 }
