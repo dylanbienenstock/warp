@@ -7,6 +7,7 @@ var HUDContainer;
 var grid;
 
 var stationOuter;
+var stationInnerShadow;
 var stationInner;
 
 window.boundaryRadius = 4096;
@@ -65,6 +66,7 @@ function loadContent() {
 		.add("shield", "./img/shield.svg")
 		.add("station:outer", "./img/station-outer.svg")
 		.add("station:inner", "./img/station-inner.svg")
+		.add("station:inner:shadow", "./img/station-inner-shadow.svg")
 	.load(setup);
 }
 
@@ -74,12 +76,20 @@ function setup() {
 	stationOuter.height = 512;
 	stationOuter.anchor.set(0.5, 0.5);
 
+	stationInnerShadow = new PIXI.Sprite(PIXI.loader.resources["station:inner:shadow"].texture);
+	stationInnerShadow.width = 512;
+	stationInnerShadow.height = 512;
+	stationInnerShadow.x = 2;
+	stationInnerShadow.y = 2;
+	stationInnerShadow.alpha = 0.5;
+	stationInnerShadow.anchor.set(0.5, 0.5);
+
 	stationInner = new PIXI.Sprite(PIXI.loader.resources["station:inner"].texture);
 	stationInner.width = 512;
 	stationInner.height = 512;
 	stationInner.anchor.set(0.5, 0.5);
 
-	stageContainer.addChild(stationOuter, stationInner);
+	stageContainer.addChild(stationOuter, stationInnerShadow, stationInner);
 
 	setupHUD(HUDContainer);
 	connect();
@@ -90,6 +100,7 @@ function update() {
 	window.requestAnimationFrame(update);
 
 	stationOuter.rotation += 0.001;
+	stationInnerShadow.rotation += 0.00025;
 	stationInner.rotation += 0.00025;
 
 	drawGrid();
