@@ -34,5 +34,9 @@ module.exports = function(__PHYS) {
 		addChild(child) {
 			this.children.push(child);
 		}
+
+		distanceTo(x, y) {
+			return Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
+		}
 	}
 }
