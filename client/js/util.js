@@ -12,10 +12,10 @@ function lerpAngle(a0,a1,t) {
     return a0 + shortAngleDist(a0, a1) * t;
 }
 
-PIXI.Sprite.prototype.attach = function(sprite) {
-	sprite.x = this.x;
-	sprite.y = this.y;
-	sprite.rotation = this.rotation;
+PIXI.Sprite.prototype.attach = function(sprite, offsetX, offsetY, offsetRotation) {
+	sprite.x = this.x + (offsetX || 0);
+	sprite.y = this.y + (offsetY || 0);
+	sprite.rotation = this.rotation + (offsetRotation || 0);
 }
 
 PIXI.Sprite.prototype.getCenter = function() {
