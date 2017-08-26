@@ -23,15 +23,6 @@ class EntityPlayer extends EntityBase {
 			fireSecondary: false
 		};
 
-		this.outlineSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:outline"].texture);
-		this.outlineSprite.anchor.set(0.678, 0.5);
-		this.outlineSprite.width = 32;
-		this.outlineSprite.height = 32;
-		this.outlineSprite.visible = !this.alive;
-		this.outlineSprite.x = this.x;
-		this.outlineSprite.y = this.y;
-		this.outlineSprite.rotation = this.rotation;
-
 		this.shadowSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:shadow"].texture);
 		this.shadowSprite.anchor.set(0.678, 0.5);
 		this.shadowSprite.width = 40;
@@ -41,6 +32,15 @@ class EntityPlayer extends EntityBase {
 		this.shadowSprite.x = this.x;
 		this.shadowSprite.y = this.y;
 		this.shadowSprite.rotation = this.rotation;
+
+		this.outlineSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:outline"].texture);
+		this.outlineSprite.anchor.set(0.678, 0.5);
+		this.outlineSprite.width = 32;
+		this.outlineSprite.height = 32;
+		this.outlineSprite.visible = !this.alive;
+		this.outlineSprite.x = this.x;
+		this.outlineSprite.y = this.y;
+		this.outlineSprite.rotation = this.rotation;
 
 		this.sprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
 		this.sprite.anchor.set(0.678, 0.5);
@@ -81,8 +81,8 @@ class EntityPlayer extends EntityBase {
 		this.thrustSprites.backward.y = this.y;
 		this.thrustSprites.backward.rotation = this.rotation;
 
-		ENT.stageContainer.addChild(this.outlineSprite,
-									this.shadowSprite,
+		ENT.stageContainer.addChild(this.shadowSprite,
+									this.outlineSprite,
 									this.sprite,
 									this.thrustSprites.forward,
 									this.thrustSprites.backward,
@@ -97,6 +97,7 @@ class EntityPlayer extends EntityBase {
 	onDeath() {
 		this.alive = false;
 		this.outlineSprite.visible = true;
+		this.shadowSprite.visible = false;
 	}
 
 	update() {
