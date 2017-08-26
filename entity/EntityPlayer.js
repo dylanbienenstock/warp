@@ -88,40 +88,42 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super.update();
 
 			if (this.alive) {
-				if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
-					ENT.create(ENT.new("Laser", {
-						ownerId: this.id,
-						x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
-						y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-						rotation: this.physicsObject.rotation,
-						thrustX: -Math.cos(this.physicsObject.rotation) * 32,
-						thrustY: -Math.sin(this.physicsObject.rotation) * 32
-					}));
-
-					this.lastFirePrimary = Date.now();
-				}
-
-				if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
-					var angleIncrement = 8 * Math.PI / 180;
-					var origin = this.physicsObject.rotation - angleIncrement * 1.5;
-
-					for (var i = 0; i < 4; i++) {
-						var offset = i * angleIncrement;
-
+				if (this.physicsObject.distanceTo(0, 0) > 256) {
+					if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
 						ENT.create(ENT.new("Laser", {
 							ownerId: this.id,
-							thickness: 4,
-							color: 0x00FF00,
-							length: 32,
 							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
 							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-							rotation: origin + offset,
-							thrustX: -Math.cos(origin + offset) * 32,
-							thrustY: -Math.sin(origin + offset) * 32
+							rotation: this.physicsObject.rotation,
+							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
+							thrustY: -Math.sin(this.physicsObject.rotation) * 32
 						}));
+
+						this.lastFirePrimary = Date.now();
 					}
 
-					this.lastFireSecondary = Date.now();
+					if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
+						var angleIncrement = 8 * Math.PI / 180;
+						var origin = this.physicsObject.rotation - angleIncrement * 1.5;
+
+						for (var i = 0; i < 4; i++) {
+							var offset = i * angleIncrement;
+
+							ENT.create(ENT.new("Laser", {
+								ownerId: this.id,
+								thickness: 4,
+								color: 0x00FF00,
+								length: 32,
+								x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
+								y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
+								rotation: origin + offset,
+								thrustX: -Math.cos(origin + offset) * 32,
+								thrustY: -Math.sin(origin + offset) * 32
+							}));
+						}
+
+						this.lastFireSecondary = Date.now();
+					}
 				}
 
 				this.shieldPower = this.shield.power;
