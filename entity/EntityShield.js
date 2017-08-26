@@ -11,6 +11,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.power = 100;
 
 			this.physicsObject = PHYS.new("Circle", {
+				collisionGroup: "Shield",
 				radius: this.radius
 			});
 		}

@@ -18,6 +18,8 @@ class PhysicsManager {
 		this.boundaryRadius = 1024;
 		this.physicsObjects = [];
 		this.physicsObjectOwners = {};
+
+		this.CollisionGroup = require("../physics/CollisionGroup.js");
 	}
 
 	new(className, data) {
@@ -232,7 +234,7 @@ class PhysicsManager {
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			var physicsObject = this.physicsObjects[i];
 
-			if (!physicsObject.active) {
+			if (!physicsObject.active || physicsObject.collisionGroup == "None") {
 				continue;
 			}
 
@@ -241,7 +243,15 @@ class PhysicsManager {
 
 				if (alreadyChecked.includes(physicsObject2.id) ||
 					!physicsObject2.active ||
-					physicsObject.id == physicsObject2.id || 
+					physicsObject.id == physicsObject2.id ||
+
+					// Compare collision groups
+					physicsObject2.collisionGroup == "None" ||
+					!((physicsObject.collisionGroup == undefined || physicsObject2.collisionGroup == undefined) ||
+					(this.CollisionGroup[physicsObject.collisionGroup].includes(physicsObject2.collisionGroup) &&
+					this.CollisionGroup[physicsObject2.collisionGroup].includes(physicsObject.collisionGroup))) ||
+
+					// Compare bounds
 					physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
 					physicsObject2.info.bounds.minX > physicsObject.info.bounds.maxX ||
 					physicsObject.info.bounds.minY > physicsObject2.info.bounds.maxY ||

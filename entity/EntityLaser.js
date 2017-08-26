@@ -14,6 +14,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.rotation = data.rotation;
 
 			this.physicsObject = PHYS.new("Box", {
+				collisionGroup: "Projectile",
 				x: data.x,
 				y: data.y,
 				localX: -this.length,
