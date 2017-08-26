@@ -67,6 +67,7 @@ function loadContent() {
 		.add("station:outer", "./img/station-outer.svg")
 		.add("station:inner", "./img/station-inner.svg")
 		.add("station:inner:shadow", "./img/station-inner-shadow.svg")
+		.add("planet:shadow", "./img/planet-shadow.svg")
 	.load(setup);
 }
 

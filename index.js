@@ -73,6 +73,12 @@ function onConnect(socket) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
 function setupGame() {
+	ENT.create(ENT.new("Planet", {
+		x: 600,
+		noiseWidth: 16,
+		noiseHeight: 16
+	}));
+
 	ENT.create(ENT.new("Shield", {
 		radius: 256,
 		hitSize: 100

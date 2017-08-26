@@ -19,6 +19,9 @@ ENT.new = function(data) {
 		case "PhysicsDebug":
 			entity = new EntityPhysicsDebug(data);
 			break;
+		case "Planet":
+			entity = new EntityPlanet(data);
+			break;
 		case "Player":
 			entity = new EntityPlayer(data);
 			break;
