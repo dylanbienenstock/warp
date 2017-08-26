@@ -45,7 +45,12 @@ http.listen(app.get("port"), function(){
 function onConnect(socket) {
 	ENT.sendAllEntities(socket);
 
-	var player = new Entity.Player();
+	var angle = 2 * Math.PI * Math.random();
+	var player = ENT.new("Player", {
+		x: -Math.cos(angle) * 145,
+		y: -Math.sin(angle) * 145
+	});
+
 	ENT.create(player, socket); 
 
 	console.log("+ Player connected. (ID: " + player.id + ")");
