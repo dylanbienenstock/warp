@@ -52,7 +52,7 @@ function onConnect(socket) {
 
 	socket.on("disconnect", function() {
 		console.log("- Player disconnected. (ID: " + player.id + ")");
-		
+
 		ENT.remove(player);
 	});
 
@@ -94,6 +94,11 @@ function onConnect(socket) {
 // 		setTimeout(update, desiredUpdateDuration - lastUpdateDuration);
 // 	}
 // }
+
+ENT.create(ENT.new("Shield", {
+	radius: 256,
+	hitSize: 80
+}));
 
 setInterval(function() {
 	PHYS.update(1);
