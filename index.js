@@ -102,7 +102,7 @@ function onConnect(socket) {
 
 ENT.create(ENT.new("Shield", {
 	radius: 256,
-	hitSize: 80
+	hitSize: 100
 }));
 
 setInterval(function() {
