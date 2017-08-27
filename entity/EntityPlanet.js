@@ -4,7 +4,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super(data);
 
 			this.radius = data.radius || 64;
-			this.color = data.color || 0xFFFFFF;
+			this.color = data.color || 0xFF6010;
 
 			this.physicsObject = PHYS.new("Circle", {
 				restrictToMap: true,

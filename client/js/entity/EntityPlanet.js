@@ -6,7 +6,7 @@ class EntityPlanet extends EntityBase {
 		super(data);
 
 		this.radius = data.radius || 64;
-		this.color = data.color || 0xFFFFFF;
+		this.color = data.color || 0xFF6010;
 
 		this.mask = new PIXI.Graphics();
 		this.mask.x = this.x;
