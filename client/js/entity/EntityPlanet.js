@@ -8,6 +8,8 @@ class EntityPlanet extends EntityBase {
 		this.radius = data.radius || 64;
 		this.color = data.color || 0xFF6010;
 
+		this.container = new PIXI.Container();
+
 		this.mask = new PIXI.Graphics();
 		this.mask.x = this.x;
 		this.mask.y = this.y;
@@ -33,7 +35,8 @@ class EntityPlanet extends EntityBase {
 		this.sprite.x = this.x;
 		this.sprite.y = this.y;
 
-		ENT.stageContainer.addChild(this.graphics, this.mask, this.sprite);
+		this.container.addChild(this.graphics, this.mask, this.sprite);
+		ENT.stageContainer.addChild(this.container);
 	}
 
 	update() {
@@ -46,6 +49,7 @@ class EntityPlanet extends EntityBase {
 	}
 
 	remove() {
-		ENT.stageContainer.removeChild(this.graphics);
+		this.container.removeChildren();
+		ENT.stageContainer.removeChild(this.container);
 	}
 }

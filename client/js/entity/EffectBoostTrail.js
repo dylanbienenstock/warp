@@ -67,5 +67,6 @@ class EffectBoostTrail extends EntityBase {
 
 	remove() {
 		ENT.stageContainer.removeChild(this.graphics);
+		this.graphics.destroy();
 	}
 }
