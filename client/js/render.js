@@ -72,6 +72,8 @@ function loadContent() {
 }
 
 function setup() {
+	var stationContainer = new PIXI.Container();
+
 	stationOuter = new PIXI.Sprite(PIXI.loader.resources["station:outer"].texture);
 	stationOuter.width = 512;
 	stationOuter.height = 512;
@@ -90,7 +92,8 @@ function setup() {
 	stationInner.height = 512;
 	stationInner.anchor.set(0.5, 0.5);
 
-	stageContainer.addChild(stationOuter, stationInnerShadow, stationInner);
+	stationContainer.addChild(stationOuter, stationInnerShadow, stationInner);
+	stageContainer.addChild(stationContainer);
 
 	setupHUD(HUDContainer);
 	connect();
@@ -99,6 +102,16 @@ function setup() {
 
 function update() {
 	window.requestAnimationFrame(update);
+
+	ENT.stageContainer.children.sort(function(a, b) {
+		a.zIndex = a.zIndex || 0;
+		b.zIndex = b.zIndex || 0;
+
+		if (a.zIndex > b.zIndex) return 1;
+		if (a.zIndex < b.zIndex) return -1;
+
+		return 0;
+	}); 
 
 	stationOuter.rotation += 0.001;
 	stationInnerShadow.rotation += 0.00025;
