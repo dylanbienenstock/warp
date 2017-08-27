@@ -58,10 +58,12 @@ function onConnect(socket) {
 
 	socket.on("control down", function(control) {
 		player.controls[control] = true;
+		player.controlDown(control);
 	});
 
 	socket.on("control up", function(control) {
 		player.controls[control] = false;
+		player.controlUp(control);
 	});
 
 	socket.on("angle", function(angle) {
