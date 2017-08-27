@@ -145,10 +145,6 @@ function getHUD() {
 	return hudContainer;
 }
 
-function getMousePosition() {
-	return stageContainer.toLocal(renderer.plugins.interaction.mouse.global);
-}
-
 function centerOn(sprite) {
 	stageContainer.position.x = renderer.width / 2;
 	stageContainer.position.y = renderer.height / 2;
