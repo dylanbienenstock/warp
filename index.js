@@ -40,6 +40,7 @@ function onConnect(socket) {
 	ENT.sendAllEntities(socket);
 
 	var angle = 2 * Math.PI * Math.random();
+
 	var player = ENT.new("Player", {
 		x: -Math.cos(angle) * 145,
 		y: -Math.sin(angle) * 145
@@ -73,16 +74,15 @@ function onConnect(socket) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
 function setupGame() {
-	ENT.create(ENT.new("Planet", {
-		x: 600,
-		color: 0xFF6010
-	}));
+	for (var i = 0; i < 6; i++) {
+		var angle = 2 * Math.PI * Math.random();
 
-	ENT.create(ENT.new("Planet", {
-		x: 730,
-		color: 0x8DFF45,
-		radius: 42
-	}));
+		ENT.create(ENT.new("Planet", {
+			x: -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 512),
+			y: -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 512),
+			radius: Math.random() * 32 + 32
+		}));
+	}
 
 	ENT.create(ENT.new("Shield", {
 		radius: 256,
