@@ -1,5 +1,4 @@
-var boostTrailLineDuration = 250;
-var boostTrailMaxLineAlpha = 1;
+var boostTrailLineDuration = 300;
 var boostTrailMaxLineThickness = 12;
 
 class EffectBoostTrail extends EntityBase {
@@ -7,10 +6,11 @@ class EffectBoostTrail extends EntityBase {
 		super(data);
 
 		this.ownerId = -1;
-		this.color = 0xB200FF;
+		this.color = 0x0000FF;
 		this.graphics = new PIXI.Graphics();
 		this.graphics.x = data.x;
 		this.graphics.y = data.y;
+		this.graphics.zIndex = 1;
 		this.lines = [];
 		this.lastLineEnd = {
 			x: this.graphics.x,
@@ -29,7 +29,7 @@ class EffectBoostTrail extends EntityBase {
 		if (entity != undefined && entity instanceof EntityPlayer && entity.boosting) {
 			var lineEnd = entity.getBoostAttachmentPosition();
 
-			this.graphics.beginFill(this.color);
+			this.graphics.beginFill(PIXI.utils.rgb2hex([ 0, 0.85, 1 ]));
 			this.graphics.drawCircle(lineEnd.x - this.graphics.x, lineEnd.y - this.graphics.y, boostTrailMaxLineThickness / 2);
 			this.graphics.endFill();
 
@@ -48,13 +48,17 @@ class EffectBoostTrail extends EntityBase {
 		for (var i = this.lines.length - 1; i >= 0; i--) {
 			var line = this.lines[i];
 			var lineAge = Date.now() - line.time;
-			var lineAlpha = Math.max(((boostTrailLineDuration - lineAge) / boostTrailLineDuration) * boostTrailMaxLineAlpha, 0);
-			var lineThickness = Math.max(((boostTrailLineDuration - lineAge) / boostTrailLineDuration) * boostTrailMaxLineThickness, 0);
+			var lineProgress = ((boostTrailLineDuration - lineAge) / boostTrailLineDuration)
+			var lineThickness = Math.max(lineProgress * boostTrailMaxLineThickness, 0);
+			var lineColorMod = Math.max(lineProgress, 0);
+			var lineColor = PIXI.utils.rgb2hex([ 0, lineColorMod * 0.85, 1 ]);
 
-			if (lineAlpha > 0) {
-				this.graphics.lineStyle(lineThickness, this.color, lineAlpha);
+			if (lineProgress > 0) {
+				var angle = Math.atan2(line.end.y - line.start.y, line.end.x - line.start.x);
+
+				this.graphics.lineStyle(lineThickness, lineColor, 1);
 				this.graphics.moveTo(line.start.x - this.graphics.x, line.start.y - this.graphics.y);
-				this.graphics.lineTo(line.end.x - this.graphics.x, line.end.y - this.graphics.y);
+				this.graphics.lineTo(line.end.x - this.graphics.x + Math.cos(angle), line.end.y - this.graphics.y + Math.sin(angle));
 			} else {
 				this.lines.splice(i, 1);
 			}
