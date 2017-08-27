@@ -212,7 +212,7 @@ class PhysicsManager {
 				var distance = Math.sqrt(Math.pow(circle2.position.x - circle1.position.x, 2) + Math.pow(circle2.position.y - circle1.position.y, 2));
 				var angle = Math.atan2(circle2.position.y - circle1.position.y, circle2.position.x - circle1.position.x);
 
-				if (distance >= circle1.radius + circle2.radius) {
+				if (distance <= (circle1.radius + circle2.radius)) {
 					return {
 						type: "circle",
 						position: {
@@ -228,22 +228,38 @@ class PhysicsManager {
 	}
 
 	restrictToMap(physicsObject) {
-		for (var i = physicsObject.info.lines.length - 1; i >= 0; i--) {
-			var line = physicsObject.info.lines[i];
+		var outsideMap = false;
 
-			if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= this.boundaryRadius ||
-				Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= this.boundaryRadius) {
+		for (var i = physicsObject.info.circles.length - 1; i >= 0; i--) {
+			var circle = physicsObject.info.circles[i];
 
-				var angle = Math.atan2(-physicsObject.y, -physicsObject.x);
-
-				physicsObject.restrictX += Math.cos(angle) * 0.05;
-				physicsObject.restrictY += Math.sin(angle) * 0.05;
-
-				return false;
+			if (Math.sqrt(Math.pow(circle.position.x, 2) + Math.pow(circle.position.y, 2)) >= (this.boundaryRadius - circle.radius)) {
+				outsideMap = true;
+				break;
 			}
 		}
 
-		return true;
+		if (!outsideMap) {
+			for (var i = physicsObject.info.lines.length - 1; i >= 0; i--) {
+				var line = physicsObject.info.lines[i];
+
+				if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= this.boundaryRadius ||
+					Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= this.boundaryRadius) {
+					
+					outsideMap = true;
+					break;
+				}
+			}
+		}
+
+		if (outsideMap) {
+			var angle = Math.atan2(-physicsObject.y, -physicsObject.x);
+
+			physicsObject.restrictX += Math.cos(angle) * 0.05;
+			physicsObject.restrictY += Math.sin(angle) * 0.05;
+		}
+
+		return !outsideMap;
 	}
 
 	checkForCollisions() {
