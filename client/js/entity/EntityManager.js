@@ -48,6 +48,9 @@ ENT.newEffect = function(className, data) {
 	data.className = className;
 
 	switch (className) {
+		case "BoostTrail":
+			effect = new EffectBoostTrail(data);
+			break;
 		case "LaserTrail":
 			effect = new EffectLaserTrail(data);
 			break;

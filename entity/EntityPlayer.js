@@ -1,3 +1,7 @@
+var boostSpeed = 1.8;
+var boostDeplete = 0.5;
+var boostRegen = 0.25;
+
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityPlayer extends EntityBase {
 		constructor(data) {
@@ -6,6 +10,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.shield = null;
 			this.shieldPower = 100;
 			this.health = 100;
+			this.boost = 100;
+			this.boosting = false;
+			this.lastBoosting = false;
+			this.lastBoostTime = 0;
 			this.alive = true;
 			this.speed = 6;
 			this.lastFirePrimary = 0;
@@ -16,6 +24,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				thrustBackward: false,
 				thrustLeft: false,
 				thrustRight: false,
+				boost: false,
 				firePrimary: false,
 				fireSecondary: false
 			};
@@ -71,7 +80,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			return 0;
 		}
 
-		update() {
+		controlDown(control) {
+
+		}
+
+		controlUp(control) {
+
+		}
+
+		update(timeMult) {
 			super.update();
 
 			if (this.alive) {
@@ -115,19 +132,43 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 				this.shieldPower = this.shield.power;
 
-				this.move();
+				if (Date.now() - this.lastBoostTime >= 1000) {
+					this.boost = Math.min(this.boost + boostRegen * timeMult, 100);
+				}
+
+				this.move(timeMult);
+
+				if (this.boosting && !this.lastBoosting) {
+					ENT.trigger(this, "boost");
+				}
+
+				this.lastBoosting = this.boosting;
 			}
 		}
 
-		move() {
+		move(timeMult) {
 			var degToRad = Math.PI / 180;
 
 			this.physicsObject.thrustX = 0;
 			this.physicsObject.thrustY = 0;
 
+			this.boosting = false;
+
 			if (this.controls.thrustForward) {
-				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation) * this.speed;
-				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation) * this.speed;
+				var boostMult = 1;
+
+				if (this.controls.boost) {
+					if (this.boost > 0) {
+						this.boost = Math.max(this.boost - boostDeplete * timeMult, 0);
+						boostMult = boostSpeed;
+						this.boosting = true;
+					}
+
+					this.lastBoostTime = Date.now();
+				}
+
+				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation) * (this.speed * boostMult);
+				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation) * (this.speed * boostMult);
 			}
 
 			if (this.controls.thrustBackward) {
@@ -153,7 +194,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				rotation: this.physicsObject.rotation,
 				controls: this.controls,
 				health: this.health,
-				shieldPower: this.shieldPower
+				shieldPower: this.shieldPower,
+				boost: this.boost,
+				boosting: this.boosting
 			});
 		}
 	}

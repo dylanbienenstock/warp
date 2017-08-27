@@ -4,10 +4,13 @@ class EntityPlayer extends EntityBase {
 
 		this.triggers.hit = this.onHit.bind(this);
 		this.triggers.death = this.onDeath.bind(this);
+		this.triggers.boost = this.onBoost.bind(this);
 
 		this.name = data.name;
 		this.health = 100;
 		this.shieldPower = 100;
+		this.boost = 100;
+		this.boosting = false;
 		this.alive = data.alive;
 		this.isLocalPlayer = false;
 		this.x = data.x || 0;
@@ -19,9 +22,13 @@ class EntityPlayer extends EntityBase {
 			thrustBackward: false,
 			thrustLeft: false,
 			thrustRight: false,
+			boost: false,
 			firePrimary: false,
 			fireSecondary: false
 		};
+
+		this.container = new PIXI.Container();
+		this.container.zIndex = 1;
 
 		this.shadowSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:shadow"].texture);
 		this.shadowSprite.anchor.set(0.678, 0.5);
@@ -29,8 +36,6 @@ class EntityPlayer extends EntityBase {
 		this.shadowSprite.height = 40;
 		this.shadowSprite.alpha = 0.5;
 		this.shadowSprite.visible = this.alive;
-		this.shadowSprite.x = this.x;
-		this.shadowSprite.y = this.y;
 		this.shadowSprite.rotation = this.rotation;
 
 		this.outlineSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:outline"].texture);
@@ -38,8 +43,6 @@ class EntityPlayer extends EntityBase {
 		this.outlineSprite.width = 32;
 		this.outlineSprite.height = 32;
 		this.outlineSprite.visible = !this.alive;
-		this.outlineSprite.x = this.x;
-		this.outlineSprite.y = this.y;
 		this.outlineSprite.rotation = this.rotation;
 
 		this.sprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
@@ -47,8 +50,6 @@ class EntityPlayer extends EntityBase {
 		this.sprite.width = 32;
 		this.sprite.height = 32;
 		this.sprite.visible = this.alive;
-		this.sprite.x = this.x;
-		this.sprite.y = this.y;
 		this.sprite.rotation = this.rotation;
 
 		this.overlaySprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
@@ -57,8 +58,6 @@ class EntityPlayer extends EntityBase {
 		this.overlaySprite.height = 32;
 		this.overlaySprite.alpha = 0;
 		this.overlaySprite.visible = this.alive;
-		this.overlaySprite.x = this.x;
-		this.overlaySprite.y = this.y;
 		this.overlaySprite.rotation = this.rotation;
 
 		this.thrustSprites = {};
@@ -68,8 +67,6 @@ class EntityPlayer extends EntityBase {
 		this.thrustSprites.forward.width = 44;
 		this.thrustSprites.forward.height = 32;
 		this.thrustSprites.forward.visible = this.alive;
-		this.thrustSprites.forward.x = this.x;
-		this.thrustSprites.forward.y = this.y;
 		this.thrustSprites.forward.rotation = this.rotation;
 
 		this.thrustSprites.backward = new PIXI.Sprite(PIXI.loader.resources["thrust:default:backward"].texture);
@@ -77,16 +74,15 @@ class EntityPlayer extends EntityBase {
 		this.thrustSprites.backward.width = 32;
 		this.thrustSprites.backward.height = 32;
 		this.thrustSprites.backward.visible = this.alive;
-		this.thrustSprites.backward.x = this.x;
-		this.thrustSprites.backward.y = this.y;
 		this.thrustSprites.backward.rotation = this.rotation;
 
-		ENT.stageContainer.addChild(this.shadowSprite,
+		this.container.addChild(this.shadowSprite,
 									this.outlineSprite,
 									this.sprite,
 									this.thrustSprites.forward,
 									this.thrustSprites.backward,
 									this.overlaySprite);
+		ENT.stageContainer.addChild(this.container);
 	}
 
 	onHit() {
@@ -100,6 +96,18 @@ class EntityPlayer extends EntityBase {
 		this.shadowSprite.visible = false;
 	}
 
+	onBoost() {
+		this.boosting = true;
+
+		var attachmentPosition = this.getBoostAttachmentPosition();
+
+		ENT.createEffect(ENT.newEffect("BoostTrail", {
+			ownerId: this.id,
+			x: attachmentPosition.x,
+			y: attachmentPosition.y
+		}));
+	}
+
 	update() {
 		super.update();
 
@@ -109,6 +117,7 @@ class EntityPlayer extends EntityBase {
 
 		if (this.isLocalPlayer) {
 			centerOn(this.sprite);
+			this.container.zIndex = 2;
 		} else {
 			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}
@@ -127,6 +136,13 @@ class EntityPlayer extends EntityBase {
 		this.sprite.attach(this.overlaySprite);
 		this.sprite.attach(this.thrustSprites.forward);
 		this.sprite.attach(this.thrustSprites.backward);
+	}
+
+	getBoostAttachmentPosition() {
+		return {
+			x: this.sprite.x + Math.cos(this.sprite.rotation) * 11,
+			y: this.sprite.y + Math.sin(this.sprite.rotation) * 11
+		};
 	}
 
 	remove() {

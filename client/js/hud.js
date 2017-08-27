@@ -1,7 +1,9 @@
 var levels;
 var healthText;
 var shieldText;
+var boostText;
 
+var boost = 100;
 var shield = 100;
 var health = 100;
 var barMaxValue = 100;
@@ -32,8 +34,9 @@ function setupHUD(HUDContainer) {
 	levels = new PIXI.Graphics();
 	healthText = new PIXI.Text("health 100", textStyle);
 	shieldText = new PIXI.Text("shield 100", textStyle);
+	boostText = new PIXI.Text("boost 100", textStyle);
 
-	HUDContainer.addChild(levels, healthText, shieldText, radar);
+	HUDContainer.addChild(levels, healthText, shieldText, boostText, radar);
 }
 
 function drawHUD() {
@@ -79,27 +82,35 @@ function drawLevels() {
 	if (ENT.localPlayer != undefined) {
 		var destHealth = (ENT.localPlayer.alive ? ENT.localPlayer.health : 0);
 		var destShield = (ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0);
+		var destBoost = (ENT.localPlayer.alive ? ENT.localPlayer.boost : 0);
 
 		health = lerp(health, destHealth, 0.1);
 		shield = lerp(shield, destShield, 0.1);
+		boost = lerp(boost, destBoost, 0.1);
 
 		levels.beginFill(0x202020);
 		levels.drawRect(windowPadding, windowHeight - windowPadding - barHeight, barWidth, barHeight);
 		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding - barHeight * 2, barWidth, barHeight);
+		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding * 2 - barHeight * 3, barWidth, barHeight);
 		levels.endFill();
 
 		levels.beginFill(0xFFFFFF);
 		levels.drawRect(windowPadding, windowHeight - windowPadding - barHeight, health * (barWidth / barMaxValue), barHeight);
 		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding - barHeight * 2, shield * (barWidth / barMaxValue), barHeight);
+		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding * 2 - barHeight * 3, boost * (barWidth / barMaxValue), barHeight);
 		levels.endFill();
 
 		healthText.text = "health " + Math.floor(destHealth);
 		shieldText.text = "shield " + Math.floor(destShield);
+		boostText.text = "boost " + Math.floor(destBoost);
 
 		healthText.x = windowPadding + textPadding;
 		healthText.y = windowHeight - windowPadding - barHeight + 1;
 
 		shieldText.x = windowPadding + textPadding;
 		shieldText.y = windowHeight - windowPadding - barPadding - barHeight * 2 + 1;
+
+		boostText.x = windowPadding + textPadding;
+		boostText.y = windowHeight - windowPadding - barPadding * 2 - barHeight * 3 + 1;
 	}
 }

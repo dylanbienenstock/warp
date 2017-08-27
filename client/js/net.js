@@ -94,6 +94,11 @@ $(function() {
 					}
 
 					break;
+				case "Shift":
+					if (!ENT.localPlayer.controls.boost) {
+						sendControl("boost", true);
+						ENT.localPlayer.controls.boost = true;
+					}
 			}
 		}
 	});
@@ -121,6 +126,10 @@ $(function() {
 				case "D":
 					sendControl("thrustRight", false);
 					ENT.localPlayer.controls.thrustRight = false;
+					break;
+				case "Shift":
+					sendControl("boost", false);
+					ENT.localPlayer.controls.boost = false;
 					break;
 				case "p":
 				case "P":
