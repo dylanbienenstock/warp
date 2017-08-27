@@ -28,7 +28,7 @@ class EntityPlayer extends EntityBase {
 		};
 
 		this.container = new PIXI.Container();
-		this.container.zIndex = 1;
+		this.container.zIndex = 2;
 
 		this.shadowSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:shadow"].texture);
 		this.shadowSprite.anchor.set(0.678, 0.5);
@@ -117,7 +117,7 @@ class EntityPlayer extends EntityBase {
 
 		if (this.isLocalPlayer) {
 			centerOn(this.sprite);
-			this.container.zIndex = 2;
+			this.container.zIndex = 3;
 		} else {
 			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}
