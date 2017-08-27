@@ -50,6 +50,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 				ENT.remove(this);
 			}
+
+			if (entity instanceof ENT.type("Planet")) {
+				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / 8;
+				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / 8;
+
+				ENT.remove(this);
+			}
 		}
 	}
 }

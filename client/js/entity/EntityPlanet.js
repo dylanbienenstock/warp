@@ -5,7 +5,8 @@ class EntityPlanet extends EntityBase {
 	constructor(data) {
 		super(data);
 
-		this.radius = data.radius || 32;
+		this.radius = data.radius || 64;
+		this.color = data.color || 0xFFFFFF;
 
 		this.mask = new PIXI.Graphics();
 		this.mask.x = this.x;
@@ -19,7 +20,7 @@ class EntityPlanet extends EntityBase {
 		this.graphics.x = this.x;
 		this.graphics.y = this.y;
 
-		this.graphics.beginFill(0xFF6010);
+		this.graphics.beginFill(this.color);
 		this.graphics.drawCircle(0, 0, this.radius);
 		this.graphics.endFill();
 
@@ -38,7 +39,10 @@ class EntityPlanet extends EntityBase {
 	update() {
 		super.update();
 
-		addRadarDot(this.sprite.x, this.sprite.y, 0xFF00FF, 3);
+		addRadarDot(this.sprite.x, this.sprite.y, this.color, 3);
+
+		this.sprite.attach(this.graphics);
+		this.sprite.attach(this.mask);
 	}
 
 	remove() {

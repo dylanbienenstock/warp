@@ -4,8 +4,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super(data);
 
 			this.radius = data.radius || 64;
+			this.color = data.color || 0xFFFFFF;
 
 			this.physicsObject = PHYS.new("Circle", {
+				restrictToMap: true,
 				x: this.x,
 				y: this.y,
 				radius: this.radius
@@ -20,8 +22,18 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super.update();
 		}
 
+		collideWith(entity, collision) {
+			if (entity instanceof ENT.type("Planet")) {
+				this.physicsObject.velocityX += -Math.cos(collision.angle) * 0.1;
+				this.physicsObject.velocityY += -Math.sin(collision.angle) * 0.1;
+			}
+		}
+
 		network() {
-			
+			ENT.sendProperties(this, {
+				x: this.physicsObject.x,
+				y: this.physicsObject.y
+			});
 		}
 	}
 }

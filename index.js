@@ -75,8 +75,13 @@ function onConnect(socket) {
 function setupGame() {
 	ENT.create(ENT.new("Planet", {
 		x: 600,
-		noiseWidth: 16,
-		noiseHeight: 16
+		color: 0xFF6010
+	}));
+
+	ENT.create(ENT.new("Planet", {
+		x: 730,
+		color: 0x8DFF45,
+		radius: 42
 	}));
 
 	ENT.create(ENT.new("Shield", {
