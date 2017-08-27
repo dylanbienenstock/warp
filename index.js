@@ -48,10 +48,14 @@ function onConnect(socket) {
 
 	ENT.create(player, socket); 
 
-	console.log("+ Player connected. (ID: " + player.id + ")");
+	if (!physicsDebug) {
+		console.log("+ Player connected. (ID: " + player.id + ")");
+	}
 
 	socket.on("disconnect", function() {
-		console.log("- Player disconnected. (ID: " + player.id + ")");
+		if (!physicsDebug) {
+			console.log("- Player disconnected. (ID: " + player.id + ")");
+		}
 
 		ENT.remove(player);
 	});
@@ -92,8 +96,43 @@ function setupGame() {
 	}));
 }
 
-setInterval(function() {
-	PHYS.update(1);
-	ENT.update(1);
-	ENT.network();
-}, 1000 / 32);
+var update;
+
+if (physicsDebug) {
+	var performanceNow = require("performance-now");
+	var physicsTimes = [];
+	var avgCalculationInterval = 2500;
+	var lastAvgCalculationTime = performanceNow();
+
+	update = function() {
+		var startTime = performanceNow();
+
+		PHYS.update(1);
+
+		physicsTimes.push(performanceNow() - startTime);
+
+		if (performanceNow() - lastAvgCalculationTime >= avgCalculationInterval) {
+			lastAvgCalculationTime = performanceNow();
+
+			var physicsTimesSum = 0;
+
+			for (var i = physicsTimes.length - 1; i >= 0; i--) {
+				physicsTimesSum += physicsTimes[i];
+			}
+
+			console.log(performanceNow() + "," + physicsTimesSum);
+			physicsTimes = [];
+		}
+
+		ENT.update(1);
+		ENT.network();
+	}
+} else {
+	update = function() {
+		PHYS.update(1);
+		ENT.update(1);
+		ENT.network();
+	}
+}
+
+setInterval(update, 1000 / 32);
