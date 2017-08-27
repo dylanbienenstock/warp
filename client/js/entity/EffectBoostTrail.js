@@ -1,6 +1,6 @@
-var lineDuration = 250;
-var maxLineAlpha = 1;
-var maxLineThickness = 12;
+var boostTrailLineDuration = 250;
+var boostTrailMaxLineAlpha = 1;
+var boostTrailMaxLineThickness = 12;
 
 class EffectBoostTrail extends EntityBase {
 	constructor(data) {
@@ -30,7 +30,7 @@ class EffectBoostTrail extends EntityBase {
 			var lineEnd = entity.getBoostAttachmentPosition();
 
 			this.graphics.beginFill(this.color);
-			this.graphics.drawCircle(lineEnd.x - this.graphics.x, lineEnd.y - this.graphics.y, maxLineThickness / 2);
+			this.graphics.drawCircle(lineEnd.x - this.graphics.x, lineEnd.y - this.graphics.y, boostTrailMaxLineThickness / 2);
 			this.graphics.endFill();
 
 			this.lines.push({
@@ -48,8 +48,8 @@ class EffectBoostTrail extends EntityBase {
 		for (var i = this.lines.length - 1; i >= 0; i--) {
 			var line = this.lines[i];
 			var lineAge = Date.now() - line.time;
-			var lineAlpha = Math.max(((lineDuration - lineAge) / lineDuration) * maxLineAlpha, 0);
-			var lineThickness = Math.max(((lineDuration - lineAge) / lineDuration) * maxLineThickness, 0);
+			var lineAlpha = Math.max(((boostTrailLineDuration - lineAge) / boostTrailLineDuration) * boostTrailMaxLineAlpha, 0);
+			var lineThickness = Math.max(((boostTrailLineDuration - lineAge) / boostTrailLineDuration) * boostTrailMaxLineThickness, 0);
 
 			if (lineAlpha > 0) {
 				this.graphics.lineStyle(lineThickness, this.color, lineAlpha);

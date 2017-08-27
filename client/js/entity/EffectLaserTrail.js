@@ -1,5 +1,5 @@
-var lineDuration = 250;
-var maxLineAlpha = 1;
+var laserTrailLineDuration = 250;
+var laserTrailmaxLineAlpha = 1;
 
 class EffectLaserTrail extends EntityBase {
 	constructor(data) {
@@ -53,7 +53,7 @@ class EffectLaserTrail extends EntityBase {
 		for (var i = this.lines.length - 1; i >= 0; i--) {
 			var line = this.lines[i];
 			var lineAge = Date.now() - line.time;
-			var lineAlpha = Math.max(((lineDuration - lineAge) / lineDuration) * maxLineAlpha, 0);
+			var lineAlpha = Math.max(((laserTrailLineDuration - lineAge) / laserTrailLineDuration) * laserTrailmaxLineAlpha, 0);
 
 			if (lineAlpha > 0) {
 				this.graphics.lineStyle(this.thickness, this.color, lineAlpha);
