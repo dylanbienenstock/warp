@@ -30,6 +30,15 @@ class EntityPlayer extends EntityBase {
 		this.container = new PIXI.Container();
 		this.container.zIndex = 2;
 
+		var textStyle = new PIXI.TextStyle({
+		    fontFamily: "Helvetica",
+		    fontSize: 11,
+		    fill: "#FFFFFF",
+		    letterSpacing: 0.25
+		});
+
+		this.nameText = new PIXI.Text(this.name, textStyle);
+
 		this.shadowSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:shadow"].texture);
 		this.shadowSprite.anchor.set(0.678, 0.5);
 		this.shadowSprite.width = 40;
@@ -76,12 +85,14 @@ class EntityPlayer extends EntityBase {
 		this.thrustSprites.backward.visible = this.alive;
 		this.thrustSprites.backward.rotation = this.rotation;
 
-		this.container.addChild(this.shadowSprite,
-									this.outlineSprite,
-									this.sprite,
-									this.thrustSprites.forward,
-									this.thrustSprites.backward,
-									this.overlaySprite);
+		this.container.addChild(this.nameText,
+								this.shadowSprite,
+								this.outlineSprite,
+								this.sprite,
+								this.thrustSprites.forward,
+								this.thrustSprites.backward,
+								this.overlaySprite);
+
 		ENT.stageContainer.addChild(this.container);
 	}
 
@@ -130,6 +141,9 @@ class EntityPlayer extends EntityBase {
 		if (!this.alive) {
 			this.sprite.alpha = lerp(this.sprite.alpha, 0, 0.05);
 		}
+
+		this.nameText.x = this.sprite.x + 16;
+		this.nameText.y = this.sprite.y + 16;
 
 		this.sprite.attach(this.outlineSprite);
 		this.sprite.attach(this.shadowSprite, 2, 2);

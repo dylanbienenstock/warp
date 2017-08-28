@@ -161,18 +161,16 @@ class EntityManager {
 		return null;
 	}
 
-	getByClassName(className, callback) {
+	getAllByClassName(className) {
+		var found = [];
+
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i].className == className) {
-				if (callback instanceof Function) {
-					callback(this.entities[i]);
-				}
-
-				return this.entities[i];
+				found.push(this.entities[i]);
 			}
 		}
 
-		return null;
+		return found;
 	}
 
 	getAll() {

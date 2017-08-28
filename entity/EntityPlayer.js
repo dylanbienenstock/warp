@@ -7,6 +7,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super(data);
 
+			this.name = data.name || "Unnamed";
 			this.shield = null;
 			this.shieldPower = 100;
 			this.health = 100;
