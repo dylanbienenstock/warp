@@ -1,5 +1,7 @@
 var renderer;
 var baseContainer;
+var titleScreenContainer;
+var gameContainer;
 var gridContainer;
 var stageContainer;
 var boundaryContainer;
@@ -19,12 +21,18 @@ $(function() {
 	document.body.appendChild(renderer.view);
 
 	baseContainer = new PIXI.Container();
+	titleScreenContainer = new PIXI.Container();
+	gameContainer = new PIXI.Container();
+
 	gridContainer = new PIXI.Container();
 	stageContainer = new PIXI.Container();
 	boundaryContainer = new PIXI.Container();
 	HUDContainer = new PIXI.Container();
 
-	baseContainer.addChild(gridContainer, stageContainer, boundaryContainer, HUDContainer);
+	gameContainer.addChild(gridContainer, stageContainer, boundaryContainer, HUDContainer);
+	baseContainer.addChild(titleScreenContainer, gameContainer);
+
+	setupTitleScreen(titleScreenContainer, gameContainer);
 
 	grid = new PIXI.Graphics();
 	gridContainer.addChild(grid);
@@ -96,12 +104,13 @@ function setup() {
 	stageContainer.addChild(stationContainer);
 
 	setupHUD(HUDContainer);
-	connect();
 	update();
 }
 
 function update() {
 	window.requestAnimationFrame(update);
+
+	updateTitleScreen(baseContainer, titleScreenContainer, gameContainer);
 
 	ENT.stageContainer.children.sort(function(a, b) {
 		a.zIndex = a.zIndex || 0;
@@ -127,21 +136,26 @@ function update() {
 function drawGrid() {
 	grid.clear();
 	
-	var line = grid.lineStyle(1, 0xFFFFFF, 0.5);
 	var ww = $(window).innerWidth();
 	var wh = $(window).innerHeight();
 
+	grid.beginFill(0x000000);
+	grid.drawRect(0, 0, ww, wh);
+	grid.endFill();
+
+	grid.lineStyle(1, 0xFFFFFF, 0.5);
+
 	for (var x = 0; x < ww; x++) {
 		if (Math.floor(stageContainer.pivot.x + x) % 256 == 0) {
-			line.moveTo(x, 0);
-			line.lineTo(x, wh);
+			grid.moveTo(x, 0);
+			grid.lineTo(x, wh);
 		}
 	}
 
 	for (var y = 0; y < wh; y++) {
 		if (Math.floor(stageContainer.pivot.y + y) % 256 == 0) {
-			line.moveTo(0, y);
-			line.lineTo(ww, y);
+			grid.moveTo(0, y);
+			grid.lineTo(ww, y);
 		}
 	}
 }

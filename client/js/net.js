@@ -1,43 +1,56 @@
 var socket;
 
-function connect() {
+function connect(name) {
+	var accepted = false;
+
 	socket = io();
 
-	socket.on("entity list", function(data) {
-		for (var i = data.length - 1; i >= 0; i--) {
-			ENT.create(ENT.new(data[i]));
-		}
-	});
+	socket.emit("name request", name);
 
-	socket.on("entity create", function(data) {
-		var entity = ENT.create(ENT.new(data));
+	socket.on("name response", function(response) {
+		if (!accepted) {
+			processResponse(response);
+			accepted = response.accepted;
 
-		if (data.playerSocketId == socket.id) {
-			ENT.localPlayer = entity;
-			entity.isLocalPlayer = true;
-		}
-	});
+			if (response.accepted) {
+				socket.on("entity list", function(data) {
+					for (var i = data.length - 1; i >= 0; i--) {
+						ENT.create(ENT.new(data[i]));
+					}
+				});
 
-	socket.on("entity remove", function(id) {
-		ENT.removeById(id);
-	});
+				socket.on("entity create", function(data) {
+					var entity = ENT.create(ENT.new(data));
 
-	socket.on("entity set", function(data) {
-		for (var i = data.length - 1; i >= 0; i--) {
-			var data2 = data[i];
+					if (data.playerSocketId == socket.id) {
+						ENT.localPlayer = entity;
+						entity.isLocalPlayer = true;
+					}
+				});
 
-			ENT.getById(data2.id, function(entity) {
-				entity.setProperties(data2.properties);
-			});
-		}
-	});
+				socket.on("entity remove", function(id) {
+					ENT.removeById(id);
+				});
 
-	socket.on("entity trigger", function(data) {
-		ENT.getById(data.id, function(entity) {
-			if (entity.triggers.hasOwnProperty(data.trigger)) {
-				entity.triggers[data.trigger](data.triggerData);
+				socket.on("entity set", function(data) {
+					for (var i = data.length - 1; i >= 0; i--) {
+						var data2 = data[i];
+
+						ENT.getById(data2.id, function(entity) {
+							entity.setProperties(data2.properties);
+						});
+					}
+				});
+
+				socket.on("entity trigger", function(data) {
+					ENT.getById(data.id, function(entity) {
+						if (entity.triggers.hasOwnProperty(data.trigger)) {
+							entity.triggers[data.trigger](data.triggerData);
+						}
+					});
+				});
 			}
-		});
+		}
 	});
 }
 
@@ -49,7 +62,7 @@ function sendAngle(angle) {
 	socket.emit("angle", angle);
 }
 
-$(function() {
+function bindControls() {
 	$(window).mousemove(function(event) {
 		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
 			var mousePos = getMousePosition();
@@ -177,4 +190,4 @@ $(function() {
 			sendAngle(ENT.localPlayer.sprite.rotation);
 		}
 	}, 1000 / 32);
-});
+}

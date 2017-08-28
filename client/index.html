@@ -4,6 +4,7 @@
 	<head>
 		<title>warp.io</title>
 
+		<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
 		<link rel="stylesheet" href="./css/styles.css" />
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -13,11 +14,13 @@
 		<script src="./js/lib/pixi.min.js"></script>
 		<script src="./js/lib/jquery.resize.js"></script>
 		<script src="./js/lib/jquery.mousewheel.min.js"></script>
+		<script src="./js/lib/jquery.color-2.1.2.min.js"></script>
 
+		<script src="./js/net.js"></script>
 		<script src="./js/util.js"></script>
+		<script src="./js/titlescreen.js"></script>
 		<script src="./js/render.js"></script>
 		<script src="./js/hud.js"></script>
-		<script src="./js/net.js"></script>
 
 		<script src="./js/entity/EntityBase.js"></script>
 		<script src="./js/entity/EntityPhysicsDebug.js"></script>
@@ -31,6 +34,19 @@
 	</head>
 
 	<body oncontextmenu="return false;">
-		
+		<div id="title-container">
+			<div>
+				<span id="title">WARP</span>
+			</div>
+
+			<div style="margin-top: 12px;">
+				<span id="name-input-title">NAME: </span>
+				<input id="name-input" type="text" maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+			</div>
+
+			<div style="margin-top: 12px;">
+				<span id="help-message">Press ENTER to connect.</span>
+			</div>
+		</div>
 	</body>
 </html>

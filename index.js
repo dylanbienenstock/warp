@@ -37,11 +37,29 @@ function startServer(startTime) {
 }
 
 function onConnect(socket) {
+	var accepted = false;
+
+	socket.on("name request", function(name) {
+		if (!accepted) {
+			var response = processName(name);
+			accepted = response.accepted;
+
+			socket.emit("name response", response);
+
+			if (response.accepted) {
+				acceptConnection(name, socket);
+			}
+		}
+	});
+}
+
+function acceptConnection(name, socket) {
 	ENT.sendAllEntities(socket);
 
 	var angle = 2 * Math.PI * Math.random();
 
 	var player = ENT.new("Player", {
+		name: name,
 		x: -Math.cos(angle) * 145,
 		y: -Math.sin(angle) * 145
 	});
@@ -49,12 +67,12 @@ function onConnect(socket) {
 	ENT.create(player, socket); 
 
 	if (!physicsDebug) {
-		console.log("+ Player connected. (ID: " + player.id + ")");
+		console.log("+ Player " + name + " has connected.");
 	}
 
 	socket.on("disconnect", function() {
 		if (!physicsDebug) {
-			console.log("- Player disconnected. (ID: " + player.id + ")");
+			console.log("- Player " + name + " has disconnected.");
 		}
 
 		ENT.remove(player);
@@ -75,6 +93,41 @@ function onConnect(socket) {
 			player.physicsObject.rotation = angle;
 		}
 	});
+}
+
+var nameValidator = /^([A-Za-z0-9\-]+)$/g;
+
+function processName(name) {
+	var players = ENT.getAllByClassName("Player");
+	var response = {
+		accepted: true,
+		message: "Connection accepted."
+	};
+
+	for (var i = players.length - 1; i >= 0; i--) {
+		if (players[i].name == name) {
+			response.accepted = false;
+			response.message = "That name is currently in use.";
+
+			return response;
+		}
+	}
+
+	if (name.length < 3 || name.length > 16) {
+		response.accepted = false;
+		response.message = "Name must be within 3 and 16 characters.";
+
+		return response;
+	}
+
+	if (name.match(nameValidator) == null) {
+		response.accepted = false;
+		response.message = "Use only letters, numbers, and hyphens.";
+
+		return response;
+	}
+
+	return response;
 }
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////

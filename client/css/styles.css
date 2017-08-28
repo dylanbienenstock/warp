@@ -4,3 +4,38 @@
 
 	overflow: hidden;
 }
+
+#title-container {
+	position: absolute;
+	z-index: 999;
+	color: yellow;
+	text-align: center;
+	font-family: 'Source Code Pro', monospace;
+}
+
+#title {
+	font-size: 96px;
+}
+
+#name-input-title {
+	font-size: 24px;
+}
+
+#name-input {
+	background: none;
+	outline: none;
+	border: none;
+
+	width: 235px;
+
+	font-size: 24px;
+	line-height: 24px;
+
+	color: inherit;
+	font-family: inherit;
+}
+
+#help-message {
+	font-size: 12px;
+	font-style: italic;
+}
