@@ -85,7 +85,7 @@ class EntityPlayer extends EntityBase {
 
 		ENT.stageContainer.addChild(this.container);
 
-		this.createNametag();
+		this.createNameTag();
 	}
 
 	onHit() {
@@ -139,27 +139,28 @@ class EntityPlayer extends EntityBase {
 		this.sprite.attach(this.overlaySprite);
 		this.sprite.attach(this.thrustSprites.forward);
 		this.sprite.attach(this.thrustSprites.backward);
-
-		this.updateNametag();
 	}
 
-	createNametag() {
+	createNameTag() {
 		this.nameTag = document.createElement("span");
 		this.nameTag.className = "nametag";
 		this.nameTag.innerHTML = this.name;
 
 		document.body.appendChild(this.nameTag);
 
-		this.updateNametag();
+		this.updateNameTag();
 	}
 
-	updateNametag() {
+	updateNameTag() {
 		var nameTagPosition = ENT.stageContainer.toGlobal(this.sprite.position);
 		var nameTagWidth = $(this.nameTag).outerWidth();
 		var nameTagHeight = $(this.nameTag).outerHeight();
 
 		nameTagPosition.x -= nameTagWidth / 2;
-		nameTagPosition.y += nameTagHeight + 16 * window.zoom;
+		nameTagPosition.y += 20 * window.zoom;
+
+		nameTagPosition.x = Math.round(nameTagPosition.x);
+		nameTagPosition.y = Math.round(nameTagPosition.y);
 
 		if (window.showNameTags &&
 			!this.isLocalPlayer && 

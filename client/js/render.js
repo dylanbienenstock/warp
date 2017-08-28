@@ -186,4 +186,10 @@ function centerOn(sprite) {
 	boundaryContainer.scale.y = window.zoom;
 	boundaryContainer.pivot.x = sprite.position.x;
 	boundaryContainer.pivot.y = sprite.position.y;
+
+	var players = ENT.getAllByClassName("Player");
+
+	for (var i = players.length - 1; i >= 0; i--) {
+		players[i].updateNameTag();
+	}
 }

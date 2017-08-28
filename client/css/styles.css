@@ -47,10 +47,11 @@
 
 .nametag {
 	position: absolute;
+	display: block;
 	font-size: 16px;
 	color: white;
 	text-shadow: #000 0px 0px 8px;
-	padding: 0 8px 0 8px;
+	padding: 4px;
 
 	-webkit-user-select: none;
 	-moz-user-select: none;
