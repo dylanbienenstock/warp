@@ -93,6 +93,8 @@ $(function() {
 			connect($("#name-input").val());
 		}
 	});
+
+	centerTitleScreen();
 });
 
 function processResponse(response) {
