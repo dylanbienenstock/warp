@@ -3,14 +3,17 @@
 	margin: 0 0 0 0;
 
 	overflow: hidden;
+
+	font-family: "Source Code Pro", monospace;
 }
+
+/* Interface */
 
 #title-container {
 	position: absolute;
 	z-index: 999;
 	color: yellow;
 	text-align: center;
-	font-family: 'Source Code Pro', monospace;
 }
 
 #title {
@@ -38,4 +41,21 @@
 #help-message {
 	font-size: 12px;
 	font-style: italic;
+}
+
+/* In-Game */
+
+.nametag {
+	position: absolute;
+	font-size: 16px;
+	color: white;
+	text-shadow: #000 0px 0px 8px;
+	padding: 0 8px 0 8px;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	cursor: default;
 }

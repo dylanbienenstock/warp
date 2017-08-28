@@ -30,15 +30,6 @@ class EntityPlayer extends EntityBase {
 		this.container = new PIXI.Container();
 		this.container.zIndex = 2;
 
-		var textStyle = new PIXI.TextStyle({
-		    fontFamily: "Helvetica",
-		    fontSize: 11,
-		    fill: "#FFFFFF",
-		    letterSpacing: 0.25
-		});
-
-		this.nameText = new PIXI.Text(this.name, textStyle);
-
 		this.shadowSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:shadow"].texture);
 		this.shadowSprite.anchor.set(0.678, 0.5);
 		this.shadowSprite.width = 40;
@@ -85,8 +76,7 @@ class EntityPlayer extends EntityBase {
 		this.thrustSprites.backward.visible = this.alive;
 		this.thrustSprites.backward.rotation = this.rotation;
 
-		this.container.addChild(this.nameText,
-								this.shadowSprite,
+		this.container.addChild(this.shadowSprite,
 								this.outlineSprite,
 								this.sprite,
 								this.thrustSprites.forward,
@@ -94,6 +84,8 @@ class EntityPlayer extends EntityBase {
 								this.overlaySprite);
 
 		ENT.stageContainer.addChild(this.container);
+
+		this.createNametag();
 	}
 
 	onHit() {
@@ -142,14 +134,46 @@ class EntityPlayer extends EntityBase {
 			this.sprite.alpha = lerp(this.sprite.alpha, 0, 0.05);
 		}
 
-		this.nameText.x = this.sprite.x + 16;
-		this.nameText.y = this.sprite.y + 16;
-
 		this.sprite.attach(this.outlineSprite);
 		this.sprite.attach(this.shadowSprite, 2, 2);
 		this.sprite.attach(this.overlaySprite);
 		this.sprite.attach(this.thrustSprites.forward);
 		this.sprite.attach(this.thrustSprites.backward);
+
+		this.updateNametag();
+	}
+
+	createNametag() {
+		this.nameTag = document.createElement("span");
+		this.nameTag.className = "nametag";
+		this.nameTag.innerHTML = this.name;
+
+		document.body.appendChild(this.nameTag);
+
+		this.updateNametag();
+	}
+
+	updateNametag() {
+		var nameTagPosition = ENT.stageContainer.toGlobal(this.sprite.position);
+		var nameTagWidth = $(this.nameTag).outerWidth();
+		var nameTagHeight = $(this.nameTag).outerHeight();
+
+		nameTagPosition.x -= nameTagWidth / 2;
+		nameTagPosition.y += nameTagHeight + 16 * window.zoom;
+
+		if (window.showNameTags &&
+			!this.isLocalPlayer && 
+			((nameTagPosition.x + nameTagWidth > 0 && nameTagPosition.y + nameTagHeight > 0) ||
+			(nameTagPosition.x < $(window).innerWidth() && nameTagPosition.y < $(window).innerHeight()))) {
+
+			this.nameTag.style.display = "initial";
+			$(this.nameTag).offset({
+				left: nameTagPosition.x,
+				top: nameTagPosition.y
+			});
+		} else {
+			this.nameTag.style.display = "none"
+		}
 	}
 
 	getBoostAttachmentPosition() {
@@ -163,5 +187,7 @@ class EntityPlayer extends EntityBase {
 		this.container.removeChildren();
 		ENT.stageContainer.removeChild(this.container);
 		this.container.destroy();
+
+		document.body.removeChild(this.nameTag);
 	}
 }

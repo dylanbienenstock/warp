@@ -6,6 +6,8 @@ var transitioning = false;
 var transitionProgress = 0;
 var done = false;
 
+window.showNameTags = false;
+
 function setupTitleScreen(titleScreenContainer, gameContainer) {
 	titleScreenBackground = new PIXI.Graphics();
 	titleScreenCircles = new PIXI.Graphics();
@@ -58,6 +60,8 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 				titleScreenBackground.destroy();
 				titleScreenCircles.destroy();
 				titleScreenTransition.destroy();
+			} else if (transitionProgress >= 0.4) {
+				window.showNameTags = true;
 			}
 		}
 	}
