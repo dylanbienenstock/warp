@@ -362,9 +362,12 @@ class PhysicsManager {
 				var shouldCalcInfo = false;
 				physicsObject.sleeping = true;
 
-				if (physicsObject.info == undefined || Math.abs(physicsObject.totalVelocityX) > 0 || Math.abs(physicsObject.totalVelocityY) > 0) {
+				if (physicsObject.info == undefined || physicsObject.x != physicsObject.lastX || physicsObject.y != physicsObject.lastY) {
 					shouldCalcInfo = true;
 				}
+
+				physicsObject.lastX = physicsObject.x;
+				physicsObject.lastY = physicsObject.y;
 
 				if (physicsObject instanceof this.Physics.Box) { 									// 0.05 rad ~= 3 deg
 					if (!shouldCalcInfo && Math.abs(physicsObject.rotation - physicsObject.lastRotation) > 0.05) {
