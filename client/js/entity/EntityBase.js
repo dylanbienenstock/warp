@@ -7,6 +7,7 @@ Special entity variables
 * lifespan: If set, the entity will be automatically removed after this many milliseconds
 * createdTime: Set automatically if entity has lifespan property
 * networkGlobally: Entities with this property will be networked to all clients regardless of position
+* nextNetworkGlobally: Same as networkGlobally, but only for the next network update
 * doNotNetwork: Entities with this property set to true will not be networked
 				Properties of the entity may use this property as well
 

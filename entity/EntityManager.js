@@ -34,6 +34,7 @@ class EntityManager {
 	}
 
 	new(className, data) {
+		data = data || {};
 		data.className = className;
 		
 		return new this.Entity[className](data);
@@ -135,9 +136,11 @@ class EntityManager {
 				var entity = this.toNetwork[i3].entity;
 
 				if (entity.networkGlobally ||
+					entity.nextNetworkGlobally ||
 					entity.physicsObject == undefined ||
 					entity.physicsObject.info == undefined) {
 
+					entity.nextNetworkGlobally = false;
 					toNetworkSpecific.push(this.toNetwork[i3].packet);
 				} else {
 					var entityBounds = entity.physicsObject.info.bounds;
