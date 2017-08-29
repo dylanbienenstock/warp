@@ -14,7 +14,7 @@
    viewBox="0 0 8.4666665 8.4666669"
    version="1.1"
    id="svg1497"
-   sodipodi:docname="3.svg"
+   sodipodi:docname="3-outline.svg"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06">
   <defs
      id="defs1491" />
@@ -56,7 +56,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -66,7 +66,7 @@
      id="layer1"
      transform="translate(0,-288.53332)">
     <path
-       style="fill:#828282;fill-opacity:1;stroke:none;stroke-width:0.72486484;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#a0a0a0;fill-opacity:1;stroke:none;stroke-width:0.72486484;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 8.4666668,291.13626 -1.0720781,1.45879 0.2199135,1.6876 -0.7971862,1.57321 -1.6768399,-0.54348 -1.869264,1.68761 -1.9792208,-1.02971 0.1649352,-2.37411 L 0,291.67973 l 1.7867967,-1.4874 0.797186,-1.65901 1.9242425,0.45766 0.9896104,0.88673 2.4190477,-0.85814 z"
        id="path2149"
        inkscape:connector-curvature="0" />
