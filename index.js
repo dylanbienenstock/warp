@@ -166,11 +166,6 @@ function setupGame() {
 			radius: Math.random() * 32 + 32
 		}));
 	}
-
-	ENT.create(ENT.new("Shield", {
-		radius: 256,
-		hitSize: 100
-	}));
 }
 
 var update;
