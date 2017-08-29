@@ -159,8 +159,8 @@ function setupGame() {
 		var angle = 2 * Math.PI * Math.random();
 
 		ENT.create(ENT.new("Planet", {
-			x: -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128 + 512),
-			y: -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128 + 512),
+			x: -Math.cos(angle) * (Math.random() * 512 + 1024),
+			y: -Math.sin(angle) * (Math.random() * 512 + 1024),
 			velocityX: -Math.cos(angle) * 2,
 			velocityY: -Math.sin(angle) * 2,
 			radius: Math.random() * 32 + 32
