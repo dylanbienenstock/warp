@@ -115,6 +115,9 @@ ENT.removeEffectById = function(id) {
 }
 
 ENT.update = function() {
+	ENT.ww = $(window).width();
+	ENT.wh = $(window).height();
+
 	for (var i = entities.length - 1; i >= 0; i--) {
 		entities[i].update();
 	}
