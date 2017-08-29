@@ -66,10 +66,16 @@ function sendAngle(angle) {
 	socket.emit("angle", angle);
 }
 
+var sendViewportDimensionsTimeout;
+
 function sendViewportDimensions() {
-	socket.emit("viewport", {
-		width: $(window).width(),
-		height: $(window).height()
+	clearTimeout(sendViewportDimensionsTimeout);
+
+	setTimeout(function() {
+		socket.emit("viewport", {
+			width: $(window).width() * (1 / window.destZoom),
+			height: $(window).height() * (1 / window.destZoom )
+		});
 	});
 }
 
@@ -81,15 +87,8 @@ function bindControls() {
 														 ENT.localPlayer.sprite.position.x - mousePos.x);
 		}
 	});
-
-	var resizeTimeout;
-
 	$(window).resize(function() {
-		clearTimeout(resizeTimeout);
-		
-		resizeTimeout = setTimeout(function() {
-			sendViewportDimensions();
-		}, 500);
+		sendViewportDimensions();
 	});
 
 	$(window).keydown(function(event) {
@@ -165,6 +164,10 @@ function bindControls() {
 					sendControl("boost", false);
 					ENT.localPlayer.controls.boost = false;
 					break;
+				case "o":
+				case "O":
+					window.overrideZoom = 0.3;
+					window.useOverrideZoom = !window.useOverrideZoom;
 				case "p":
 				case "P":
 					ENT.physicsDebug = !ENT.physicsDebug;

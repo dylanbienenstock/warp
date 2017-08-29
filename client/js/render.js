@@ -14,8 +14,18 @@ var stationInner;
 
 window.renderer;
 window.boundaryRadius = 4096;
-window.zoom = 2;
 window.protectedSpaceRadius = 600;
+
+window.maxZoom = 3;
+window.minZoom = 1;
+window.zoomLerpFactor = 0.2;
+window.zoomIncrement = 0.1;
+window.currentZoom = 1.5;
+window.scrollZoom = window.currentZoom;
+window.destZoom = window.currentZoom;
+window.lastDestZoom = window.currentZoom;
+window.overrideZoom = -1;
+window.useOverrideZoom = false;
 
 $(function() {
 	var ww = $(window).innerWidth();
@@ -41,16 +51,10 @@ $(function() {
 	blackness.cacheAsBitmap = true;
 
 	backdropContainer.addChild(blackness);
-	gameContainer.addChild(backdropContainer, stageContainer, boundaryContainer, HUDContainer);
+	gameContainer.addChild(backdropContainer, boundaryContainer, stageContainer, HUDContainer);
 	baseContainer.addChild(titleScreenContainer, gameContainer);
 
 	setupTitleScreen(titleScreenContainer, gameContainer);
-
-	boundary = new PIXI.Graphics();
-	boundaryContainer.addChild(boundary)
-
-	boundary.lineStyle(1, 0xFFFFFF, 1);
-	boundary.drawCircle(0, 0, boundaryRadius);
 
 	ENT.stageContainer = stageContainer;
 
@@ -58,10 +62,10 @@ $(function() {
 
 	$(window).mousewheel(function(event) {
     	if (event.deltaY > 0) {
-    		window.zoom = Math.min(window.zoom + 0.25, 3);
+    		window.scrollZoom = Math.min(window.scrollZoom + window.zoomIncrement * window.scrollZoom, window.maxZoom);
     	}
     	else if (event.deltaY < 0) {
-    		window.zoom = Math.max(window.zoom - 0.25, 1);
+    		window.scrollZoom = Math.max(window.scrollZoom - window.zoomIncrement * window.scrollZoom, window.minZoom);
     	}
 	});
 
@@ -176,17 +180,26 @@ function getHUD() {
 }
 
 function centerOn(sprite) {
+	window.destZoom = (window.useOverrideZoom ? window.overrideZoom : window.scrollZoom);
+	window.currentZoom = lerp(window.currentZoom, window.destZoom, window.zoomLerpFactor);
+
+	if (window.currentZoom != window.lastDestZoom) {
+		sendViewportDimensions();
+	}
+
+	window.lastDestZoom = window.currentZoom;
+
 	stageContainer.position.x = renderer.width / 2;
 	stageContainer.position.y = renderer.height / 2;
-	stageContainer.scale.x = window.zoom;
-	stageContainer.scale.y = window.zoom;
+	stageContainer.scale.x = window.currentZoom;
+	stageContainer.scale.y = window.currentZoom;
 	stageContainer.pivot.x = sprite.position.x;
 	stageContainer.pivot.y = sprite.position.y;
 
 	boundaryContainer.position.x = renderer.width / 2;
 	boundaryContainer.position.y = renderer.height / 2;
-	boundaryContainer.scale.x = window.zoom;
-	boundaryContainer.scale.y = window.zoom;
+	boundaryContainer.scale.x = window.currentZoom;
+	boundaryContainer.scale.y = window.currentZoom;
 	boundaryContainer.pivot.x = sprite.position.x;
 	boundaryContainer.pivot.y = sprite.position.y;
 

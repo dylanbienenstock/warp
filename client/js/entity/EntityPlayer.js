@@ -157,7 +157,7 @@ class EntityPlayer extends EntityBase {
 		var nameTagHeight = $(this.nameTag).outerHeight();
 
 		nameTagPosition.x -= nameTagWidth / 2;
-		nameTagPosition.y += 20 * window.zoom;
+		nameTagPosition.y += 20 * window.currentZoom;
 
 		nameTagPosition.x = Math.round(nameTagPosition.x);
 		nameTagPosition.y = Math.round(nameTagPosition.y);
