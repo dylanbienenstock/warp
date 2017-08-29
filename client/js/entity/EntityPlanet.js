@@ -45,6 +45,10 @@ class EntityPlanet extends EntityBase {
 		this.sprite.attach(this.mask);
 	}
 
+	cull(visible) {
+		this.container.visible = visible;
+	}
+
 	remove() {
 		this.container.removeChildren();
 		ENT.stageContainer.removeChild(this.container);

@@ -141,6 +141,10 @@ class EntityPlayer extends EntityBase {
 		this.sprite.attach(this.thrustSprites.backward);
 	}
 
+	cull(visible) {
+		this.container.visible = visible;
+	}
+
 	createNameTag() {
 		this.nameTag = document.createElement("span");
 		this.nameTag.className = "nametag";

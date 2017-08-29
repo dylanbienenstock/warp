@@ -2,12 +2,25 @@
 
 Special entity variables
 ------------------------
+* sprite: The entity's primary sprite - cull() will only be called if this property is present
+
+* physicsObject: The entity's primary physicsObject
+Physics will not be calculated for the entity if this property isn't present
+
+* lerpFactorPosition: Used to override default position lerp factor
+
 * x, y, rotation: Used to send physics information to client
+
 * triggers: Used to send trigger events to client
+
 * lifespan: If set, the entity will be automatically removed after this many milliseconds
+
 * createdTime: Set automatically if entity has lifespan property
+
 * networkGlobally: Entities with this property will be networked to all clients regardless of position
+
 * nextNetworkGlobally: Same as networkGlobally, but only for the next network update
+
 * doNotNetwork: Entities with this property set to true will not be networked
 				Properties of the entity may use this property as well
 
@@ -36,11 +49,15 @@ class EntityBase {
 				bounds.y < ENT.wh &&
 				bounds.y + bounds.height > 0) {
 
-				this.sprite.visible = true;
+				this.cull(true);
 			} else {
-				this.sprite.visible = false;
+				this.cull(false);
 			}
 		}
+	}
+
+	cull(visible) {
+
 	}
 
 	remove() {

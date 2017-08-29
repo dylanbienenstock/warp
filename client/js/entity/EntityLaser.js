@@ -31,6 +31,10 @@ class EntityLaser extends EntityBase {
 		super.update();
 	}
 
+	cull(visible) {
+		this.graphics.visible = visible;
+	}
+
 	remove() {
 		ENT.stageContainer.removeChild(this.graphics);
 		this.graphics.destroy();
