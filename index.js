@@ -5,7 +5,7 @@ var io = require("socket.io")(http);
 
 const physicsDebug = process.env.PHYS_DEBUG;
 
-var PHYS = require("./physics/PhysicsManager.js")(io);
+var PHYS = require("./physics/PhysicsManager.js")(io, physicsDebug);
 var Physics = require("./physics/Physics.js")(PHYS);
 PHYS.Physics = Physics;
 

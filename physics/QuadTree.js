@@ -2,7 +2,7 @@ module.exports = function() {
 	const capacity = 8;
 	const maxLevel = 8;
 
-	return class QuadTree {
+	class QuadTree {
 		constructor(x, y, size, level) {
 			this.x = x;
 			this.y = y;
@@ -10,12 +10,12 @@ module.exports = function() {
 			this.level = level;
 			this.horizontalMidpoint = x + size / 2;
 			this.verticalMidpoint = y + size / 2;
-			this.objects = null;
+			this.objects = [];
 			this.nodes = null;
 		}
 
 		insert(physicsObject) {
-			if (nodes != null) {
+			if (this.nodes != null) {
 				var index = this.getIndex(physicsObject.info.bounds);
 
 				if (index != -1) {
@@ -48,9 +48,9 @@ module.exports = function() {
 		}
 
 		getIndex(bounds) {
-			var top = bounds.maxY > this.verticalMidpoint;
-			var bottom = bounds.minY < this.verticalMidpoint;
-			var left = bounds.maxX < this.horizontalMidpoint;
+			var top = bounds.minY <= this.verticalMidpoint;
+			var bottom = bounds.maxY > this.verticalMidpoint;
+			var left = bounds.maxX <= this.horizontalMidpoint;
 			var right = bounds.minX > this.horizontalMidpoint;
 
 			if (top) {
@@ -71,13 +71,13 @@ module.exports = function() {
 		}
 
 		subdivide() {
-			var halfSize = size / 2;
+			var halfSize = this.size / 2;
 
 			this.nodes = [
-				new QuadTree(x, y, halfSize, this.level + 1),						// Top left
-				new QuadTree(x + halfSize, y, halfSize, this.level + 1),			// Top right
-				new QuadTree(x, y + halfSize, halfSize, this.level + 1),			// Bottom left
-				new QuadTree(x + halfSize, y + halfSize, halfSize, this.level + 1),	// Bottom right
+				new QuadTree(this.x, this.y, halfSize, this.level + 1),						// Top left
+				new QuadTree(this.x + halfSize, this.y, halfSize, this.level + 1),			// Top right
+				new QuadTree(this.x, this.y + halfSize, halfSize, this.level + 1),			// Bottom left
+				new QuadTree(this.x + halfSize, this.y + halfSize, halfSize, this.level + 1)	// Bottom right
 			];
 		}
 
@@ -87,7 +87,7 @@ module.exports = function() {
 			var index = this.getIndex(bounds);
 
 			if (index != -1 && this.nodes != null) {
-				nodes[index].retrievedObjects(bounds, retrievedObjects);
+				this.nodes[index].retrieve(bounds, retrievedObjects);
 			}
 
 			for (var i = this.objects.length - 1; i >= 0; i--) {
@@ -100,12 +100,29 @@ module.exports = function() {
 		clear() {
 			this.objects.length = 0;
 
-			for (var i = this.nodes.length - 1; i >= 0; i--) {
-				if (this.nodes[i] != null) {
-					this.nodes[i].clear();
-					this.nodes[i] = null;
-				}
+			if (this.nodes != null) {
+				this.nodes = null;
 			}
 		}
+
+		getDebugInfo(debugInfo) {
+			debugInfo = debugInfo || [];
+
+			if (this.nodes != null) {
+				for (var i = this.nodes.length - 1; i >= 0; i--) {
+					this.nodes[i].getDebugInfo(debugInfo);
+				}
+			}
+
+			debugInfo.push({
+				x: this.x,
+				y: this.y,
+				size: this.size
+			});
+
+			return debugInfo;
+		}
 	}
+
+	return QuadTree;
 }

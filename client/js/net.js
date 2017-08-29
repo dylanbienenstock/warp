@@ -49,6 +49,10 @@ function connect(name) {
 						}
 					});
 				});
+
+				socket.on("quadtree", function(data) {
+					window.quadTreeData = data;
+				});
 			}
 		}
 	});

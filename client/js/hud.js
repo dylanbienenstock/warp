@@ -71,6 +71,17 @@ function drawRadar() {
 
 		radarDots.splice(i, 1);
 	}
+
+	if (ENT.physicsDebug && window.quadTreeData != null) {
+		radar.lineStyle(1, 0xFF0000, 1);
+
+		for (var i = window.quadTreeData.length - 1; i >= 0; i--) {
+			var quadTree = window.quadTreeData[i];
+
+			radar.drawRect(radarX + quadTree.x * radarProportion, radarY + quadTree.y * radarProportion,
+						   quadTree.size * radarProportion, quadTree.size * radarProportion);
+		}
+	}
 }
 
 function drawLevels() {

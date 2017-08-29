@@ -1,11 +1,14 @@
 var lineIntersect = require("line-intersect");
 var lineCircleIntersect = require("line-circle-collision");
+var QuadTree = require("../physics/QuadTree.js")();
 var io;
+var physicsDebug;
 
 const velocityDampeningFactor = 0.9;
 
-module.exports = function(__io) {
+module.exports = function(__io, __physicsDebug) {
 	io = __io;
+	physicsDebug = __physicsDebug;
 
 	return new PhysicsManager();
 }
@@ -18,8 +21,11 @@ class PhysicsManager {
 		this.boundaryRadius = 4096;
 		this.physicsObjects = [];
 		this.physicsObjectOwners = {};
+		this.collisions = [];
 
 		this.CollisionGroup = require("../physics/CollisionGroup.js");
+
+		this.QuadTree = new QuadTree(-this.boundaryRadius, -this.boundaryRadius, this.boundaryRadius * 2, 0);
 	}
 
 	new(className, data) {
@@ -262,70 +268,64 @@ class PhysicsManager {
 		return !outsideMap;
 	}
 
-	checkForCollisions() {
-		var collisions = [];
-		var alreadyChecked = [];
+	checkForCollisions(physicsObject) {
+		if (!physicsObject.active || physicsObject.collisionGroup == "None") {
+			return;
+		}
 
-		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
-			var physicsObject = this.physicsObjects[i];
+		var likelyToCollide = this.QuadTree.retrieve(physicsObject.info.bounds);
 
-			if (!physicsObject.active || physicsObject.collisionGroup == "None") {
+		for (var i = likelyToCollide.length - 1; i >= 0; i--) {
+			var physicsObject2 = likelyToCollide[i];
+
+			if (!physicsObject2.active ||
+				physicsObject.id == physicsObject2.id ||
+
+				// Compare collision groups
+				physicsObject2.collisionGroup == "None" ||
+				!((physicsObject.collisionGroup == undefined || physicsObject2.collisionGroup == undefined) ||
+				(this.CollisionGroup[physicsObject.collisionGroup].includes(physicsObject2.collisionGroup) &&
+				this.CollisionGroup[physicsObject2.collisionGroup].includes(physicsObject.collisionGroup))) ||
+
+				// Compare bounds
+				physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
+				physicsObject2.info.bounds.minX > physicsObject.info.bounds.maxX ||
+				physicsObject.info.bounds.minY > physicsObject2.info.bounds.maxY ||
+				physicsObject2.info.bounds.minY > physicsObject.info.bounds.maxY) {
+
 				continue;
 			}
 
-			for (var i2 = this.physicsObjects.length - 1; i2 >= 0; i2--) {
-				var physicsObject2 = this.physicsObjects[i2];
+			var collision = this.checkCirclesToCircles(physicsObject.info.circles, physicsObject2.info.circles);
 
-				if (alreadyChecked.includes(physicsObject2.id) ||
-					!physicsObject2.active ||
-					physicsObject.id == physicsObject2.id ||
-
-					// Compare collision groups
-					physicsObject2.collisionGroup == "None" ||
-					!((physicsObject.collisionGroup == undefined || physicsObject2.collisionGroup == undefined) ||
-					(this.CollisionGroup[physicsObject.collisionGroup].includes(physicsObject2.collisionGroup) &&
-					this.CollisionGroup[physicsObject2.collisionGroup].includes(physicsObject.collisionGroup))) ||
-
-					// Compare bounds
-					physicsObject.info.bounds.minX > physicsObject2.info.bounds.maxX ||
-					physicsObject2.info.bounds.minX > physicsObject.info.bounds.maxX ||
-					physicsObject.info.bounds.minY > physicsObject2.info.bounds.maxY ||
-					physicsObject2.info.bounds.minY > physicsObject.info.bounds.maxY) {
-
-					continue;
-				}
-
-				var collision = this.checkCirclesToCircles(physicsObject.info.circles, physicsObject2.info.circles);
-
-				if (collision == null) {
-					collision = this.checkLinesToCircles(physicsObject.info.lines, physicsObject2.info.circles);
-				}
-
-				if (collision == null) {
-					collision = this.checkLinesToCircles(physicsObject2.info.lines, physicsObject.info.circles);
-				}
-
-				if (collision == null) {
-					collision = this.checkLinesToLines(physicsObject.info.lines, physicsObject2.info.lines);
-				}
-
-				if (collision != null) {
-					collision.physicsObject = physicsObject;
-					collision.with = physicsObject2;
-					collision.angle = Math.atan2((collision.with.info.bounds.center.y + collision.with.totalVelocityY) - (collision.physicsObject.info.bounds.center.y - collision.physicsObject.totalVelocityY), 
-									 (collision.with.info.bounds.center.x + collision.with.totalVelocityX) - (collision.physicsObject.info.bounds.center.x - collision.physicsObject.totalVelocityX));
-
-					collisions.push(collision);
-
-					break;
-				}
+			if (collision == null) {
+				collision = this.checkLinesToCircles(physicsObject.info.lines, physicsObject2.info.circles);
 			}
 
-			alreadyChecked.push(physicsObject.id);
-		}
+			if (collision == null) {
+				collision = this.checkLinesToCircles(physicsObject2.info.lines, physicsObject.info.circles);
+			}
 
-		for (var i = collisions.length - 1; i >= 0; i--) {
-			var collision = collisions[i];
+			if (collision == null) {
+				collision = this.checkLinesToLines(physicsObject.info.lines, physicsObject2.info.lines);
+			}
+
+			if (collision != null) {
+				collision.physicsObject = physicsObject;
+				collision.with = physicsObject2;
+				collision.angle = Math.atan2((collision.with.info.bounds.center.y + collision.with.totalVelocityY) - (collision.physicsObject.info.bounds.center.y - collision.physicsObject.totalVelocityY), 
+								 (collision.with.info.bounds.center.x + collision.with.totalVelocityX) - (collision.physicsObject.info.bounds.center.x - collision.physicsObject.totalVelocityX));
+
+				this.collisions.push(collision);
+
+				break;
+			}
+		}
+	}
+
+	acknowledgeCollisions() {
+		for (var i = this.collisions.length - 1; i >= 0; i--) {
+			var collision = this.collisions[i];
 			var entity = this.physicsObjectOwners[collision.physicsObject.id];
 			var withEntity = this.physicsObjectOwners[collision.with.id];
 
@@ -341,6 +341,8 @@ class PhysicsManager {
 				withEntity.collideWith(entity, collision);
 			}
 		}
+
+		this.collisions.length = 0;
 	}
 
 	update(timeMult) {
@@ -349,6 +351,9 @@ class PhysicsManager {
 
 			if (physicsObject.active) {
 				physicsObject.info = this.getPhysicsInfo(physicsObject);
+
+				this.QuadTree.insert(physicsObject);
+				this.checkForCollisions(physicsObject);
 
 				if (physicsObject.restrictToMap) {
 					if (this.restrictToMap(physicsObject)) {
@@ -373,6 +378,12 @@ class PhysicsManager {
 			}
 		}
 
-		this.checkForCollisions();
+		this.acknowledgeCollisions();
+
+		if (physicsDebug) {
+			io.emit("quadtree", this.QuadTree.getDebugInfo());
+		}
+
+		this.QuadTree.clear();
 	}
 }
