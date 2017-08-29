@@ -103,7 +103,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super.update();
 
 			if (this.alive) {
-				if (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius) {
+				if (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
 					if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
 						ENT.create(ENT.new("Laser", {
 							ownerId: this.id,

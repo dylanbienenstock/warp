@@ -18,6 +18,7 @@ class EntityManager {
 		this.nextId = 0;
 		this.toNetwork = null;
 		this.protectedSpaceRadius = 600;
+		this.DMZRadius = 200;
 	}
 
 	getNetworkableProperties(entity) {
