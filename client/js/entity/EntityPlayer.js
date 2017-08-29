@@ -35,21 +35,21 @@ class EntityPlayer extends EntityBase {
 		this.shadowSprite.width = 40;
 		this.shadowSprite.height = 40;
 		this.shadowSprite.alpha = 0.5;
-		this.shadowSprite.visible = this.alive;
+		this.shadowSprite.renderable = this.alive;
 		this.shadowSprite.rotation = this.rotation;
 
 		this.outlineSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:outline"].texture);
 		this.outlineSprite.anchor.set(0.678, 0.5);
 		this.outlineSprite.width = 32;
 		this.outlineSprite.height = 32;
-		this.outlineSprite.visible = !this.alive;
+		this.outlineSprite.renderable = !this.alive;
 		this.outlineSprite.rotation = this.rotation;
 
 		this.sprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
 		this.sprite.anchor.set(0.678, 0.5);
 		this.sprite.width = 32;
 		this.sprite.height = 32;
-		this.sprite.visible = this.alive;
+		this.sprite.renderable = this.alive;
 		this.sprite.rotation = this.rotation;
 
 		this.overlaySprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
@@ -57,7 +57,7 @@ class EntityPlayer extends EntityBase {
 		this.overlaySprite.width = 32;
 		this.overlaySprite.height = 32;
 		this.overlaySprite.alpha = 0;
-		this.overlaySprite.visible = this.alive;
+		this.overlaySprite.renderable = this.alive;
 		this.overlaySprite.rotation = this.rotation;
 
 		this.thrustSprites = {};
@@ -66,14 +66,14 @@ class EntityPlayer extends EntityBase {
 		this.thrustSprites.forward.anchor.set(0.475, 0.5);
 		this.thrustSprites.forward.width = 44;
 		this.thrustSprites.forward.height = 32;
-		this.thrustSprites.forward.visible = this.alive;
+		this.thrustSprites.forward.renderable = this.alive;
 		this.thrustSprites.forward.rotation = this.rotation;
 
 		this.thrustSprites.backward = new PIXI.Sprite(PIXI.loader.resources["thrust:default:backward"].texture);
 		this.thrustSprites.backward.anchor.set(0.678, 0.5);
 		this.thrustSprites.backward.width = 32;
 		this.thrustSprites.backward.height = 32;
-		this.thrustSprites.backward.visible = this.alive;
+		this.thrustSprites.backward.renderable = this.alive;
 		this.thrustSprites.backward.rotation = this.rotation;
 
 		this.container.addChild(this.shadowSprite,
@@ -95,8 +95,8 @@ class EntityPlayer extends EntityBase {
 
 	onDeath() {
 		this.alive = false;
-		this.outlineSprite.visible = true;
-		this.shadowSprite.visible = false;
+		this.outlineSprite.renderable = true;
+		this.shadowSprite.renderable = false;
 	}
 
 	onBoost() {
@@ -125,8 +125,8 @@ class EntityPlayer extends EntityBase {
 			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}
 
-		this.thrustSprites.forward.visible = this.alive && this.controls.thrustForward;
-		this.thrustSprites.backward.visible = this.alive && this.controls.thrustBackward;
+		this.thrustSprites.forward.renderable = this.alive && this.controls.thrustForward;
+		this.thrustSprites.backward.renderable = this.alive && this.controls.thrustBackward;
 
 		this.overlaySprite.alpha = lerp(this.overlaySprite.alpha, 0, 0.05);
 
