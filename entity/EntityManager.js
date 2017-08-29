@@ -43,7 +43,7 @@ class EntityManager {
 
 	create(entity, playerSocket, creatingEntityPhysicsDebug) {
 		if (entity.className != undefined) {
-			if (entity.lifespan != undefined && entity.lifespan != null) {
+			if (entity.lifespan != undefined) {
 				entity.createdTime = Date.now();
 			}
 
@@ -53,7 +53,7 @@ class EntityManager {
 
 			var data = this.getNetworkableProperties(entity);
 
-			if (playerSocket != null) {
+			if (playerSocket != undefined) {
 				data.playerSocketId = playerSocket.client.id;
 				this.players.push(entity);
 			}
@@ -104,7 +104,7 @@ class EntityManager {
 
 			entity.update(timeMult);
 
-			if (entity.lifespan != undefined && entity.lifespan != null && Date.now() - entity.createdTime >= entity.lifespan) {
+			if (entity.lifespan != undefined && entity.lifespan != undefined && Date.now() - entity.createdTime >= entity.lifespan) {
 				this.remove(entity);
 			}
 		}
@@ -133,8 +133,8 @@ class EntityManager {
 				var entity = this.toNetwork[i3].entity;
 
 				if (entity.networkGlobally ||
-					entity.physicsObject == null ||
-					entity.physicsObject.info == null) {
+					entity.physicsObject == undefined ||
+					entity.physicsObject.info == undefined) {
 
 					toNetworkSpecific.push(this.toNetwork[i3].packet);
 				} else {
@@ -150,7 +150,9 @@ class EntityManager {
 				}
 			}
 
-			io.sockets.connected[player.socketId].emit("entity set", toNetworkSpecific);
+			if (io.sockets.connected[player.socketId] != undefined) {
+				io.sockets.connected[player.socketId].emit("entity set", toNetworkSpecific);
+			}
 		}
 	}
 
