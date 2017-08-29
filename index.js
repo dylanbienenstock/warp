@@ -155,16 +155,22 @@ function processName(name) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
 function setupGame() {
-	for (var i = 0; i < (process.env.PLANETS || 6); i++) {
+	for (var i = 0; i < (process.env.PLANETS || 8); i++) {
 		var angle = 2 * Math.PI * Math.random();
 
 		ENT.create(ENT.new("Planet", {
-			x: -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128),
-			y: -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128),
+			x: -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128 + 512),
+			y: -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128 + 512),
 			velocityX: -Math.cos(angle) * 2,
 			velocityY: -Math.sin(angle) * 2,
 			radius: Math.random() * 32 + 32
 		}));
+	}
+
+	for (var i = 0; i < (process.env.ASTEROIDS || 256); i++) {
+		var angle = 2 * Math.PI * Math.random();
+
+		ENT.create(ENT.new("Asteroid"));
 	}
 }
 

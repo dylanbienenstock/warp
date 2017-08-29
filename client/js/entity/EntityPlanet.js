@@ -1,6 +1,3 @@
-var pixelWidth = 16;
-var pixelHeight = 8;
-
 class EntityPlanet extends EntityBase {
 	constructor(data) {
 		super(data);

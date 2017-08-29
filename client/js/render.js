@@ -118,6 +118,10 @@ function loadContent() {
 		.add("station:inner", "./img/station-inner.svg")
 		.add("station:inner:shadow", "./img/station-inner-shadow.svg")
 		.add("planet:shadow", "./img/planet-shadow.svg")
+		.add("asteroid:0", "./img/asteroid/0.svg")
+		.add("asteroid:1", "./img/asteroid/1.svg")
+		.add("asteroid:2", "./img/asteroid/2.svg")
+		.add("asteroid:3", "./img/asteroid/3.svg")
 	.load(setup);
 }
 

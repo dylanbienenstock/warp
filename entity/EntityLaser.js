@@ -6,6 +6,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lifespan = data.lifespan || 1000;
 
 			this.ownerId = data.ownerId;
+			this.damage = data.damage || 10;
 			this.thickness = data.thickness || 2;
 			this.color = data.color || 0xFF0000;
 			this.length = data.length || 64;
@@ -40,7 +41,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		collideWith(entity, collision) {
 			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId) {
-				var damage = entity.takeDamage(10, this, collision);
+				var damage = entity.takeDamage(this.damage, this, collision);
 
 				if (damage > 0) {
 					ENT.getById(entity.ownerId, function(player) {
@@ -51,9 +52,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				ENT.remove(this);
 			}
 
-			if (entity instanceof ENT.type("Planet")) {
-				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / 8;
-				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / 8;
+			if (entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid")) {
+				var velocity = (entity instanceof ENT.type("Planet") ? 16 : 64);
+
+				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / velocity;
+				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / velocity;
 
 				ENT.remove(this);
 			}

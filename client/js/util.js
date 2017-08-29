@@ -49,3 +49,7 @@ function rotatePoint(x, y, originX, originY, rotation) {
     	y: Math.sin(rotation) * (x - originX) + Math.cos(rotation) * (y - originY) + originY
 	};
 }
+
+function randomInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}

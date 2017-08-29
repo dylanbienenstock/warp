@@ -110,8 +110,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
 							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
 							rotation: this.physicsObject.rotation,
-							thrustX: -Math.cos(this.physicsObject.rotation) * 48,
-							thrustY: -Math.sin(this.physicsObject.rotation) * 48
+							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
+							thrustY: -Math.sin(this.physicsObject.rotation) * 32
 						}));
 
 						this.lastFirePrimary = Date.now();
@@ -132,8 +132,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 								x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
 								y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
 								rotation: origin + offset,
-								thrustX: -Math.cos(origin + offset) * 48,
-								thrustY: -Math.sin(origin + offset) * 48
+								thrustX: -Math.cos(origin + offset) * 32,
+								thrustY: -Math.sin(origin + offset) * 32
 							}));
 						}
 
