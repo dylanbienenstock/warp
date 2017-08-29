@@ -2,9 +2,12 @@ class EntityPhysicsDebug extends EntityBase {
 	constructor(data) {
 		super(data);
 
-		this.graphics = new PIXI.Graphics();
-		ENT.stageContainer.addChild(this.graphics);
 		this.info = null;
+
+		this.graphics = new PIXI.Graphics();
+		this.graphics.zIndex = 99999;
+
+		ENT.stageContainer.addChild(this.graphics);
 	}
 
 	update() {
