@@ -15,6 +15,7 @@ var stationInner;
 window.renderer;
 window.boundaryRadius = 4096;
 window.zoom = 2;
+window.protectedSpaceRadius = 600;
 
 $(function() {
 	var ww = $(window).innerWidth();
@@ -64,9 +65,23 @@ $(function() {
     	}
 	});
 
+	drawBoundary();
 	resizeRenderer();
 	loadContent();
 });
+
+function drawBoundary() {
+	boundary = new PIXI.Graphics();
+	boundaryContainer.addChild(boundary)
+
+	boundary.lineStyle(1, 0xFFFFFF, 1);
+	boundary.drawCircle(0, 0, window.boundaryRadius);
+
+	boundary.lineStyle(1, 0x00FF00, 0.5);
+	boundary.beginFill(0x00FF00, 0.14);
+	boundary.drawCircle(0, 0, window.protectedSpaceRadius);
+	boundary.endFill();
+}
 
 function resizeRenderer() {
 	renderer.resize($(window).innerWidth(), $(window).innerHeight());

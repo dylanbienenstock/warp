@@ -1,4 +1,5 @@
 var levels;
+
 var healthText;
 var shieldText;
 var boostText;
@@ -59,8 +60,11 @@ function drawRadar() {
 	radar.beginFill(0x000000, 0.5);
 	radar.drawCircle(radarX, radarY, radarRadius);
 	radar.endFill();
-	radar.drawCircle(radarX, radarY, 6);
 	radar.lineStyle();
+
+	radar.beginFill(0x00FF00, 0.25);
+	radar.drawCircle(radarX, radarY, window.protectedSpaceRadius * radarProportion);
+	radar.endFill();
 
 	for (var i = radarDots.length - 1; i >= 0; i--) {
 		var dot = radarDots[i];
