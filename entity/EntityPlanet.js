@@ -24,8 +24,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		collideWith(entity, collision) {
 			if (entity instanceof ENT.type("Planet")) {
-				this.physicsObject.velocityX += -Math.cos(collision.angle) * 0.1;
-				this.physicsObject.velocityY += -Math.sin(collision.angle) * 0.1;
+				var distance = this.physicsObject.distanceTo(entity.physicsObject.x, entity.physicsObject.y);
+				var velocity = (entity.radius / this.radius) * (this.radius + entity.radius - distance) * 0.05;
+
+				this.physicsObject.velocityX += -Math.cos(collision.angle) * velocity;
+				this.physicsObject.velocityY += -Math.sin(collision.angle) * velocity;
 			}
 		}
 
