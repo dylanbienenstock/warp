@@ -17,6 +17,7 @@ class EntityManager {
 		this.players = [];
 		this.nextId = 0;
 		this.toNetwork = null;
+		this.protectedSpaceRadius = 600;
 	}
 
 	getNetworkableProperties(entity) {

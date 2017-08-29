@@ -6,9 +6,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.doNotNetwork = true;
 			this.ownerId = data.ownerId;
 			this.radius = data.radius || 32;
+			this.showHits = data.showHits;
 			this.hitSize = data.hitSize || data.radius || 32;
 			this.damageFactor = 0.5;
 			this.power = 100;
+
+			if (this.showHits == undefined) {
+				this.showHits = true;
+			}
 
 			this.physicsObject = PHYS.new("Circle", {
 				collisionGroup: "Shield",
@@ -41,10 +46,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				}
 			}
 
-			ENT.trigger(this, "hit", {
-				angle: collision.angle,
-				position: collision.position
-			});
+			if (this.showHits) {
+				ENT.trigger(this, "hit", {
+					angle: collision.angle,
+					position: collision.position
+				});
+			}
 
 			return 0;
 		}
@@ -56,6 +63,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				if (owner != undefined) {
 					this.physicsObject.x = owner.physicsObject.info.bounds.center.x + this.physicsObject.totalVelocityX;
 					this.physicsObject.y = owner.physicsObject.info.bounds.center.y + this.physicsObject.totalVelocityY;
+
+					this.physicsObject.active = (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius);
 				}
 
 				this.power = Math.min(this.power + 0.1 * timeMult, 100);
