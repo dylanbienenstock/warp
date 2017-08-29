@@ -20,6 +20,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastFirePrimary = 0;
 			this.lastFireSecondary = 0;
 
+			this.viewport = {
+				width: 1920,
+				height: 1080,
+				doNotNetwork: true
+			};
+
+			this.socketId = data.socketId;
+
 			this.controls = {
 				thrustForward: false,
 				thrustBackward: false,

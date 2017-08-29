@@ -14,7 +14,7 @@ class EntityManager {
 		this.Entity = null;
 
 		this.entities = [];
-		this.players = {};
+		this.players = [];
 		this.nextId = 0;
 		this.toNetwork = null;
 	}
@@ -55,6 +55,7 @@ class EntityManager {
 
 			if (playerSocket != null) {
 				data.playerSocketId = playerSocket.client.id;
+				this.players.push(entity);
 			}
 
 			io.emit("entity create", data);
@@ -88,13 +89,11 @@ class EntityManager {
 			}
 		}
 
-		for (var socketid in this.players) {
-			if (this.players.hasOwnProperty(socketid)) {
-				if (this.players[socketid].id == entity.id) {
-					delete this.players[socketid];
+		for (var i = this.players.length - 1; i >= 0; i--) {
+			if (this.players.id == entity.id) {
+				this.players.splice(i, 1);
 
-					break;
-				}
+				break;
 			}
 		}
 	}
@@ -120,7 +119,61 @@ class EntityManager {
 			}
 		}
 
-		io.emit("entity set", this.toNetwork);
+		for (var i2 = this.players.length - 1; i2 >= 0; i2--) {
+			var player = this.players[i2];
+			var toNetworkSpecific = [];
+
+			var vpInflate = 128;
+			var vpMinX = player.physicsObject.x - (player.viewport.width / 2) - vpInflate;
+			var vpMinY = player.physicsObject.y - (player.viewport.height / 2) - vpInflate;
+			var vpMaxX = player.physicsObject.x + (player.viewport.width / 2) + vpInflate;
+			var vpMaxY = player.physicsObject.y + (player.viewport.height / 2) + vpInflate;
+
+			for (var i3 = this.toNetwork.length - 1; i3 >= 0; i3--) {
+				var entity = this.toNetwork[i3].entity;
+
+				if (entity.networkGlobally ||
+					entity.physicsObject == null ||
+					entity.physicsObject.info == null) {
+
+					toNetworkSpecific.push(this.toNetwork[i3].packet);
+				} else {
+					var entityBounds = entity.physicsObject.info.bounds;
+
+					if (entityBounds.minX < vpMaxX && 
+						entityBounds.maxX > vpMinX &&
+						entityBounds.minY < vpMaxY &&
+						entityBounds.maxY > vpMinY) {
+
+						toNetworkSpecific.push(this.toNetwork[i3].packet);
+					}
+				}
+			}
+
+			io.sockets.connected[player.socketId].emit("entity set", toNetworkSpecific);
+		}
+	}
+
+	sendProperties(entity, data) {
+		var data2 = {
+			entity: entity,
+			packet: {
+				id: entity.id,
+				properties: data
+			}
+		};
+
+		this.toNetwork.push(data2);
+	}
+
+	sendAllEntities(socket) {
+		var allData = [];
+
+		for (var i = this.entities.length - 1; i >= 0; i--) {
+			allData.push(this.getNetworkableProperties(this.entities[i]));
+		}
+
+		socket.emit("entity list", allData);
 	}
 
 	trigger(entity, trigger, data) {
@@ -129,22 +182,6 @@ class EntityManager {
 			trigger: trigger,
 			triggerData: data
 		});
-	}
-
-	getPlayerById(id, callback) { // Callback returns socketid
-		for (var socketid in this.players) {
-			if (this.players.hasOwnProperty(socketid)) {
-				if (this.players[socketid].id == id) {
-					if (callback instanceof Function) {
-						callback(socketid);
-					}
-
-					return this.players[socketid];
-				}
-			}
-		}
-
-		return null;
 	}
 
 	getById(id, callback) {
@@ -175,23 +212,5 @@ class EntityManager {
 
 	getAll() {
 		return this.entities;
-	}
-
-	sendAllEntities(socket) {
-		var allData = [];
-
-		for (var i = this.entities.length - 1; i >= 0; i--) {
-			allData.push(this.getNetworkableProperties(this.entities[i]));
-		}
-
-		socket.emit("entity list", allData);
-	}
-
-	sendProperties(entity, data) {
-		var data2 = {};
-		data2.id = entity.id;
-		data2.properties = data;
-
-		this.toNetwork.push(data2);
 	}
 }

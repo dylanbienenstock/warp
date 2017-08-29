@@ -66,6 +66,13 @@ function sendAngle(angle) {
 	socket.emit("angle", angle);
 }
 
+function sendViewportDimensions() {
+	socket.emit("viewport", {
+		width: $(window).width(),
+		height: $(window).height()
+	});
+}
+
 function bindControls() {
 	$(window).mousemove(function(event) {
 		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
@@ -73,6 +80,16 @@ function bindControls() {
 			ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - mousePos.y,
 														 ENT.localPlayer.sprite.position.x - mousePos.x);
 		}
+	});
+
+	var resizeTimeout;
+
+	$(window).resize(function() {
+		clearTimeout(resizeTimeout);
+		
+		resizeTimeout = setTimeout(function() {
+			sendViewportDimensions();
+		}, 500);
 	});
 
 	$(window).keydown(function(event) {

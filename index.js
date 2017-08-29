@@ -60,6 +60,7 @@ function acceptConnection(name, socket) {
 
 	var player = ENT.new("Player", {
 		name: name,
+		socketId: socket.id,
 		x: -Math.cos(angle) * 145,
 		y: -Math.sin(angle) * 145
 	});
@@ -92,6 +93,11 @@ function acceptConnection(name, socket) {
 		if (player.alive) {
 			player.physicsObject.rotation = angle;
 		}
+	});
+
+	socket.on("viewport", function(data) {
+		player.viewport.width = data.width;
+		player.viewport.height = data.height;
 	});
 }
 
