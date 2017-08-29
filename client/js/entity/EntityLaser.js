@@ -29,8 +29,6 @@ class EntityLaser extends EntityBase {
 
 	update() {
 		super.update();
-
-		addRadarDot(this.sprite.x, this.sprite.y, 0xFFFFFF, 1);
 	}
 
 	remove() {
