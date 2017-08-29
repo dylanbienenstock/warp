@@ -5,7 +5,7 @@ var io;
 var physicsDebug;
 
 const velocityDampeningFactor = 0.9;
-const velocitySleepLimit = 0.1;
+const velocitySleepLimit = 0.09;
 
 module.exports = function(__io, __physicsDebug) {
 	io = __io;
@@ -312,46 +312,75 @@ class PhysicsManager {
 	}
 
 	restrictToMap(physicsObject) {
-		var outsideMap = false;
+		if (physicsObject.restrictToMap) {
+			var outsideMap = false;
 
-		for (var i = physicsObject.info.circles.length - 1; i >= 0; i--) {
-			var circle = physicsObject.info.circles[i];
+			for (var i = physicsObject.info.circles.length - 1; i >= 0; i--) {
+				var circle = physicsObject.info.circles[i];
 
-			if (Math.sqrt(Math.pow(circle.position.x, 2) + Math.pow(circle.position.y, 2)) >= (this.boundaryRadius - circle.radius)) {
-				outsideMap = true;
-				break;
-			}
-		}
-
-		if (!outsideMap) {
-			for (var i = physicsObject.info.lines.length - 1; i >= 0; i--) {
-				var line = physicsObject.info.lines[i];
-
-				if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= this.boundaryRadius ||
-					Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= this.boundaryRadius) {
-					
+				if (Math.sqrt(Math.pow(circle.position.x, 2) + Math.pow(circle.position.y, 2)) >= (this.boundaryRadius - circle.radius)) {
 					outsideMap = true;
 					break;
 				}
 			}
-		}
 
-		if (outsideMap) {
-			var angle = Math.atan2(-physicsObject.y, -physicsObject.x);
+			if (!outsideMap) {
+				for (var i = physicsObject.info.lines.length - 1; i >= 0; i--) {
+					var line = physicsObject.info.lines[i];
 
-			physicsObject.restrictX += Math.cos(angle) * 0.05;
-			physicsObject.restrictY += Math.sin(angle) * 0.05;
-
-			if (Math.abs(physicsObject.restrictX) < velocitySleepLimit) {
-				physicsObject.restrictX = 0;
+					if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= this.boundaryRadius ||
+						Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= this.boundaryRadius) {
+						
+						outsideMap = true;
+						break;
+					}
+				}
 			}
 
-			if (Math.abs(physicsObject.restrictY) < velocitySleepLimit) {
-				physicsObject.restrictY = 0;
+			if (outsideMap) {
+				var angle = Math.atan2(-physicsObject.y, -physicsObject.x);
+
+				physicsObject.restrictX += Math.cos(angle) * 0.1;
+				physicsObject.restrictY += Math.sin(angle) * 0.1;
 			}
+
+			physicsObject.inMap = !outsideMap;
+		}
+	}
+
+	restVelocities(physicsObject) {
+		if (Math.abs(physicsObject.restrictX) + Math.abs(physicsObject.restrictY) < velocitySleepLimit) {
+			physicsObject.restrictX = 0;
+			physicsObject.restrictY = 0;
 		}
 
-		return !outsideMap;
+		if (Math.abs(physicsObject.velocityX) + Math.abs(physicsObject.velocityY) < velocitySleepLimit) {
+			physicsObject.velocityX = 0;
+			physicsObject.velocityY = 0;
+		}
+	}
+
+	dampenVelocities(physicsObject, timeMult) {
+		physicsObject.velocityX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+		physicsObject.velocityY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+
+		if (physicsObject.restrictToMap && physicsObject.inMap) {
+			physicsObject.restrictX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+			physicsObject.restrictY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
+		}
+	}
+
+	applyVelocities(physicsObject, timeMult) {
+		physicsObject.x += physicsObject.totalVelocityX * timeMult;
+		physicsObject.y += physicsObject.totalVelocityY * timeMult;
+
+		if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
+			physicsObject.velocityX = Math.max(Math.min((physicsObject.velocityX + physicsObject.thrustX) * timeMult, 0), 0);
+		}
+
+		if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
+			physicsObject.velocityY = Math.max(Math.min((physicsObject.velocityY + physicsObject.thrustY) * timeMult, 0), 0);
+		}
 	}
 
 	update(timeMult) {
@@ -384,35 +413,10 @@ class PhysicsManager {
 
 				this.QuadTree.insert(physicsObject);
 				this.checkForCollisions(physicsObject);
-
-				if (physicsObject.restrictToMap) {
-					if (this.restrictToMap(physicsObject)) {
-						physicsObject.restrictX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
-						physicsObject.restrictY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
-					}
-				}
-
-				physicsObject.x += physicsObject.totalVelocityX * timeMult;
-				physicsObject.y += physicsObject.totalVelocityY * timeMult;
-
-				physicsObject.velocityX *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
-				physicsObject.velocityY *= velocityDampeningFactor * Math.min(1 / timeMult, 1);
-
-				if ((physicsObject.velocityX > 0 && physicsObject.thrustX < 0) || (physicsObject.velocityX < 0 && physicsObject.thrustX > 0)) {
-					physicsObject.velocityX = Math.max(Math.min((physicsObject.velocityX + physicsObject.thrustX) * timeMult, 0), 0);
-				}
-
-				if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
-					physicsObject.velocityY = Math.max(Math.min((physicsObject.velocityY + physicsObject.thrustY) * timeMult, 0), 0);
-				}
-
-				if (Math.abs(physicsObject.velocityX) < velocitySleepLimit) {
-					physicsObject.velocityX = 0;
-				}
-
-				if (Math.abs(physicsObject.velocityY) < velocitySleepLimit) {
-					physicsObject.velocityY = 0;
-				}
+				this.restrictToMap(physicsObject);
+				this.applyVelocities(physicsObject, timeMult);
+				this.restVelocities(physicsObject, timeMult);
+				this.dampenVelocities(physicsObject, timeMult);
 			}
 		}
 
