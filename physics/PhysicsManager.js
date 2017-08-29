@@ -5,6 +5,7 @@ var io;
 var physicsDebug;
 
 const velocityDampeningFactor = 0.9;
+const velocitySleepLimit = 0.1;
 
 module.exports = function(__io, __physicsDebug) {
 	io = __io;
@@ -233,41 +234,6 @@ class PhysicsManager {
 		return null;
 	}
 
-	restrictToMap(physicsObject) {
-		var outsideMap = false;
-
-		for (var i = physicsObject.info.circles.length - 1; i >= 0; i--) {
-			var circle = physicsObject.info.circles[i];
-
-			if (Math.sqrt(Math.pow(circle.position.x, 2) + Math.pow(circle.position.y, 2)) >= (this.boundaryRadius - circle.radius)) {
-				outsideMap = true;
-				break;
-			}
-		}
-
-		if (!outsideMap) {
-			for (var i = physicsObject.info.lines.length - 1; i >= 0; i--) {
-				var line = physicsObject.info.lines[i];
-
-				if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= this.boundaryRadius ||
-					Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= this.boundaryRadius) {
-					
-					outsideMap = true;
-					break;
-				}
-			}
-		}
-
-		if (outsideMap) {
-			var angle = Math.atan2(-physicsObject.y, -physicsObject.x);
-
-			physicsObject.restrictX += Math.cos(angle) * 0.05;
-			physicsObject.restrictY += Math.sin(angle) * 0.05;
-		}
-
-		return !outsideMap;
-	}
-
 	checkForCollisions(physicsObject) {
 		if (!physicsObject.active || physicsObject.collisionGroup == "None") {
 			return;
@@ -345,12 +311,73 @@ class PhysicsManager {
 		this.collisions.length = 0;
 	}
 
+	restrictToMap(physicsObject) {
+		var outsideMap = false;
+
+		for (var i = physicsObject.info.circles.length - 1; i >= 0; i--) {
+			var circle = physicsObject.info.circles[i];
+
+			if (Math.sqrt(Math.pow(circle.position.x, 2) + Math.pow(circle.position.y, 2)) >= (this.boundaryRadius - circle.radius)) {
+				outsideMap = true;
+				break;
+			}
+		}
+
+		if (!outsideMap) {
+			for (var i = physicsObject.info.lines.length - 1; i >= 0; i--) {
+				var line = physicsObject.info.lines[i];
+
+				if (Math.sqrt(Math.pow(line.start.x, 2) + Math.pow(line.start.y, 2)) >= this.boundaryRadius ||
+					Math.sqrt(Math.pow(line.end.x, 2) + Math.pow(line.end.y, 2)) >= this.boundaryRadius) {
+					
+					outsideMap = true;
+					break;
+				}
+			}
+		}
+
+		if (outsideMap) {
+			var angle = Math.atan2(-physicsObject.y, -physicsObject.x);
+
+			physicsObject.restrictX += Math.cos(angle) * 0.05;
+			physicsObject.restrictY += Math.sin(angle) * 0.05;
+
+			if (Math.abs(physicsObject.restrictX) < velocitySleepLimit) {
+				physicsObject.restrictX = 0;
+			}
+
+			if (Math.abs(physicsObject.restrictY) < velocitySleepLimit) {
+				physicsObject.restrictY = 0;
+			}
+		}
+
+		return !outsideMap;
+	}
+
 	update(timeMult) {
 		for (var i = this.physicsObjects.length - 1; i >= 0; i--) {
 			var physicsObject = this.physicsObjects[i];
 
 			if (physicsObject.active) {
-				physicsObject.info = this.getPhysicsInfo(physicsObject);
+				var shouldCalcInfo = false;
+				physicsObject.sleeping = true;
+
+				if (physicsObject.info == undefined || Math.abs(physicsObject.totalVelocityX) > 0 || Math.abs(physicsObject.totalVelocityY) > 0) {
+					shouldCalcInfo = true;
+				}
+
+				if (physicsObject instanceof this.Physics.Box) { 									// 0.05 rad ~= 3 deg
+					if (!shouldCalcInfo && Math.abs(physicsObject.rotation - physicsObject.lastRotation) > 0.05) {
+						shouldCalcInfo = true;
+					}
+
+					physicsObject.lastRotation = physicsObject.rotation;
+				}
+
+				if (shouldCalcInfo) {
+					physicsObject.info = this.getPhysicsInfo(physicsObject);
+					physicsObject.sleeping = false;
+				}
 
 				this.QuadTree.insert(physicsObject);
 				this.checkForCollisions(physicsObject);
@@ -374,6 +401,14 @@ class PhysicsManager {
 
 				if ((physicsObject.velocityY > 0 && physicsObject.thrustY < 0) || (physicsObject.velocityY < 0 && physicsObject.thrustY > 0)) {
 					physicsObject.velocityY = Math.max(Math.min((physicsObject.velocityY + physicsObject.thrustY) * timeMult, 0), 0);
+				}
+
+				if (Math.abs(physicsObject.velocityX) < velocitySleepLimit) {
+					physicsObject.velocityX = 0;
+				}
+
+				if (Math.abs(physicsObject.velocityY) < velocitySleepLimit) {
+					physicsObject.velocityY = 0;
 				}
 			}
 		}

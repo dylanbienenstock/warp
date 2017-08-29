@@ -8,6 +8,7 @@ module.exports = function(__PHYS) {
 			this.doNotNetwork = true;
 			this.id = -1;
 			this.active = data.active;
+			this.sleeping = false;
 			this.collisionGroup = data.collisionGroup;
 			this.x = data.x || 0;
 			this.y = data.y || 0;

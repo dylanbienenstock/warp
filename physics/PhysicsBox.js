@@ -10,6 +10,7 @@ module.exports = function(PhysicsBase, __PHYS) {
 			this.width = data.width || 16;
 			this.height = data.height || 16;
 			this.rotation = data.rotation || 0;
+			this.lastRotation = this.rotation;
 		}
 	}
 }
