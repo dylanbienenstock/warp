@@ -26,8 +26,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			this.nextNetworkGlobally = true;
 
-			this.physicsObject.x = -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128);
-			this.physicsObject.y = -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128);
+			this.physicsObject.x = -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 1024);
+			this.physicsObject.y = -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 1024);
 			this.physicsObject.velocityX = -Math.cos(angle) * 2;
 			this.physicsObject.velocityY = -Math.sin(angle) * 2;
 
@@ -57,7 +57,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		collideWith(entity, collision) {
 			if (entity instanceof ENT.type("Asteroid")) {
 				var distance = this.physicsObject.distanceTo(entity.physicsObject.x, entity.physicsObject.y);
-				var velocity = (entity.radius / this.radius) * (this.radius + entity.radius - distance) * 0.05 + 0.025;
+				var velocity = (entity.radius / this.radius) * 0.2;
 
 				this.physicsObject.velocityX += -Math.cos(collision.angle) * velocity;
 				this.physicsObject.velocityY += -Math.sin(collision.angle) * velocity;
