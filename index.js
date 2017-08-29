@@ -2,6 +2,7 @@ var express = require("express");
 var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
+var memwatch = require("memwatch-next");
 
 const physicsDebug = process.env.PHYS_DEBUG;
 
@@ -33,6 +34,10 @@ function startServer(startTime) {
 		console.log("Took " + (Date.now() - startTime) + "ms to initialize game");
 		console.log("Server listening on port " + app.get("port"));
 		console.log();
+	});
+
+	memwatch.on("leak", function(info) {
+		console.log("MEMORY LEAK", info);
 	});
 }
 
@@ -139,12 +144,14 @@ function processName(name) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
 function setupGame() {
-	for (var i = 0; i < 6; i++) {
+	for (var i = 0; i < (process.env.PLANETS || 6); i++) {
 		var angle = 2 * Math.PI * Math.random();
 
 		ENT.create(ENT.new("Planet", {
-			x: -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 512),
-			y: -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 512),
+			x: -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128),
+			y: -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 128),
+			velocityX: -Math.cos(angle) * 2,
+			velocityY: -Math.sin(angle) * 2,
 			radius: Math.random() * 32 + 32
 		}));
 	}
@@ -180,6 +187,7 @@ if (physicsDebug) {
 			}
 
 			console.log(performanceNow() + "," + physicsTimesSum);
+
 			physicsTimes = [];
 		}
 
