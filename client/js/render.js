@@ -122,6 +122,14 @@ function loadContent() {
 		.add("asteroid:1", "./img/asteroid/1.svg")
 		.add("asteroid:2", "./img/asteroid/2.svg")
 		.add("asteroid:3", "./img/asteroid/3.svg")
+		.add("asteroid:0:outline", "./img/asteroid/0-outline.svg")
+		.add("asteroid:1:outline", "./img/asteroid/1-outline.svg")
+		.add("asteroid:2:outline", "./img/asteroid/2-outline.svg")
+		.add("asteroid:3:outline", "./img/asteroid/3-outline.svg")
+		.add("asteroid:0:overlay", "./img/asteroid/0-overlay.svg")
+		.add("asteroid:1:overlay", "./img/asteroid/1-overlay.svg")
+		.add("asteroid:2:overlay", "./img/asteroid/2-overlay.svg")
+		.add("asteroid:3:overlay", "./img/asteroid/3-overlay.svg")
 	.load(setup);
 }
 
