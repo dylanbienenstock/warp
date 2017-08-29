@@ -1,6 +1,6 @@
 module.exports = function() {
-	const capacity = (process.env.QUADTREE_CAPACITY || 8);
-	const maxLevel = (process.env.QUADTREE_MAXLEVEL || 8);
+	const capacity = (process.env.QUADTREE_CAPACITY || 4);
+	const maxLevel = (process.env.QUADTREE_MAXLEVEL || 6);
 
 	class QuadTree {
 		constructor(x, y, size, level) {
