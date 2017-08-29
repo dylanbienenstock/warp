@@ -2,21 +2,25 @@ var renderer;
 var baseContainer;
 var titleScreenContainer;
 var gameContainer;
-var gridContainer;
+var backdropContainer;
 var stageContainer;
 var boundaryContainer;
 var HUDContainer;
-var grid;
+var blackness;
 
 var stationOuter;
 var stationInnerShadow;
 var stationInner;
 
+window.renderer;
 window.boundaryRadius = 4096;
 window.zoom = 2;
 
 $(function() {
-	renderer = new PIXI.CanvasRenderer($(window).innerWidth(), $(window).innerHeight());
+	var ww = $(window).innerWidth();
+	var wh = $(window).innerHeight();
+
+	window.renderer = new PIXI.CanvasRenderer(ww, wh);
 
 	document.body.appendChild(renderer.view);
 
@@ -24,18 +28,22 @@ $(function() {
 	titleScreenContainer = new PIXI.Container();
 	gameContainer = new PIXI.Container();
 
-	gridContainer = new PIXI.Container();
+	backdropContainer = new PIXI.Container();
 	stageContainer = new PIXI.Container();
 	boundaryContainer = new PIXI.Container();
 	HUDContainer = new PIXI.Container();
 
-	gameContainer.addChild(gridContainer, stageContainer, boundaryContainer, HUDContainer);
+	blackness = new PIXI.Graphics();
+	blackness.beginFill(0x000000);
+	blackness.drawRect(0, 0, ww, wh);
+	blackness.endFill();
+	blackness.cacheAsBitmap = true;
+
+	backdropContainer.addChild(blackness);
+	gameContainer.addChild(backdropContainer, stageContainer, boundaryContainer, HUDContainer);
 	baseContainer.addChild(titleScreenContainer, gameContainer);
 
 	setupTitleScreen(titleScreenContainer, gameContainer);
-
-	grid = new PIXI.Graphics();
-	gridContainer.addChild(grid);
 
 	boundary = new PIXI.Graphics();
 	boundaryContainer.addChild(boundary)
@@ -62,6 +70,12 @@ $(function() {
 
 function resizeRenderer() {
 	renderer.resize($(window).innerWidth(), $(window).innerHeight());
+
+	blackness.clear();
+	blackness.beginFill(0x000000);
+	blackness.drawRect(0, 0, $(window).innerWidth(), $(window).innerHeight());
+	blackness.endFill();
+	blackness.cacheAsBitmap = true;
 }
 
 function loadContent() {
@@ -103,6 +117,7 @@ function setup() {
 	stationContainer.addChild(stationOuter, stationInnerShadow, stationInner);
 	stageContainer.addChild(stationContainer);
 
+	setupBackdrop(backdropContainer);
 	setupHUD(HUDContainer);
 	update();
 }
@@ -126,38 +141,11 @@ function update() {
 	stationInnerShadow.rotation += 0.00025;
 	stationInner.rotation += 0.00025;
 
-	drawGrid();
+	renderBackdrop();
 	ENT.update();
 	drawHUD();
 	
 	renderer.render(baseContainer);
-}
-
-function drawGrid() {
-	grid.clear();
-	
-	var ww = $(window).innerWidth();
-	var wh = $(window).innerHeight();
-
-	grid.beginFill(0x000000);
-	grid.drawRect(0, 0, ww, wh);
-	grid.endFill();
-
-	grid.lineStyle(1, 0xFFFFFF, 0.5);
-
-	for (var x = 0; x < ww; x++) {
-		if (Math.floor(stageContainer.pivot.x + x) % 256 == 0) {
-			grid.moveTo(x, 0);
-			grid.lineTo(x, wh);
-		}
-	}
-
-	for (var y = 0; y < wh; y++) {
-		if (Math.floor(stageContainer.pivot.y + y) % 256 == 0) {
-			grid.moveTo(0, y);
-			grid.lineTo(ww, y);
-		}
-	}
 }
 
 function getRenderer() {
