@@ -165,6 +165,12 @@ class EntityManager {
 			}
 		};
 
+		if (entity.physicsObject.sleeping) {
+			delete data2.packet.properties.x;
+			delete data2.packet.properties.y;
+			delete data2.packet.properties.rotation;
+		}
+
 		this.toNetwork.push(data2);
 	}
 
