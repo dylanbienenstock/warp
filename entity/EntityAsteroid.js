@@ -5,6 +5,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			this.radius = Math.random() * 16 + 32;
 			this.health = 150 * (this.radius / (16 + 32));
+			this.initialHealth = this.health;
 			this.alive = true;
 
 			if (Math.random() > 0.95) {
@@ -37,6 +38,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.nextNetworkGlobally = true;
 
 			this.alive = true;
+			this.health = this.initialHealth;
 			this.physicsObject.active = true;
 		}
 
