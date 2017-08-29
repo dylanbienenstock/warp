@@ -99,19 +99,29 @@ $(function() {
 
 function processResponse(response) {
 	var $titleContainer = $("#title-container");
+	var $notesContainer = $("#notes-container");
 
 	if (response.accepted) {
+		$notesContainer.animate({
+			color: "#00FF00"
+		}, 600);
+
 		$titleContainer.animate({
 			color: "#00FF00"
 		}, 600, function() {
 			setTimeout(function() {
-				$("#title-container").fadeOut();
+				$notesContainer.fadeOut();
+				$titleContainer.fadeOut();
 				bindControls();
 
 				transitioning = true;
 			}, 600);
 		});
 	} else {
+		$notesContainer.animate({
+			color: "#FF0000"
+		}, 600);
+
 		$titleContainer.animate({
 			color: "#FF0000"
 		}, 600);

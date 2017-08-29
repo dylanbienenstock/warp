@@ -7,7 +7,7 @@
 	font-family: "Source Code Pro", monospace;
 }
 
-/* Interface */
+/* Login */
 
 #title-container {
 	position: absolute;
@@ -41,6 +41,25 @@
 #help-message {
 	font-size: 12px;
 	font-style: italic;
+}
+
+/* Notes */
+
+#notes-container {
+	position: absolute;
+	top: 0;
+	left: 8px;
+
+	color: yellow;
+}
+
+#notes-title {
+	font-size: 32px;
+	font-style: italic;
+}
+
+#notes-content {
+	font-size: 12px;
 }
 
 /* In-Game */
