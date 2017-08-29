@@ -1,3 +1,14 @@
+/*
+
+Environment variables
+---------------------
+PHYS_DEBUG
+QUADTREE_CAPACITY
+QUADTREE_MAXLEVEL
+PLANETS
+
+*/
+
 var express = require("express");
 var app = require("express")();
 var http = require("http").Server(app);
