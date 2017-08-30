@@ -10,6 +10,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.networkGlobally = true;
 
 			this.name = data.name || "Unnamed";
+			this.credits = data.credits || 0;
 			this.shield = null;
 			this.shieldPower = 100;
 			this.health = 100;
@@ -68,6 +69,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		remove() {
 			ENT.remove(this.shield);
+		}
+
+		giveCredits(amount) {
+			this.credits += Math.max(amount, 0);
 		}
 
 		takeDamage(damage, collision) {
@@ -204,6 +209,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			ENT.sendProperties(this, {
 				x: this.physicsObject.x,
 				y: this.physicsObject.y,
+				credits: this.credits,
 				rotation: this.physicsObject.rotation,
 				controls: this.controls,
 				health: this.health,

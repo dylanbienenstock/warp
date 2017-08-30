@@ -130,6 +130,8 @@ function loadContent() {
 		.add("asteroid:1:overlay", "./img/asteroid/1-overlay.svg")
 		.add("asteroid:2:overlay", "./img/asteroid/2-overlay.svg")
 		.add("asteroid:3:overlay", "./img/asteroid/3-overlay.svg")
+		.add("credits", "./img/credits.svg")
+		.add("credits:glow", "./img/credits-glow.svg")
 	.load(setup);
 }
 

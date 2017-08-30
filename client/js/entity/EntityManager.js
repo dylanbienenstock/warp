@@ -25,6 +25,9 @@ ENT.new = function(data) {
 		case "Asteroid":
 			entity = new EntityAsteroid(data);
 			break;
+		case "Credits":
+			entity = new EntityCredits(data);
+			break;
 		case "Player":
 			entity = new EntityPlayer(data);
 			break;
