@@ -34,7 +34,7 @@ module.exports = function() {
 
 				var i = 0;
 				while (i < this.objects.length) {
-					var index = this.getIndex(this.objects[i]);
+					var index = this.getIndex(this.objects[i].info.bounds);
 
 					if (index != -1) {
 						this.nodes[index].insert(this.objects[i]);
@@ -48,9 +48,9 @@ module.exports = function() {
 		}
 
 		getIndex(bounds) {
-			var top = bounds.minY <= this.verticalMidpoint;
-			var bottom = bounds.maxY > this.verticalMidpoint;
-			var left = bounds.maxX <= this.horizontalMidpoint;
+			var top = bounds.minY < this.verticalMidpoint && bounds.maxY < this.verticalMidpoint;
+			var bottom = bounds.minY > this.verticalMidpoint;
+			var left = bounds.minX < this.horizontalMidpoint && bounds.maxX < this.horizontalMidpoint;
 			var right = bounds.minX > this.horizontalMidpoint;
 
 			if (top) {
@@ -81,17 +81,18 @@ module.exports = function() {
 			];
 		}
 
-		retrieve(bounds, retrievedObjects) {
-			retrievedObjects = retrievedObjects || [];
-
+		retrieve(bounds) {
+			var retrievedObjects = this.objects;
 			var index = this.getIndex(bounds);
 
-			if (index != -1 && this.nodes != null) {
-				this.nodes[index].retrieve(bounds, retrievedObjects);
-			}
-
-			for (var i = this.objects.length - 1; i >= 0; i--) {
-				retrievedObjects.push(this.objects[i]);
+			if (this.nodes != null) {
+				if (index != -1) {
+					retrievedObjects = retrievedObjects.concat(this.nodes[index].retrieve(bounds));
+				} else {
+					for (var i = 0; i < this.nodes.length; i++) {
+						retrievedObjects = retrievedObjects.concat(this.nodes[i].retrieve(bounds));
+					}
+				}
 			}
 
 			return retrievedObjects;
@@ -101,8 +102,12 @@ module.exports = function() {
 			this.objects.length = 0;
 
 			if (this.nodes != null) {
-				this.nodes = null;
+				for (var i = 0; i < this.nodes.length; i++) {
+					this.nodes[i].clear();
+				}
 			}
+
+			this.nodes = null;
 		}
 
 		getDebugInfo(debugInfo) {
