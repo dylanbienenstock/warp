@@ -161,6 +161,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.lastBoosting = this.boosting;
 			} else {
 				this.boosting = false;
+				this.shield.physicsObject.active = false;
 			}
 		}
 
