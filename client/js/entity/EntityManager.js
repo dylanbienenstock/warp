@@ -13,33 +13,7 @@ ENT.localPlayer;
 ENT.physicsDebug = true;
 
 ENT.new = function(data) {
-	var entity;
-
-	switch (data.className) {
-		case "PhysicsDebug":
-			entity = new EntityPhysicsDebug(data);
-			break;
-		case "Planet":
-			entity = new EntityPlanet(data);
-			break;
-		case "Asteroid":
-			entity = new EntityAsteroid(data);
-			break;
-		case "Credits":
-			entity = new EntityCredits(data);
-			break;
-		case "Player":
-			entity = new EntityPlayer(data);
-			break;
-		case "Shield":
-			entity = new EntityShield(data);
-			break;
-		case "Laser":
-			entity = new EntityLaser(data);
-			break;
-		default:
-			console.error("Tried to create non-existent entity:", data);
-	}
+	var entity = new window.Entity[data.className](data);
 
 	if (entity != undefined) {
 		entity.setProperties(data);
