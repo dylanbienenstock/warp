@@ -86,9 +86,11 @@ function drawOscillatingCircles(ww, wh) {
 	}
 }
 
+window.connected = false;
+
 $(function() {
 	$("*").keyup(function(event) {
-		if (event.key == "Enter" && !awaitingResponse) {
+		if (event.key == "Enter" && !awaitingResponse && !window.connected) {
 			awaitingResponse = true;
 			connect($("#name-input").val());
 		}
@@ -102,6 +104,8 @@ function processResponse(response) {
 	var $notesContainer = $("#notes-container");
 
 	if (response.accepted) {
+		window.connected = true;
+
 		$notesContainer.animate({
 			color: "#00FF00"
 		}, 600);
