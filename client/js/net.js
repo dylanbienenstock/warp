@@ -168,9 +168,11 @@ function bindControls() {
 				case "O":
 					window.overrideZoom = 0.3;
 					window.useOverrideZoom = !window.useOverrideZoom;
+					break;
 				case "p":
 				case "P":
 					ENT.physicsDebug = !ENT.physicsDebug;
+					break;
 			}
 		}
 	});
