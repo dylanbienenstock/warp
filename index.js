@@ -25,6 +25,8 @@ var ENT = require("./entity/EntityManager.js")(io, physicsDebug);
 var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
 ENT.Entity = Entity;
 
+var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
+
 console.log("Initializing game...");
 var startTime = Date.now();
 setupGame();
@@ -82,6 +84,8 @@ function acceptConnection(name, socket) {
 	});
 
 	ENT.create(player, socket); 
+
+	player.primaryWeapon = new Weapon.Peashooter(player.id);
 
 	if (!physicsDebug) {
 		console.log("+ Player " + name + " has connected.");
