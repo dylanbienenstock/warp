@@ -47,7 +47,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				ENT.create(ENT.new("Credits", {
 					x: this.physicsObject.x,
 					y: this.physicsObject.y,
-					amount: this.radius * 10
+					amount: this.radius * 5
 				}));
 			}
 		}
