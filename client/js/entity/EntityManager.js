@@ -23,20 +23,9 @@ ENT.new = function(data) {
 }
 
 ENT.newEffect = function(className, data) {
-	var effect;
-
 	data.className = className;
 
-	switch (className) {
-		case "BoostTrail":
-			effect = new EffectBoostTrail(data);
-			break;
-		case "LaserTrail":
-			effect = new EffectLaserTrail(data);
-			break;
-		default:
-			console.error("Tried to create non-existent effect:", data);
-	}
+	var effect = new window.Effect[className](data);
 
 	if (effect != undefined) {
 		effect.setProperties(data);
