@@ -122,6 +122,10 @@ function acceptConnection(name, socket) {
 		player.viewport.width = data.width;
 		player.viewport.height = data.height;
 	});
+
+	socket.on("buy weapon", function(data) {
+		Shop.buyWeapon(player, data);
+	});
 }
 
 var nameValidator = /^([A-Za-z0-9\-]+)$/g;
