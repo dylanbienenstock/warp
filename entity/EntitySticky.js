@@ -3,11 +3,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super(data);
 
-			this.lifespan = data.lifespan || 1000;
+			this.lifespan = data.lifespan || 10000;
 
 			this.ownerId = data.ownerId;
 			this.damage = data.damage || 10;
 			this.radius = data.radius || 4;
+			this.stuck = false;
 
 			this.x = data.x;
 			this.y = data.y;
@@ -36,15 +37,20 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		collideWith(entity, collision) {	
-			// collision is defined here	
-			// console.log(collision);
 			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId ||
-				entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid")) {
+				entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid") &&
+				!this.stuck) {
+				debugger;
 				console.log("sticky hit: " + entity.className);
-				ENT.trigger(this, "stick", {"collision": {}, "targetId": entity.id});
-				// ENT.trigger(this, "stick", {"collision": {collision}, "targetId": entity.id});
-				// but when I pass it here, I get crazy strange error...
-				// clearly coming from onStick client/js/entity/EntitySticky but don't get why...
+				ENT.trigger(this, "stick",
+					{"collision":
+						{
+							"x": collision.position.x,
+							"y": collision.position.y
+						}, "targetId": entity.id}
+				);
+				PHYS.remove(this.physicsObject);
+				this.stuck = true;
 			}
 		}
 	}
