@@ -412,12 +412,17 @@ class PhysicsManager {
 				}
 
 				this.QuadTree.insert(physicsObject);
-				this.checkForCollisions(physicsObject);
-				this.restrictToMap(physicsObject);
-				this.applyVelocities(physicsObject, timeMult);
-				this.restVelocities(physicsObject, timeMult);
-				this.dampenVelocities(physicsObject, timeMult);
 			}
+		}
+
+		for (var i2 = this.physicsObjects.length - 1; i2 >= 0; i2--) {
+			var physicsObject = this.physicsObjects[i2];
+
+			this.checkForCollisions(physicsObject);
+			this.restrictToMap(physicsObject);
+			this.applyVelocities(physicsObject, timeMult);
+			this.restVelocities(physicsObject, timeMult);
+			this.dampenVelocities(physicsObject, timeMult);
 		}
 
 		this.acknowledgeCollisions();

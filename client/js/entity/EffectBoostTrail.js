@@ -10,7 +10,7 @@ class EffectBoostTrail extends EntityBase {
 		this.graphics = new PIXI.Graphics();
 		this.graphics.x = data.x;
 		this.graphics.y = data.y;
-		this.graphics.zIndex = 1;
+		this.graphics.zIndex = 98;
 		this.lines = [];
 		this.lastLineEnd = {
 			x: this.graphics.x,

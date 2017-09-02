@@ -79,3 +79,19 @@
 
 	cursor: default;
 }
+
+.collect-credits {
+	position: absolute;
+	display: block;
+	font-size: 24px;
+	color: yellow;
+	text-shadow: #000 0px 0px 8px;
+	padding: 4px;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	cursor: default;
+}

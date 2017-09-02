@@ -10,6 +10,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.networkGlobally = true;
 
 			this.name = data.name || "Unnamed";
+			this.credits = data.credits || 0;
 			this.shield = null;
 			this.shieldPower = 100;
 			this.health = 100;
@@ -19,8 +20,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastBoostTime = 0;
 			this.alive = true;
 			this.speed = 6;
-			this.lastFirePrimary = 0;
-			this.lastFireSecondary = 0;
+
+			this.primaryWeapon = data.primaryWeapon;
+			this.secondaryWeapon = data.secondaryWeapon;
 
 			this.viewport = {
 				width: 1920,
@@ -70,6 +72,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			ENT.remove(this.shield);
 		}
 
+		giveCredits(amount) {
+			this.credits += Math.max(amount, 0);
+		}
+
 		takeDamage(damage, collision) {
 			if (this.alive) {
 				ENT.trigger(this, "hit");
@@ -103,47 +109,30 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super.update();
 
 			if (this.alive) {
-				if (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
-					if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
-						ENT.create(ENT.new("Laser", {
-							ownerId: this.id,
-							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
-							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-							rotation: this.physicsObject.rotation,
-							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
-							thrustY: -Math.sin(this.physicsObject.rotation) * 32
-						}));
+				var now = Date.now();
 
-						this.lastFirePrimary = Date.now();
+				if (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
+					var firePosition = {
+						x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
+						y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24
+					};
+
+					var fireAngle = this.physicsObject.rotation;
+
+					if (this.primaryWeapon != undefined && this.controls.firePrimary && now - this.primaryWeapon.lastFire >= this.primaryWeapon.fireInterval) {
+						this.primaryWeapon.fire(firePosition, fireAngle);
+						this.primaryWeapon.lastFire = now;
 					}
 
-					if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
-						var angleIncrement = 8 * Math.PI / 180;
-						var origin = this.physicsObject.rotation - angleIncrement * 1.5;
-
-						for (var i = 0; i < 4; i++) {
-							var offset = i * angleIncrement;
-
-							ENT.create(ENT.new("Laser", {
-								ownerId: this.id,
-								thickness: 4,
-								color: 0x00FF00,
-								length: 32,
-								x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
-								y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-								rotation: origin + offset,
-								thrustX: -Math.cos(origin + offset) * 32,
-								thrustY: -Math.sin(origin + offset) * 32
-							}));
-						}
-
-						this.lastFireSecondary = Date.now();
+					if (this.secondaryWeapon != undefined && this.controls.fireSecondary && now - this.secondaryWeapon.lastFire >= this.secondaryWeapon.fireInterval) {
+						this.secondaryWeapon.fire(firePosition, fireAngle);
+						this.secondaryWeapon.lastFire = now;
 					}
 				}
 
 				this.shieldPower = this.shield.power;
 
-				if (Date.now() - this.lastBoostTime >= 1000) {
+				if (now - this.lastBoostTime >= 1000) {
 					this.boost = Math.min(this.boost + boostRegen * timeMult, 100);
 				}
 
@@ -156,6 +145,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.lastBoosting = this.boosting;
 			} else {
 				this.boosting = false;
+				this.shield.physicsObject.active = false;
 			}
 		}
 
@@ -204,6 +194,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			ENT.sendProperties(this, {
 				x: this.physicsObject.x,
 				y: this.physicsObject.y,
+				credits: this.credits,
 				rotation: this.physicsObject.rotation,
 				controls: this.controls,
 				health: this.health,

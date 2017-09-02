@@ -13,6 +13,10 @@ function connect(name) {
 			accepted = response.accepted;
 
 			if (response.accepted) {
+				for (var i = 0; i < response.shopListings.length; i++) {
+					addShopListing(response.shopListings[i]);
+				}
+
 				socket.on("entity list", function(data) {
 					data.forEach(function (entity) {
 						ENT.create(ENT.new(entity));
@@ -59,6 +63,7 @@ function connect(name) {
 }
 
 function sendControl(control, down) {
+	ENT.localPlayer.controls[control] = down;
 	socket.emit("control " + (down ? "down" : "up"), control);
 }
 
@@ -80,18 +85,23 @@ function sendViewportDimensions() {
 }
 
 function bindControls() {
-	$(window).mousemove(function(event) {
+	$("body").mousemove(function(event) {
+		if (window.shopOpen) return;
+
 		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
 			var mousePos = getMousePosition();
 			ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - mousePos.y,
 														 ENT.localPlayer.sprite.position.x - mousePos.x);
 		}
 	});
+	
 	$(window).resize(function() {
 		sendViewportDimensions();
 	});
 
 	$(window).keydown(function(event) {
+		if (window.shopOpen) return;
+
 		if (ENT.localPlayer != undefined && ENT.localPlayer != null) {
 			switch (event.key)
 			{
@@ -99,7 +109,6 @@ function bindControls() {
 				case "W":
 					if (!ENT.localPlayer.controls.thrustForward) {
 						sendControl("thrustForward", true);
-						ENT.localPlayer.controls.thrustForward = true;
 					}
 
 					break;
@@ -107,7 +116,6 @@ function bindControls() {
 				case "S":
 					if (!ENT.localPlayer.controls.thrustBackward) {
 						sendControl("thrustBackward", true);
-						ENT.localPlayer.controls.thrustBackward = true;
 					}
 
 					break;
@@ -115,7 +123,6 @@ function bindControls() {
 				case "A":
 					if (!ENT.localPlayer.controls.thrustLeft) {
 						sendControl("thrustLeft", true);
-						ENT.localPlayer.controls.thrustLeft = true;
 					}
 
 					break;
@@ -123,15 +130,15 @@ function bindControls() {
 				case "D":
 					if (!ENT.localPlayer.controls.thrustRight) {
 						sendControl("thrustRight", true);
-						ENT.localPlayer.controls.thrustRight = true;
 					}
 
 					break;
 				case "Shift":
 					if (!ENT.localPlayer.controls.boost) {
 						sendControl("boost", true);
-						ENT.localPlayer.controls.boost = true;
 					}
+					event.preventDefault();
+					event.stopPropagation();
 			}
 		}
 	});
@@ -143,39 +150,36 @@ function bindControls() {
 				case "w":
 				case "W":
 					sendControl("thrustForward", false);
-					ENT.localPlayer.controls.thrustForward = false;
 					break;
 				case "s":
 				case "S":
 					sendControl("thrustBackward", false);
-					ENT.localPlayer.controls.thrustBackward = false;
 					break;
 				case "a":
 				case "A":
 					sendControl("thrustLeft", false);
-					ENT.localPlayer.controls.thrustLeft = false;
 					break;
 				case "d":
 				case "D":
 					sendControl("thrustRight", false);
-					ENT.localPlayer.controls.thrustRight = false;
 					break;
 				case "Shift":
 					sendControl("boost", false);
-					ENT.localPlayer.controls.boost = false;
 					break;
-				case "o":
-				case "O":
-					window.overrideZoom = 0.3;
-					window.useOverrideZoom = !window.useOverrideZoom;
+				case " ":
+					toggleShop();
+					break;
 				case "p":
 				case "P":
 					ENT.physicsDebug = !ENT.physicsDebug;
+					break;
 			}
 		}
 	});
 
 	$(window).mousedown(function(event) {
+		if (window.shopOpen) return;
+
 		switch (event.which) {
 			case (1):
 				if (!ENT.localPlayer.controls.firePrimary) {
@@ -210,6 +214,8 @@ function bindControls() {
 	});
 
 	setInterval(function() {
+		if (window.shopOpen) return;
+
 		if (ENT.localPlayer != undefined) {
 			sendAngle(ENT.localPlayer.sprite.rotation);
 		}

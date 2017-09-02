@@ -7,6 +7,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.health = 150 * (this.radius / (16 + 32));
 			this.initialHealth = this.health;
 			this.alive = true;
+			this.respawnTimeout = null;
 
 			if (Math.random() > 0.95) {
 				this.radius = 72;
@@ -15,7 +16,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			this.physicsObject = PHYS.new("Circle", {
 				restrictToMap: true,
-				radius: this.radius
+				radius: this.radius + 8
 			});
 
 			this.resetPosition();
@@ -28,9 +29,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			this.physicsObject.x = -Math.cos(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 1024);
 			this.physicsObject.y = -Math.sin(angle) * (PHYS.boundaryRadius / 2 + Math.random() * 1024);
-			this.physicsObject.velocityX = -Math.cos(angle) * 2;
-			this.physicsObject.velocityY = -Math.sin(angle) * 2;
 
+			clearTimeout(this.respawnTimeout);
 			setTimeout(this.respawn.bind(this), 5000);
 		}
 
@@ -43,7 +43,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		dropCredits() {
-
+			if (this.alive) {
+				ENT.create(ENT.new("Credits", {
+					x: this.physicsObject.x,
+					y: this.physicsObject.y,
+					amount: this.radius * 5
+				}));
+			}
 		}
 
 		create() {
@@ -56,23 +62,23 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		collideWith(entity, collision) {
 			if (entity instanceof ENT.type("Asteroid")) {
-				var distance = this.physicsObject.distanceTo(entity.physicsObject.x, entity.physicsObject.y);
-				var velocity = (entity.radius / this.radius) * 0.2;
+				var velocity = 0.1;
+				var angle = Math.atan2(entity.physicsObject.y - this.physicsObject.y, entity.physicsObject.x - this.physicsObject.x);
 
-				this.physicsObject.velocityX += -Math.cos(collision.angle) * velocity;
-				this.physicsObject.velocityY += -Math.sin(collision.angle) * velocity;
+				this.physicsObject.velocityX += -Math.cos(angle) * 0.1;
+				this.physicsObject.velocityY += -Math.sin(angle) * 0.1;
 			}
 
 			if (entity instanceof ENT.type("Laser")) {
 				ENT.trigger(this, "hit");
+				ENT.remove(entity);
 
 				this.health -= entity.damage;
 				
 				if (this.health <= 0) {
+					this.dropCredits();
 					this.alive = false;
 					this.physicsObject.active = false;
-
-					this.dropCredits();
 
 					setTimeout(this.resetPosition.bind(this), 5000);
 				}

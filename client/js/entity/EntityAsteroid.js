@@ -10,6 +10,7 @@ class EntityAsteroid extends EntityBase {
 		this.textureNumber = randomInt(0, 3);
 
 		this.container = new PIXI.Container();
+		this.container.zIndex = 3;
 
 		this.sprite = new PIXI.Sprite(PIXI.loader.resources["asteroid:" + this.textureNumber].texture);
 		this.sprite.anchor.set(0.5, 0.5);
@@ -41,7 +42,6 @@ class EntityAsteroid extends EntityBase {
 			this.sprite.rotationDelta = Math.random() * 0.01 - 0.005;
 		}
 
-		//this.subContainer.addChild(this.outlineSprite, this.sprite);
 		this.container.addChild(this.outlineSprite, this.sprite, this.overlaySprite);
 		ENT.stageContainer.addChild(this.container);
 	}

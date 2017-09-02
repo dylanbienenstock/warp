@@ -53,3 +53,21 @@ function rotatePoint(x, y, originX, originY, rotation) {
 function randomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+function formatCredits(number, doNotReplaceZeros) {
+	var formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+	if (!doNotReplaceZeros) {
+		formattedNumber = formattedNumber.replace(/0/g, "O");
+	}
+
+    return formattedNumber;
+}
+
+function getLocalPlayerCredits() {
+	if (ENT != undefined && ENT.localPlayer != undefined) {
+		return ENT.localPlayer.credits;
+	}
+
+	return 0;
+}

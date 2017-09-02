@@ -7,6 +7,7 @@ class EntityPlayer extends EntityBase {
 		this.triggers.boost = this.onBoost.bind(this);
 
 		this.name = data.name;
+		this.credits = data.credits || 0;
 		this.health = 100;
 		this.shieldPower = 100;
 		this.boost = 100;
@@ -28,7 +29,7 @@ class EntityPlayer extends EntityBase {
 		};
 
 		this.container = new PIXI.Container();
-		this.container.zIndex = 2;
+		this.container.zIndex = 99;
 
 		this.shadowSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:shadow"].texture);
 		this.shadowSprite.anchor.set(0.678, 0.5);
@@ -120,7 +121,7 @@ class EntityPlayer extends EntityBase {
 
 		if (this.isLocalPlayer) {
 			centerOn(this.sprite);
-			this.container.zIndex = 3;
+			this.container.zIndex = 100;
 		} else {
 			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}

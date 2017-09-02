@@ -1,0 +1,358 @@
+#shop-veil {
+	position: absolute;
+	display: none;
+	z-index: 9999;
+
+	background-color: rgba(0, 0, 0, 0.75);
+}
+
+#shop-veil-over {
+	position: absolute;
+	display: none;
+	width: 650px;
+	height: 450px;
+	background-color: rgba(0, 0, 0, 0.75);
+	z-index: 99999;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	-webkit-box-shadow: 0px 0px 0px 2px #000000;
+	-moz-box-shadow: 0px 0px 0px 2px #000000;
+	box-shadow: 0px 0px 0px 2px #000000;
+}
+
+#shop-container {
+	position: absolute;
+
+	-webkit-box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75);
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#shop {
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+
+	overflow: hidden;
+
+	width: 650px;
+	height: 450px;
+
+	background-color: #454545;
+	color: white;
+}
+
+.shop-modal {
+	position: absolute;
+	display: none;
+	overflow: hidden;
+	z-index: 999999;
+
+	-webkit-box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75);
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	background-color: #454545;
+	color: white;
+}
+
+.shop-modal-titlebar {
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 12px 0 12px;
+
+	background-color: #303030;
+}
+
+.shop-modal-content {
+	padding: 12px;
+}
+
+#shop-buy-weapon-modal {
+	top: 0;
+	left: 0;
+}
+
+.shop-close {
+	position: absolute;
+	display: inline;
+
+	color: red;
+	font-size: 24px;
+	line-height: 30px;
+	cursor: pointer;
+}
+
+#shop-tab-container {
+	width: 100%;
+	height: 30px;
+
+	background-color: #303030;
+}
+
+.shop-tab-inactive {
+	display: inline-block;
+	padding: 0 12px 0 12px;
+	height: 100%;
+
+	background-color: transparent;
+	color: white;
+	font-size: 16px;
+	line-height: 30px;
+	cursor: pointer;
+}
+
+.shop-tab-inactive:hover {
+	background-color: #393939;
+}
+
+.shop-tab-active {
+	display: inline-block;
+	padding: 0 12px 0 12px;
+	height: 100%;
+
+	background-color: #454545;
+	color: white;
+	font-size: 16px;
+	line-height: 31px;
+	cursor: pointer;
+}
+
+#shop-page-container {
+	height: 100%;
+}
+
+.shop-page {
+	display: none;
+	width: 100%;
+	height: 100%;
+}
+
+.shop-listing-container {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 300px;
+	height: 420px;
+	padding: 12px;
+	font-size: 0;
+	vertical-align: top;
+}
+
+.shop-listing-inactive {
+	width: 100%;
+	height: 50px;
+	display: flex;
+	margin-bottom: 12px;
+
+	background-color: #656565;
+	opacity: 0.7;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	-webkit-transition: opacity 150ms ease;
+	-moz-transition: opacity 150ms ease;
+	-ms-transition: opacity 150ms ease;
+	-o-transition: opacity 150ms ease;
+	transition: opacity 150ms ease;
+	cursor: pointer;
+}
+
+.shop-listing-inactive:hover {
+	opacity: 1;
+}
+
+
+.shop-listing-active {
+	width: 100%;
+	height: 50px;
+	display: flex;
+	margin-bottom: 12px;
+
+	background-color: #656565;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	-webkit-box-shadow: 0px 0px 0px 1px #FFFFFF;
+	-moz-box-shadow: 0px 0px 0px 1px #FFFFFF;
+	box-shadow: 0px 0px 0px 1px #FFFFFF;
+
+	cursor: pointer;
+}
+
+.shop-listing-icon {
+	position: relative;
+	top: 7px;
+	left: 7px;
+
+	width: 36px;
+	height: 36px;
+
+	vertical-align: top;
+}
+
+.shop-listing-details-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position: relative;
+	margin-left: 20px;
+}
+
+.shop-listing-name {
+	font-size: 18px;
+}
+
+.shop-listing-price {
+	font-size: 12px;
+	color: yellow;
+}
+
+.shop-listing-info-container {
+	display: inline-block;
+	width: 350px;
+	height: 420px;
+	padding: 12px 12px 0 0;
+	vertical-align: top;
+	box-sizing: border-box;
+}
+
+.shop-listing-info {
+	width: 100%;
+	height: 336px;
+	padding: 8px;
+	margin-bottom: 12px;
+
+	background-color: #656565;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	box-sizing: border-box;
+}
+
+.shop-listing-buy {
+	outline: none;
+	border: none;
+
+	width: 100%;
+	height: 48px;
+
+	background-color: rgba(225, 200, 55, 0.5);
+	color: white;
+	font-family: inherit;
+	font-size: 18px;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	-webkit-transition: background 150ms ease;
+	-moz-transition: background 150ms ease;
+	-ms-transition: background 150ms ease;
+	-o-transition: background 150ms ease;
+	transition: background 150ms ease;
+
+	cursor: pointer;
+}
+
+.shop-listing-buy:hover {
+	background-color: rgba(225, 200, 55, 0.8);
+}
+
+.shop-listing-buy-disabled {
+	outline: none;
+	border: none;
+
+	width: 100%;
+	height: 48px;
+
+	background-color: #545454;
+	color: #989898;
+	font-family: inherit;
+	font-size: 18px;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+
+#shop-buy-weapon-modal-replace-primary {
+	outline: none;
+	border: none;
+	margin-bottom: 12px;
+
+	width: 100%;
+	height: 48px;
+
+	background-color: rgba(225, 0, 0, 0.5);
+	color: white;
+	font-family: inherit;
+	font-size: 18px;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	-webkit-transition: background 150ms ease;
+	-moz-transition: background 150ms ease;
+	-ms-transition: background 150ms ease;
+	-o-transition: background 150ms ease;
+	transition: background 150ms ease;
+
+	cursor: pointer;
+}
+
+#shop-buy-weapon-modal-replace-primary:hover {
+	background-color: rgba(225, 0, 0, 0.8);
+}
+
+#shop-buy-weapon-modal-replace-secondary {
+	outline: none;
+	border: none;
+
+	width: 100%;
+	height: 48px;
+
+	background-color: rgba(0, 225, 0, 0.5);
+	color: white;
+	font-family: inherit;
+	font-size: 18px;
+
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+	-webkit-transition: background 150ms ease;
+	-moz-transition: background 150ms ease;
+	-ms-transition: background 150ms ease;
+	-o-transition: background 150ms ease;
+	transition: background 150ms ease;
+
+	cursor: pointer;
+}
+
+#shop-buy-weapon-modal-replace-secondary:hover {
+	background-color: rgba(0, 225, 0, 0.8);
+}
