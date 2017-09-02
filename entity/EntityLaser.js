@@ -6,6 +6,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lifespan = data.lifespan || 1000;
 			this.networkGlobally = true;
 
+			data.angle = data.angle || 0;
+			data.force = data.force || 0;
+
 			this.ownerId = data.ownerId;
 			this.damage = data.damage || 10;
 			this.thickness = data.thickness || 2;
@@ -13,7 +16,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.length = data.length || 64;
 			this.x = data.x;
 			this.y = data.y;
-			this.rotation = data.rotation;
+			this.rotation = data.angle;
 
 			this.physicsObject = PHYS.new("Box", {
 				collisionGroup: "Projectile",
@@ -23,9 +26,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				localY: -9,
 				width: this.length,
 				height: 18,
-				rotation: data.rotation,
-				thrustX: data.thrustX,
-				thrustY: data.thrustY
+				rotation: data.angle,
+				thrustX: -Math.cos(data.angle) * data.force,
+				thrustY: -Math.sin(data.angle) * data.force
 			});
 		}
 
