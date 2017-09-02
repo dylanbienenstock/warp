@@ -128,7 +128,7 @@ function drawLevels() {
 		healthText.text = "health " + Math.floor(destHealth);
 		shieldText.text = "shield " + Math.floor(destShield);
 		boostText.text = "boost " + Math.floor(destBoost);
-		creditsText.text = "Credits: " + addCommas(Math.floor(ENT.localPlayer.credits));
+		creditsText.text = "Credits: " + formatCredits(Math.floor(ENT.localPlayer.credits), true);
 
 		healthText.x = windowPadding + textPadding;
 		healthText.y = windowHeight - windowPadding - barHeight + 1;
