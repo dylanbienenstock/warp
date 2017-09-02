@@ -104,12 +104,24 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			if (this.alive) {
 				if (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
-					if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
+					/*if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
 						ENT.create(ENT.new("Laser", {
 							ownerId: this.id,
 							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
 							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
 							rotation: this.physicsObject.rotation,
+							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
+							thrustY: -Math.sin(this.physicsObject.rotation) * 32
+						}));
+
+						this.lastFirePrimary = Date.now();
+					}*/
+					if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
+						ENT.create(ENT.new("Sticky", {
+							ownerId: this.id,
+							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
+							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
+							radius: 3,
 							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
 							thrustY: -Math.sin(this.physicsObject.rotation) * 32
 						}));

@@ -7,6 +7,7 @@ module.exports = function(io, ENT, PHYS) {
 		Asteroid: require("../entity/EntityAsteroid.js")(EntityBase, ENT, PHYS),
 		Player: require("../entity/EntityPlayer.js")(EntityBase, ENT, PHYS),
 		Shield: require("../entity/EntityShield.js")(EntityBase, ENT, PHYS),
-		Laser: require("../entity/EntityLaser.js")(EntityBase, ENT, PHYS)
+		Laser: require("../entity/EntityLaser.js")(EntityBase, ENT, PHYS),
+		Sticky: require("../entity/EntitySticky.js")(EntityBase, ENT, PHYS)
 	};
 }

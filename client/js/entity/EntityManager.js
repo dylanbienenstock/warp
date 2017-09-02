@@ -34,6 +34,9 @@ ENT.new = function(data) {
 		case "Laser":
 			entity = new EntityLaser(data);
 			break;
+		case "Sticky":
+			entity = new EntitySticky(data);
+			break;
 		default:
 			console.error("Tried to create non-existent entity:", data);
 	}
