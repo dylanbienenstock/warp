@@ -14,9 +14,9 @@ function connect(name) {
 
 			if (response.accepted) {
 				socket.on("entity list", function(data) {
-					for (var i = data.length - 1; i >= 0; i--) {
-						ENT.create(ENT.new(data[i]));
-					}
+					data.forEach(function (entity) {
+						ENT.create(ENT.new(entity));
+					});
 				});
 
 				socket.on("entity create", function(data) {
@@ -74,7 +74,7 @@ function sendViewportDimensions() {
 	setTimeout(function() {
 		socket.emit("viewport", {
 			width: $(window).width() * (1 / window.destZoom),
-			height: $(window).height() * (1 / window.destZoom )
+			height: $(window).height() * (1 / window.destZoom)
 		});
 	});
 }
