@@ -18,7 +18,9 @@
 
 		<div class="shop-page" id="shop-page-weapons">
 			<div class="shop-listing-container" id="shop-listing-container-weapons"></div><div class="shop-listing-info-container">
-				<div class="shop-listing-info" id="shop-listing-info-weapons"></div><button type="button" class="shop-listing-buy" id="shop-listing-buy-weapons"></button>
+				<div class="shop-listing-info" id="shop-listing-info-weapons"></div>
+				<button type="button" class="shop-listing-buy" id="shop-listing-buy-weapons"></button>
+				<div id="shop-listing-stats-container-weapons"></div>
 			</div>
 		</div>
 
@@ -39,9 +41,13 @@
 		</div>
 
 		<div class="shop-modal-content">
-			<div style="margin-bottom: 12px;">Which slot would you like to replace?</div>
-			<button type="button" id="shop-buy-weapon-modal-replace-primary">Replace primary</button>
-			<button type="button" id="shop-buy-weapon-modal-replace-secondary">Replace secondary</button>
+			<div id="shop-buy-weapon-modal-content">
+				<div style="margin-bottom: 12px;">Which slot would you like to replace?</div>
+				<button type="button" id="shop-buy-weapon-modal-replace-primary">Replace primary</button>
+				<button type="button" id="shop-buy-weapon-modal-replace-secondary">Replace secondary</button>
+			</div>
+
+			<div id="shop-buy-weapon-modal-receipt">Weapon purchased.</div>
 		</div>
 	</div>
 </div>

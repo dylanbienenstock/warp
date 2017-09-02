@@ -36,7 +36,8 @@ function openShop() {
 		$("#shop-veil").show();
 		layoutShop();
 
-		selectShopTab(shopFirstTab, shopPageIds[0]);
+		// TEMP (change 2 to 0)
+		selectShopTab(shopFirstTab, shopPageIds[2]);
 
 		shopFirstListings.forEach(function(listingData) {
 			selectListing(listingData.listing, listingData.data);
@@ -71,8 +72,11 @@ function layoutShop() {
 	var $shopVeil = $("#shop-veil");
 	var $shopContainer = $("#shop-container");
 	var $shopClose = $("#shop-close");
+	var $shopListingInfoWeapons = $("#shop-listing-info-weapons");
+	var $shopListingStatsContainerWeapon = $("#shop-listing-stats-container-weapons");
 	var $shopBuyWeaponModal = $("#shop-buy-weapon-modal");
 	var $shopBuyWeaponModalClose = $("#shop-buy-weapon-modal-close");
+	var $shopBuyWeaponModalReceipt = $("#shop-buy-weapon-modal-receipt");
 
 	$shopVeil.width($(window).innerWidth());
 	$shopVeil.height($(window).innerHeight());
@@ -87,6 +91,11 @@ function layoutShop() {
 		top: $shopContainer.offset().top - 0
 	});
 
+	$shopListingStatsContainerWeapon.offset({
+		left: $shopListingInfoWeapons.offset().left,
+		top: $shopListingInfoWeapons.offset().top + $shopListingInfoWeapons.outerHeight() - $shopListingStatsContainerWeapon.outerHeight()
+	});
+
 	$shopBuyWeaponModal.css({
 		left: $shopContainer.width() / 2 - $shopBuyWeaponModal.width() / 2,
 		top: $shopContainer.height() / 2 - $shopBuyWeaponModal.height() / 2
@@ -95,6 +104,11 @@ function layoutShop() {
 	$shopBuyWeaponModalClose.offset({
 		left: $shopBuyWeaponModal.offset().left + $shopBuyWeaponModal.innerWidth() - $shopClose.outerWidth() - 5,
 		top: $shopBuyWeaponModal.offset().top - 0
+	});
+
+	$shopBuyWeaponModalReceipt.css({
+		left: $shopBuyWeaponModal.width() / 2 - $shopBuyWeaponModalReceipt.width() / 2,
+		top: $shopBuyWeaponModal.height() / 2 - $shopBuyWeaponModalReceipt.height() / 2
 	});
 }
 
@@ -116,6 +130,11 @@ function addShopTab(name, pageId) {
 	}
 
 	shopTabsCount++;
+
+	// TEMP
+	if (name == "Weapons") {
+		shopFirstTab = newShopTab;
+	}
 }
 
 function selectShopTab(tab, pageId) {
@@ -185,7 +204,12 @@ function selectListing(listing, data) {
 
 	listing.className = "shop-listing-active";
 
-	if (getLocalPlayerCredits() >= data.price) {
+	console.log(ENT.localPlayer.primaryWeaponListing.className, data.className);
+	var owned = (ENT.localPlayer.primaryWeaponListing != undefined && ENT.localPlayer.primaryWeaponListing.className == data.className) || 
+				(ENT.localPlayer.secondaryWeaponListing != undefined && ENT.localPlayer.secondaryWeaponListing.className == data.className);
+
+	if (!owned && getLocalPlayerCredits() >= data.price) {
+
 		listingBuyButton.className = "shop-listing-buy";
 
 		switch (data.section) {
@@ -193,7 +217,7 @@ function selectListing(listing, data) {
 				break;
 			case "weapons":
 				listingBuyButton.onclick = function() {
-					openBuyWeaponModal();
+					openBuyWeaponModal(listing, data);
 				}
 
 				break;
@@ -202,17 +226,117 @@ function selectListing(listing, data) {
 		}
 	} else {
 		listingBuyButton.className = "shop-listing-buy-disabled";
+
+		if (owned) {
+			listingBuyButton.innerHTML = "ALREADY OWNED";
+		}
+	}
+
+	createListingStats(data);
+	layoutShop();
+}
+
+function createListingStats(data) {
+	var container = document.getElementById("shop-listing-stats-container-" + data.section);
+	$(container).empty();
+
+	if (data.stats != undefined) {
+		var currentLine;
+		var lines = [];
+		var i = 0;
+
+		for (var stat in data.stats) {
+			if (data.stats.hasOwnProperty(stat)) {
+				var statLabelContainer = document.createElement("span");
+
+				var statNameLabel = document.createElement("span");
+				statNameLabel.className = "shop-listing-stats-label";
+				statNameLabel.innerHTML = stat + ": ";
+
+				var statValueLabel = document.createElement("span");
+				statValueLabel.innerHTML = replaceZeros(data.stats[stat]);
+
+				if (i % 2 == 0 || i == 1) {
+					currentLine = document.createElement("div");
+					currentLine.className = "shop-listing-stats";
+
+					lines.push(currentLine);
+					container.appendChild(currentLine);
+
+					if (i == 1) {
+						i++;
+					}
+				} else {
+					statLabelContainer.style.textAlign = "right";
+				}
+
+				statLabelContainer.appendChild(statNameLabel);
+				statLabelContainer.appendChild(statValueLabel);
+				currentLine.appendChild(statLabelContainer);
+
+				i++;
+			}
+		}
+
+		lines.reverse();
+
+		for (var i = 0; i < lines.length; i++) {
+			if (i == 0) {
+				lines[i].className += " shop-listing-stats-bottom";
+			}
+
+			if (i % 2 == 0) {
+				lines[i].style.backgroundColor = "gray";
+			}
+		}
 	}
 }
 
-function openBuyWeaponModal() {
+function openBuyWeaponModal(listing, data) {
 	$("#shop-veil-over").show();
 	$("#shop-buy-weapon-modal").show();
+	$("#shop-buy-weapon-modal-content").css({ visibility: "visible" });
+	$("#shop-buy-weapon-modal-receipt").hide();
+
+	var replacePrimaryButton = document.getElementById("shop-buy-weapon-modal-replace-primary");
+	var replaceSecondaryButton = document.getElementById("shop-buy-weapon-modal-replace-secondary");
+
+	var completePurchase = function(primary) {
+		replacePrimaryButton.onclick = null;
+		replaceSecondaryButton.onclick = null;
+
+		$("#shop-buy-weapon-modal-content").css({ visibility: "hidden" });
+		$("#shop-buy-weapon-modal-receipt").show();
+
+		layoutShop();
+
+		sendBuyWeapon(data.className, primary);
+		closeBuyWeaponModal(true);
+
+		ENT.localPlayer.credits -= data.price;
+		ENT.localPlayer[primary ? "primaryWeaponListing" : "secondaryWeaponListing"] = data;
+		selectListing(listing, data);
+	}
+
+	replacePrimaryButton.onclick = function() {
+		completePurchase(true);
+	}
+
+	replaceSecondaryButton.onclick = function() {
+		completePurchase(false);
+	}
 
 	layoutShop();
 }
 
-function closeBuyWeaponModal() {
-	$("#shop-veil-over").hide();
-	$("#shop-buy-weapon-modal").hide();
+function closeBuyWeaponModal(purchasedWeapon) {
+	if (purchasedWeapon) {
+		setTimeout(function() {
+			$("#shop-veil-over").fadeOut();
+			$("#shop-buy-weapon-modal").fadeOut();
+		}, 600);
+	} else {
+		$("#shop-veil-over").stop().hide();
+		$("#shop-buy-weapon-modal").stop().hide();
+	}
 }
