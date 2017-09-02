@@ -29,14 +29,24 @@ module.exports = function(Weapon) {
 			return this.allListings;
 		}
 
-		buyItem(player, id) {
-			var listing = this.allListings[id];
+		buyWeapon(player, data) {
+			if (Weapon.hasOwnProperty(data.className)) {
+				var owned = (player.primaryWeaponListing != undefined && player.primaryWeaponListing.className == data.className) || 
+				(player.secondaryWeaponListing != undefined && player.secondaryWeaponListing.className == data.className);
 
-			if (player.credits >= listing.price) {
+				var weaponType = Weapon[data.className];
+				var listing = weaponType.getListing();
 
+				if (!owned && player.credits >= listing.price) {
+					player.credits -= listing.price;
+
+					if (data.primary) {
+						player.primaryWeapon = new weaponType(player.id);
+					} else {
+						player.secondaryWeapon = new weaponType(player.id);
+					}
+				}
 			}
-
-			return false;
 		}
 	}
 
