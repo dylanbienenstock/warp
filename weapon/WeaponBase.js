@@ -6,7 +6,6 @@ class WeaponBase {
 		this.doNotNetwork = true;
 
 		this.ownerId = ownerId;
-		this.name = "Unnamed";
 		this.fireInterval = 500;
 		this.lastFire = 0;
 	}

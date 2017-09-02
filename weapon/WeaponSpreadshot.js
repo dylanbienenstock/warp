@@ -1,17 +1,17 @@
 module.exports = function(WeaponBase, ENT, PHYS) {
-	return class WeaponPeashooter extends WeaponBase {
+	return class WeaponSpreadshot extends WeaponBase {
 		constructor(ownerId) {
 			super(ownerId);
 
-			this.fireInterval = 350;
+			this.fireInterval = 1250;
 		}
 
 		static getListing() {
 			return {
-				displayName: "Peashooter",
-				className: "Peashooter",
-				price: 100,
-				description: "It's a weapon."
+				displayName: "Spreadshot",
+				className: "Spreadshot",
+				price: 2500,
+				description: "It's the second weapon."
 			};
 		}
 
