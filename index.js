@@ -26,6 +26,7 @@ var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
 ENT.Entity = Entity;
 
 var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
+var Shop = require("./Shop.js")(Weapon);
 
 console.log("Initializing game...");
 var startTime = Date.now();
@@ -60,6 +61,8 @@ function onConnect(socket) {
 	socket.on("name request", function(name) {
 		if (!accepted) {
 			var response = processName(name);
+			response.shopListings = Shop.getAllListings();
+
 			accepted = response.accepted;
 
 			socket.emit("name response", response);
