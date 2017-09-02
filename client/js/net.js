@@ -84,6 +84,13 @@ function sendViewportDimensions() {
 	});
 }
 
+function sendBuyWeapon(className, primary) {
+	socket.emit("buy weapon", {
+		className: className,
+		primary: primary
+	});
+}
+
 function bindControls() {
 	$("body").mousemove(function(event) {
 		if (window.shopOpen) return;
