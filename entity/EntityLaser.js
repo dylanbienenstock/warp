@@ -7,7 +7,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.networkGlobally = true;
 
 			data.angle = data.angle || 0;
-			data.force = data.force || 0;
+			data.speed = data.speed || 0;
 
 			this.ownerId = data.ownerId;
 			this.damage = data.damage || 10;
@@ -27,8 +27,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				width: this.length,
 				height: 18,
 				rotation: data.angle,
-				thrustX: -Math.cos(data.angle) * data.force,
-				thrustY: -Math.sin(data.angle) * data.force
+				thrustX: -Math.cos(data.angle) * data.speed,
+				thrustY: -Math.sin(data.angle) * data.speed
 			});
 		}
 
