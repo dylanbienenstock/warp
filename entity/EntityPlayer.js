@@ -21,8 +21,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.alive = true;
 			this.speed = 6;
 
-			this.primaryWeapon = data.primaryWeapon;
-			this.secondaryWeapon = data.secondaryWeapon;
+			this.__primaryWeapon = null;
+			this.__secondaryWeapon = null;
+			this.primaryWeaponListing = null;
+			this.secondaryWeaponListing = null;
 
 			this.viewport = {
 				width: 1920,
@@ -58,6 +60,24 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				width: 16,
 				height: 10
 			}));
+		}
+
+		get primaryWeapon() {
+			return this.__primaryWeapon;
+		}
+
+		get secondaryWeapon() {
+			return this.__secondaryWeapon;
+		}
+
+		set primaryWeapon(value) {
+			this.__primaryWeapon = value;
+			this.primaryWeaponListing = value.constructor.getListing();
+		}
+
+		set secondaryWeapon(value) {
+			this.__secondaryWeapon = value;
+			this.secondaryWeaponListing = value.constructor.getListing();
 		}
 
 		create() {
@@ -195,6 +215,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				x: this.physicsObject.x,
 				y: this.physicsObject.y,
 				credits: this.credits,
+				primaryWeaponListing: this.primaryWeaponListing,
+				secondaryWeaponListing: this.secondaryWeaponListing,
 				rotation: this.physicsObject.rotation,
 				controls: this.controls,
 				health: this.health,
