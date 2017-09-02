@@ -13,6 +13,13 @@ class EntitySticky extends EntityBase {
 
 		this.sprite = this.graphics;
 		ENT.stageContainer.addChild(this.graphics);
+		this.triggers.stick = this.onStick.bind(this);
+
+	}
+
+	onStick(info) {
+		console.log("I AM A STICKY AND I HAVE STUCK TO SOMETHING");
+		//console.log(JSON.stringify(info));
 	}
 
 	update() {

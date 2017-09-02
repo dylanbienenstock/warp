@@ -198,7 +198,7 @@ if (physicsDebug) {
 				physicsTimesSum += physicsTimes[i];
 			}
 
-			console.log(performanceNow() + "," + physicsTimesSum);
+			//console.log(performanceNow() + "," + physicsTimesSum);
 
 			physicsTimes = [];
 		}

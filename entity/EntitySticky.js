@@ -35,26 +35,16 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			});
 		}
 
-		collideWith(entity, collision) {
-			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId) {
-				var damage = entity.takeDamage(this.damage, this, collision);
-
-				if (damage > 0) {
-					ENT.getById(entity.ownerId, function(player) {
-						player.takeDamage(damage, collision);
-					});
-				}
-
-				ENT.remove(this);
-			}
-
-			if (entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid")) {
-				var velocity = (entity instanceof ENT.type("Planet") ? 16 : 64);
-
-				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / velocity;
-				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / velocity;
-
-				ENT.remove(this);
+		collideWith(entity, collision) {	
+			// collision is defined here	
+			// console.log(collision);
+			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId ||
+				entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid")) {
+				console.log("sticky hit: " + entity.className);
+				ENT.trigger(this, "stick", {"collision": {}, "targetId": entity.id});
+				// ENT.trigger(this, "stick", {"collision": {collision}, "targetId": entity.id});
+				// but when I pass it here, I get crazy strange error...
+				// clearly coming from onStick client/js/entity/EntitySticky but don't get why...
 			}
 		}
 	}
