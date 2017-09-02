@@ -18,6 +18,9 @@ class EntityPlayer extends EntityBase {
 		this.y = data.y || 0;
 		this.rotation = data.rotation || 0;
 
+		this.primaryWeaponListing = null;
+		this.secondaryWeaponListing = null;
+
 		this.controls = {
 			thrustForward: false,
 			thrustBackward: false,
