@@ -13,6 +13,10 @@ function connect(name) {
 			accepted = response.accepted;
 
 			if (response.accepted) {
+				for (var i = 0; i < response.shopListings.length; i++) {
+					addShopListing(response.shopListings[i]);
+				}
+
 				socket.on("entity list", function(data) {
 					for (var i = data.length - 1; i >= 0; i--) {
 						ENT.create(ENT.new(data[i]));
@@ -133,6 +137,8 @@ function bindControls() {
 					if (!ENT.localPlayer.controls.boost) {
 						sendControl("boost", true);
 					}
+					event.preventDefault();
+					event.stopPropagation();
 			}
 		}
 	});
@@ -162,11 +168,6 @@ function bindControls() {
 					break;
 				case " ":
 					toggleShop();
-					break;
-				case "o":
-				case "O":
-					window.overrideZoom = 0.3;
-					window.useOverrideZoom = !window.useOverrideZoom;
 					break;
 				case "p":
 				case "P":

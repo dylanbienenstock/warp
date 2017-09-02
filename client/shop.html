@@ -1,3 +1,47 @@
+<div id="shop-veil-over">&nbsp;</div>
+
 <div id="shop">
-	<div id="shop-close" onclick="closeShop();">&times;</div>
+	<div class="shop-close" id="shop-close" onclick="closeShop();">&times;</div>
+
+	<div id="shop-tab-container"></div>
+
+	<div id="shop-page-container">
+		<div class="shop-page" id="shop-page-your-ship">
+			
+		</div>
+
+		<div class="shop-page" id="shop-page-ships">
+			<div class="shop-listing-container" id="shop-listing-container-ships">
+
+			</div>
+		</div>
+
+		<div class="shop-page" id="shop-page-weapons">
+			<div class="shop-listing-container" id="shop-listing-container-weapons"></div><div class="shop-listing-info-container">
+				<div class="shop-listing-info" id="shop-listing-info-weapons"></div><button type="button" class="shop-listing-buy" id="shop-listing-buy-weapons"></button>
+			</div>
+		</div>
+
+		<div class="shop-page" id="shop-page-equipment">
+			<div class="shop-listing-container" id="shop-listing-container-equipment">
+
+			</div>
+		</div>
+
+		<div class="shop-page" id="shop-page-upgrades">
+			
+		</div>
+	</div>
+
+	<div class="shop-modal" id="shop-buy-weapon-modal">
+		<div class="shop-modal-titlebar">Confirm purchase
+			<div class="shop-close" id="shop-buy-weapon-modal-close" onclick="closeBuyWeaponModal();">&times;</div>
+		</div>
+
+		<div class="shop-modal-content">
+			<div style="margin-bottom: 12px;">Which slot would you like to replace?</div>
+			<button type="button" id="shop-buy-weapon-modal-replace-primary">Replace primary</button>
+			<button type="button" id="shop-buy-weapon-modal-replace-secondary">Replace secondary</button>
+		</div>
+	</div>
 </div>
