@@ -55,7 +55,7 @@ class EntitySticky extends EntityBase {
 			// to understand whats goin on, once working will revert to
 			// PIXI.Sprite.attach
 
-			this.sprite.x = this.target.x + this.localX; // this.localX
+			this.sprite.x = this.target.x - this.localX; // this.localX
 			this.sprite.y = this.target.y + this.localY;
 			// need to calculate change in angle here
 			// this.sprite.rotation += (this.target.rotation - this.angle);

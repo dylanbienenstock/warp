@@ -3,16 +3,21 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super(data);
 
-			this.lifespan = data.lifespan || 10000;
+			//this.lifespan = data.lifespan || 10000;
 
 			this.ownerId = data.ownerId;
 			this.damage = data.damage || 10;
 			this.radius = data.radius || 4;
 			this.stuck = false;
+			this.target = undefined;
+			this.networkGlobally = true;
+			this.EXPLODE_TIME = 2000;
 
 			this.x = data.x;
 			this.y = data.y;
-			
+
+			this.launchTime = Date.now();
+
 			this.physicsObject = PHYS.new("Circle", {
 				collisionGroup: "Projectile",
 				x: data.x,
@@ -35,14 +40,25 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				y: this.physicsObject.y
 			});
 		}
+
+		update() {
+			super.update();
+			if (this.launchTime + this.EXPLODE_TIME < Date.now()) {
+				console.log("sticky exploded");
+				// this.explode();
+				ENT.remove(this);
+			}
+		}
 		
 		collideWith(entity, collision) {	
 			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId ||
 				entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid") &&
 				!this.stuck) {
 				console.log("sticky hit: " + entity.className);
-				this.physicsObject.thrustX = 0;
-				this.physicsObject.thrustY = 0;
+				this.target = entity;
+
+				this.physicsObject.x = collision.position.x;
+				this.physicsObject.y = collision.position.y;
 				ENT.trigger(this, "stick",
 					{"collision":
 						{
