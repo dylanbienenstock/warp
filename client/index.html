@@ -6,6 +6,7 @@
 
 		<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
 		<link rel="stylesheet" href="./css/styles.css" />
+		<link rel="stylesheet" href="./css/shop.css" />
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 
@@ -20,20 +21,31 @@
 		<script src="./js/util.js"></script>
 		<script src="./js/titlescreen.js"></script>
 		<script src="./js/backdrop.js"></script>
+		<script src="./js/load.js"></script>
 		<script src="./js/render.js"></script>
+		<script src="./js/lockon.js"></script>
 		<script src="./js/hud.js"></script>
+		<script src="./js/shop.js"></script>
 
 		<script src="./js/entity/EntityBase.js"></script>
 		<script src="./js/entity/EntityPhysicsDebug.js"></script>
 		<script src="./js/entity/EntityPlanet.js"></script>
 		<script src="./js/entity/EntityAsteroid.js"></script>
+		<script src="./js/entity/EntityCredits.js"></script>
 		<script src="./js/entity/EntityPlayer.js"></script>
 		<script src="./js/entity/EffectBoostTrail.js"></script>
 		<script src="./js/entity/EntityShield.js"></script>
 		<script src="./js/entity/EntityLaser.js"></script>
 		<script src="./js/entity/EntitySticky.js"></script>
 		<script src="./js/entity/EffectLaserTrail.js"></script>
+
+		<script src="./js/entity/Entity.js"></script>
+		<script src="./js/entity/Effect.js"></script>
 		<script src="./js/entity/EntityManager.js"></script>
+
+		<script src="./js/ship/ShipBase.js"></script>
+		<script src="./js/ship/ShipSkiff.js"></script>
+		<script src="./js/ship/Ship.js"></script>
 	</head>
 
 	<body oncontextmenu="return false;">
@@ -66,7 +78,16 @@
 				Shift - Boost </br>
 				Left click - Primary fire </br>
 				Right click - Secondary fire </br>
+				Space - Open shop </br>
+				</br>
+				Mouse over an enemy to lock on </br>
 				Scroll to zoom in and out
+			</div>
+		</div>
+
+		<div id="shop-veil">
+			<div id="shop-container">
+
 			</div>
 		</div>
 	</body>

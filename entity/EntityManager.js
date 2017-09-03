@@ -16,7 +16,9 @@ class EntityManager {
 		this.entities = [];
 		this.players = [];
 		this.nextId = 0;
+		this.networkNow = 0;
 		this.toNetwork = null;
+		
 		this.protectedSpaceRadius = 600;
 		this.DMZRadius = 200;
 	}
@@ -115,6 +117,7 @@ class EntityManager {
 
 	network() {
 		this.toNetwork = [];
+		this.networkNow = Date.now();
 
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i] != undefined && !this.entities[i].doNotNetwork) {
@@ -170,10 +173,12 @@ class EntityManager {
 			}
 		};
 
-		if (entity.physicsObject.sleeping) {
+		if (entity.physicsObject.sleeping && this.networkNow - entity.lastNetworkPosition < 8000) {
 			delete data2.packet.properties.x;
 			delete data2.packet.properties.y;
-			delete data2.packet.properties.rotation;
+			delete data2.packet.properties.rotation;this.lastNetworkPosition = this.networkNow;
+		} else {
+			this.lastNetworkPosition = this.networkNow;
 		}
 
 		this.toNetwork.push(data2);
@@ -205,6 +210,20 @@ class EntityManager {
 				}
 
 				return this.entities[i];
+			}
+		}
+
+		return null;
+	}
+
+	getPlayerById(id, callback) {
+		for (var i = this.players.length - 1; i >= 0; i--) {
+			if (this.players[i].id == id) {
+				if (callback instanceof Function) {
+					callback(this.players[i]);
+				}
+
+				return this.players[i];
 			}
 		}
 

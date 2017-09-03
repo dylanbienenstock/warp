@@ -10,7 +10,7 @@ class EffectBoostTrail extends EntityBase {
 		this.graphics = new PIXI.Graphics();
 		this.graphics.x = data.x;
 		this.graphics.y = data.y;
-		this.graphics.zIndex = 1;
+		this.graphics.zIndex = 98;
 		this.lines = [];
 		this.lastLineEnd = {
 			x: this.graphics.x,
@@ -27,7 +27,7 @@ class EffectBoostTrail extends EntityBase {
 		var entity = ENT.getById(this.ownerId);
 
 		if (entity != undefined && entity instanceof EntityPlayer && entity.boosting) {
-			var lineEnd = entity.getBoostAttachmentPosition();
+			var lineEnd = entity.ship.getBoostAttachmentPosition();
 
 			this.graphics.beginFill(PIXI.utils.rgb2hex([ 0, 0.85, 1 ]));
 			this.graphics.drawCircle(lineEnd.x - this.graphics.x, lineEnd.y - this.graphics.y, boostTrailMaxLineThickness / 2);

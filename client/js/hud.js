@@ -3,6 +3,7 @@ var levels;
 var healthText;
 var shieldText;
 var boostText;
+var creditsText;
 
 var boost = 100;
 var shield = 100;
@@ -32,12 +33,21 @@ function setupHUD(HUDContainer) {
 	    letterSpacing: 0.25
 	});
 
+	var textStyle2 = new PIXI.TextStyle({
+	    fontFamily: "Helvetica",
+	    fontSize: 18,
+	    fontWeight: "bold",
+	    fill: "yellow",
+	    letterSpacing: 0.25
+	});
+
 	levels = new PIXI.Graphics();
 	healthText = new PIXI.Text("health 100", textStyle);
 	shieldText = new PIXI.Text("shield 100", textStyle);
 	boostText = new PIXI.Text("boost 100", textStyle);
+	creditsText = new PIXI.Text("Credits: 0", textStyle2);
 
-	HUDContainer.addChild(levels, healthText, shieldText, boostText, radar);
+	HUDContainer.addChild(levels, healthText, shieldText, boostText, creditsText, radar);
 }
 
 function drawHUD() {
@@ -118,6 +128,7 @@ function drawLevels() {
 		healthText.text = "health " + Math.floor(destHealth);
 		shieldText.text = "shield " + Math.floor(destShield);
 		boostText.text = "boost " + Math.floor(destBoost);
+		creditsText.text = "Credits: " + addCommas(Math.floor(ENT.localPlayer.credits));
 
 		healthText.x = windowPadding + textPadding;
 		healthText.y = windowHeight - windowPadding - barHeight + 1;
@@ -127,5 +138,8 @@ function drawLevels() {
 
 		boostText.x = windowPadding + textPadding;
 		boostText.y = windowHeight - windowPadding - barPadding * 2 - barHeight * 3 + 1;
+
+		creditsText.x = windowPadding + textPadding;
+		creditsText.y = windowHeight - windowPadding - barPadding * 3 - barHeight * 4 + 1;
 	}
 }

@@ -1,0 +1,3 @@
+window.Ship = {
+	Skiff: ShipSkiff
+};

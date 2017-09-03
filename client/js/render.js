@@ -72,7 +72,7 @@ $(function() {
 
 	drawBoundary();
 	resizeRenderer();
-	loadContent();
+	loadContent(setup);
 });
 
 function drawBoundary() {
@@ -106,33 +106,6 @@ function resizeRenderer() {
 	blackness.cacheAsBitmap = true;
 }
 
-function loadContent() {
-	PIXI.loader
-		.add("ship:default", "./img/ships/default.svg")
-		.add("ship:default:outline", "./img/ships/default-outline.svg")
-		.add("ship:default:shadow", "./img/ships/default-shadow.svg")
-		.add("thrust:default:forward", "./img/thrust/default/forward.svg")
-		.add("thrust:default:backward","./img/thrust/default/backward.svg")
-		.add("shield", "./img/shield.svg")
-		.add("station:outer", "./img/station-outer.svg")
-		.add("station:inner", "./img/station-inner.svg")
-		.add("station:inner:shadow", "./img/station-inner-shadow.svg")
-		.add("planet:shadow", "./img/planet-shadow.svg")
-		.add("asteroid:0", "./img/asteroid/0.svg")
-		.add("asteroid:1", "./img/asteroid/1.svg")
-		.add("asteroid:2", "./img/asteroid/2.svg")
-		.add("asteroid:3", "./img/asteroid/3.svg")
-		.add("asteroid:0:outline", "./img/asteroid/0-outline.svg")
-		.add("asteroid:1:outline", "./img/asteroid/1-outline.svg")
-		.add("asteroid:2:outline", "./img/asteroid/2-outline.svg")
-		.add("asteroid:3:outline", "./img/asteroid/3-outline.svg")
-		.add("asteroid:0:overlay", "./img/asteroid/0-overlay.svg")
-		.add("asteroid:1:overlay", "./img/asteroid/1-overlay.svg")
-		.add("asteroid:2:overlay", "./img/asteroid/2-overlay.svg")
-		.add("asteroid:3:overlay", "./img/asteroid/3-overlay.svg")
-	.load(setup);
-}
-
 function setup() {
 	var stationContainer = new PIXI.Container();
 
@@ -159,6 +132,7 @@ function setup() {
 
 	setupBackdrop(backdropContainer);
 	setupHUD(HUDContainer);
+	setupLockOn();
 	update();
 }
 
@@ -183,6 +157,7 @@ function update() {
 
 	renderBackdrop();
 	ENT.update();
+	updateLockOn();
 	drawHUD();
 	
 	renderer.render(baseContainer);

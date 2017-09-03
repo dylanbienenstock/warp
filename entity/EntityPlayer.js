@@ -1,7 +1,3 @@
-var boostSpeed = 1.8;
-var boostDeplete = 0.5;
-var boostRegen = 0.25;
-
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityPlayer extends EntityBase {
 		constructor(data) {
@@ -10,17 +6,27 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.networkGlobally = true;
 
 			this.name = data.name || "Unnamed";
-			this.shield = null;
+			this.credits = data.credits || 0;
 			this.shieldPower = 100;
-			this.health = 100;
 			this.boost = 100;
 			this.boosting = false;
 			this.lastBoosting = false;
 			this.lastBoostTime = 0;
 			this.alive = true;
-			this.speed = 6;
-			this.lastFirePrimary = 0;
-			this.lastFireSecondary = 0;
+
+			this.lockedPlayerId = null;
+			this.lockOnPosition = null;
+
+			this.x = data.x || 0;
+			this.y = data.y || 0;
+
+			this.__ship = null;
+			this.__primaryWeapon = null;
+			this.__secondaryWeapon = null;
+
+			this.shipListing = null;
+			this.primaryWeaponListing = null;
+			this.secondaryWeaponListing = null;
 
 			this.viewport = {
 				width: 1920,
@@ -39,48 +45,61 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				firePrimary: false,
 				fireSecondary: false
 			};
-
-			this.physicsObject = PHYS.new("Box", {
-				restrictToMap: true,
-				x: data.x || 0,
-				y: data.y || 0,
-				localX: -6,
-				localY: -16,
-				width: 16,
-				height: 32
-			});
-
-			this.physicsObject.addChild(PHYS.new("Box", {
-				localX: -22,
-				localY: -5,
-				width: 16,
-				height: 10
-			}));
 		}
 
-		create() {
-			PHYS.create(this, this.physicsObject);
+		get ship() {
+			return this.__ship;
+		}
 
-			this.shield = ENT.create(ENT.new("Shield", {
-				ownerId: this.id
-			}));
+		get primaryWeapon() {
+			return this.__primaryWeapon;
+		}
+
+		get secondaryWeapon() {
+			return this.__secondaryWeapon;
+		}
+
+		set ship(value) {
+			var shouldNetwork = this.__ship != null;
+
+			this.__ship = value;
+			this.shipListing = value.constructor.getListing();
+
+			if (shouldNetwork) {
+				ENT.trigger("changeShip", this.shipListing.className);
+			}
+		}
+
+		set primaryWeapon(value) {
+			this.__primaryWeapon = value;
+			this.primaryWeaponListing = value.constructor.getListing();
+		}
+
+		set secondaryWeapon(value) {
+			this.__secondaryWeapon = value;
+			this.secondaryWeaponListing = value.constructor.getListing();
 		}
 
 		remove() {
-			ENT.remove(this.shield);
+			this.ship.remove();
+		}
+
+		giveCredits(amount) {
+			this.credits += Math.max(amount, 0);
 		}
 
 		takeDamage(damage, collision) {
 			if (this.alive) {
 				ENT.trigger(this, "hit");
 
-				this.health = Math.max(this.health - damage, 0);
+				this.ship.health = Math.max(this.ship.health - damage, 0);
 
-				if (this.health == 0) {
+				if (this.ship.health == 0) {
 					ENT.trigger(this, "death");
+					console.log("! Player " + this.name + " was destroyed!");
 
-					this.physicsObject.active = false;
-					this.shield.physicsObject.active = false;
+					this.ship.physicsObject.active = false;
+					this.ship.shield.physicsObject.active = false;
 					this.alive = false;
 					this.doNotNetwork = true;
 				}
@@ -103,60 +122,50 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super.update();
 
 			if (this.alive) {
-				if (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
-					/*if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
-						ENT.create(ENT.new("Laser", {
-							ownerId: this.id,
-							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
-							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-							rotation: this.physicsObject.rotation,
-							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
-							thrustY: -Math.sin(this.physicsObject.rotation) * 32
-						}));
+				var now = Date.now();
 
-						this.lastFirePrimary = Date.now();
-					}*/
-					if (this.controls.firePrimary && Date.now() - this.lastFirePrimary >= 250) {
-						ENT.create(ENT.new("Sticky", {
-							ownerId: this.id,
-							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
-							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-							radius: 7,
-							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
-							thrustY: -Math.sin(this.physicsObject.rotation) * 32
-						}));
+				if (this.lockedPlayerId != null) {
+					var lockedPlayer = ENT.getPlayerById(this.lockedPlayerId);
 
-						this.lastFirePrimary = Date.now();
-					}
+					if (lockedPlayer != undefined) {
+						this.lockedPlayerPosition = {
+							x: lockedPlayer.physicsObject.x,
+							y: lockedPlayer.physicsObject.y
+						};
 
-					if (this.controls.fireSecondary && Date.now() - this.lastFireSecondary >= 1750) {
-						var angleIncrement = 8 * Math.PI / 180;
-						var origin = this.physicsObject.rotation - angleIncrement * 1.5;
-
-						for (var i = 0; i < 4; i++) {
-							var offset = i * angleIncrement;
-
-							ENT.create(ENT.new("Laser", {
-								ownerId: this.id,
-								thickness: 4,
-								color: 0x00FF00,
-								length: 32,
-								x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
-								y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-								rotation: origin + offset,
-								thrustX: -Math.cos(origin + offset) * 32,
-								thrustY: -Math.sin(origin + offset) * 32
-							}));
+						if (this.physicsObject.distanceTo(this.lockedPlayerPosition.x, this.lockedPlayerPosition.y) > 2048 ||
+							!lockedPlayer.alive) {
+							
+							this.lockedPlayerId = null;
+							this.lockedPlayerPosition = null;
+							ENT.trigger(this, "lockBroken");
 						}
-
-						this.lastFireSecondary = Date.now();
 					}
 				}
 
-				this.shieldPower = this.shield.power;
+				if (this.ship.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
+					var firePosition = {
+						x: this.ship.physicsObject.x - Math.cos(this.ship.physicsObject.rotation) * 24,
+						y: this.ship.physicsObject.y - Math.sin(this.ship.physicsObject.rotation) * 24
+					};
 
-				if (Date.now() - this.lastBoostTime >= 1000) {
-					this.boost = Math.min(this.boost + boostRegen * timeMult, 100);
+					var fireAngle = this.ship.physicsObject.rotation;
+
+					if (this.primaryWeapon != undefined && this.controls.firePrimary && now - this.primaryWeapon.lastFire >= this.primaryWeapon.fireInterval) {
+						this.primaryWeapon.fire(firePosition, fireAngle);
+						this.primaryWeapon.lastFire = now;
+					}
+
+					if (this.secondaryWeapon != undefined && this.controls.fireSecondary && now - this.secondaryWeapon.lastFire >= this.secondaryWeapon.fireInterval) {
+						this.secondaryWeapon.fire(firePosition, fireAngle);
+						this.secondaryWeapon.lastFire = now;
+					}
+				}
+
+				this.shieldPower = this.ship.shield.power;
+
+				if (now - this.lastBoostTime >= 1000) {
+					this.boost = Math.min(this.boost + this.ship.boostRegen * timeMult, 100);
 				}
 
 				this.move(timeMult);
@@ -168,14 +177,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.lastBoosting = this.boosting;
 			} else {
 				this.boosting = false;
+				this.ship.shield.physicsObject.active = false;
 			}
 		}
 
 		move(timeMult) {
 			var degToRad = Math.PI / 180;
 
-			this.physicsObject.thrustX = 0;
-			this.physicsObject.thrustY = 0;
+			this.ship.physicsObject.thrustX = 0;
+			this.ship.physicsObject.thrustY = 0;
 
 			this.boosting = false;
 
@@ -184,41 +194,45 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 				if (this.controls.boost) {
 					if (this.boost > 0) {
-						this.boost = Math.max(this.boost - boostDeplete * timeMult, 0);
-						boostMult = boostSpeed;
+						this.boost = Math.max(this.boost - this.ship.boostDeplete * timeMult, 0);
+						boostMult = this.ship.boostFactor;
 						this.boosting = true;
 					}
 
 					this.lastBoostTime = Date.now();
 				}
 
-				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation) * (this.speed * boostMult);
-				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation) * (this.speed * boostMult);
+				this.ship.physicsObject.thrustX += -Math.cos(this.ship.physicsObject.rotation) * (this.ship.speed * boostMult);
+				this.ship.physicsObject.thrustY += -Math.sin(this.ship.physicsObject.rotation) * (this.ship.speed * boostMult);
 			}
 
 			if (this.controls.thrustBackward) {
-				this.physicsObject.thrustX -= -Math.cos(this.physicsObject.rotation) * this.speed;
-				this.physicsObject.thrustY -= -Math.sin(this.physicsObject.rotation) * this.speed;
+				this.ship.physicsObject.thrustX -= -Math.cos(this.ship.physicsObject.rotation) * this.ship.speed;
+				this.ship.physicsObject.thrustY -= -Math.sin(this.ship.physicsObject.rotation) * this.ship.speed;
 			}
 
 			if (this.controls.thrustLeft) {
-				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation - 90 * degToRad) * this.speed;
-				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation - 90 * degToRad) * this.speed;
+				this.ship.physicsObject.thrustX += -Math.cos(this.ship.physicsObject.rotation - 90 * degToRad) * this.ship.speed;
+				this.ship.physicsObject.thrustY += -Math.sin(this.ship.physicsObject.rotation - 90 * degToRad) * this.ship.speed;
 			}
 
 			if (this.controls.thrustRight) {
-				this.physicsObject.thrustX += -Math.cos(this.physicsObject.rotation + 90 * degToRad) * this.speed;
-				this.physicsObject.thrustY += -Math.sin(this.physicsObject.rotation + 90 * degToRad) * this.speed;
+				this.ship.physicsObject.thrustX += -Math.cos(this.ship.physicsObject.rotation + 90 * degToRad) * this.ship.speed;
+				this.ship.physicsObject.thrustY += -Math.sin(this.ship.physicsObject.rotation + 90 * degToRad) * this.ship.speed;
 			}
 		}
 
 		network(ENT) {
 			ENT.sendProperties(this, {
-				x: this.physicsObject.x,
-				y: this.physicsObject.y,
-				rotation: this.physicsObject.rotation,
+				x: this.ship.physicsObject.x,
+				y: this.ship.physicsObject.y,
+				credits: this.credits,
+				//shipListing: this.shipListing,
+				primaryWeaponListing: this.primaryWeaponListing,
+				secondaryWeaponListing: this.secondaryWeaponListing,
+				rotation: this.ship.physicsObject.rotation,
 				controls: this.controls,
-				health: this.health,
+				health: this.ship.health,
 				shieldPower: this.shieldPower,
 				boost: this.boost,
 				boosting: this.boosting

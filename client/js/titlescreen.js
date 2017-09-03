@@ -38,8 +38,8 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 		drawOscillatingCircles(ww, wh);
 
 		if (transitioning) {
-			transitionProgress = lerp(transitionProgress, 1, 0.01);
-			var windowDiagonal = Math.sqrt(ww * ww + wh * wh);
+			transitionProgress = lerp(transitionProgress, 1, 0.03);
+			var windowDiagonal = (ww + wh) / 2;
 
 			titleScreenTransition.clear();
 
@@ -50,7 +50,7 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 			titleScreenBackground.lineStyle(2, 0x00FF00);
 			titleScreenBackground.drawCircle(ww / 2, wh / 2, (transitionProgress * windowDiagonal) + 2);
 
-			if (transitionProgress >= 0.8) {
+			if (transitionProgress >= 0.9) {
 				transitioning = false;
 				done = true;
 				gameContainer.mask = null;
@@ -60,7 +60,7 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 				titleScreenBackground.destroy();
 				titleScreenCircles.destroy();
 				titleScreenTransition.destroy();
-			} else if (transitionProgress >= 0.4) {
+			} else if (transitionProgress >= 0.6) {
 				window.showNameTags = true;
 			}
 		}
@@ -70,7 +70,7 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 var awaitingResponse = false;
 var minCircleAlpha = 0.2;
 var circleIntervals = [
-	4000, 5000, 2000
+	2000, 4000, 8000
 ];
 
 function drawOscillatingCircles(ww, wh) {
@@ -86,9 +86,11 @@ function drawOscillatingCircles(ww, wh) {
 	}
 }
 
+window.connected = false;
+
 $(function() {
 	$("*").keyup(function(event) {
-		if (event.key == "Enter" && !awaitingResponse) {
+		if (event.key == "Enter" && !awaitingResponse && !window.connected) {
 			awaitingResponse = true;
 			connect($("#name-input").val());
 		}
@@ -102,6 +104,8 @@ function processResponse(response) {
 	var $notesContainer = $("#notes-container");
 
 	if (response.accepted) {
+		window.connected = true;
+
 		$notesContainer.animate({
 			color: "#00FF00"
 		}, 600);

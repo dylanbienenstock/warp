@@ -2,11 +2,14 @@ class EntityPlayer extends EntityBase {
 	constructor(data) {
 		super(data);
 
+		this.triggers.changeShip = this.onChangeShip.bind(this);
 		this.triggers.hit = this.onHit.bind(this);
 		this.triggers.death = this.onDeath.bind(this);
 		this.triggers.boost = this.onBoost.bind(this);
+		this.triggers.lockBroken = this.onLockBroken.bind(this);
 
 		this.name = data.name;
+		this.credits = data.credits || 0;
 		this.health = 100;
 		this.shieldPower = 100;
 		this.boost = 100;
@@ -27,76 +30,32 @@ class EntityPlayer extends EntityBase {
 			fireSecondary: false
 		};
 
-		this.container = new PIXI.Container();
-		this.container.zIndex = 2;
+		this.ship = new ShipSkiff(this.alive);
+		this.sprite = this.ship.bodySprite;
+		this.ship.controls = this.controls;
 
-		this.shadowSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:shadow"].texture);
-		this.shadowSprite.anchor.set(0.678, 0.5);
-		this.shadowSprite.width = 40;
-		this.shadowSprite.height = 40;
-		this.shadowSprite.alpha = 0.5;
-		this.shadowSprite.renderable = this.alive;
-		this.shadowSprite.rotation = this.rotation;
-
-		this.outlineSprite = new PIXI.Sprite(PIXI.loader.resources["ship:default:outline"].texture);
-		this.outlineSprite.anchor.set(0.678, 0.5);
-		this.outlineSprite.width = 32;
-		this.outlineSprite.height = 32;
-		this.outlineSprite.renderable = !this.alive;
-		this.outlineSprite.rotation = this.rotation;
-
-		this.sprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
-		this.sprite.anchor.set(0.678, 0.5);
-		this.sprite.width = 32;
-		this.sprite.height = 32;
-		this.sprite.renderable = this.alive;
-		this.sprite.rotation = this.rotation;
-
-		this.overlaySprite = new PIXI.Sprite(PIXI.loader.resources["ship:default"].texture);
-		this.overlaySprite.anchor.set(0.678, 0.5);
-		this.overlaySprite.width = 32;
-		this.overlaySprite.height = 32;
-		this.overlaySprite.alpha = 0;
-		this.overlaySprite.renderable = this.alive;
-		this.overlaySprite.rotation = this.rotation;
-
-		this.thrustSprites = {};
-
-		this.thrustSprites.forward = new PIXI.Sprite(PIXI.loader.resources["thrust:default:forward"].texture);
-		this.thrustSprites.forward.anchor.set(0.475, 0.5);
-		this.thrustSprites.forward.width = 44;
-		this.thrustSprites.forward.height = 32;
-		this.thrustSprites.forward.renderable = this.alive;
-		this.thrustSprites.forward.rotation = this.rotation;
-
-		this.thrustSprites.backward = new PIXI.Sprite(PIXI.loader.resources["thrust:default:backward"].texture);
-		this.thrustSprites.backward.anchor.set(0.678, 0.5);
-		this.thrustSprites.backward.width = 32;
-		this.thrustSprites.backward.height = 32;
-		this.thrustSprites.backward.renderable = this.alive;
-		this.thrustSprites.backward.rotation = this.rotation;
-
-		this.container.addChild(this.shadowSprite,
-								this.outlineSprite,
-								this.sprite,
-								this.thrustSprites.forward,
-								this.thrustSprites.backward,
-								this.overlaySprite);
-
-		ENT.stageContainer.addChild(this.container);
+		this.shipListing = null;
+		this.primaryWeaponListing = null;
+		this.secondaryWeaponListing = null;
 
 		this.createNameTag();
 	}
 
+	onChangeShip(className) {
+		if (Ship.hasOwnProperty(className)) {
+			this.ship.remove();
+			this.ship = new Ship[className](this.alive);
+		}
+	}
+
 	onHit() {
-		this.overlaySprite.alpha = 1;
-		this.overlaySprite.tint = 0xFF4444;
+		this.ship.onHit();
 	}
 
 	onDeath() {
+		this.health = 0;
 		this.alive = false;
-		this.outlineSprite.renderable = true;
-		this.shadowSprite.renderable = false;
+		this.ship.onDeath();
 	}
 
 	onBoost() {
@@ -111,38 +70,44 @@ class EntityPlayer extends EntityBase {
 		}));
 	}
 
+	onLockBroken() {
+		window.lockedPlayerId = null;
+	}
+
 	update() {
 		super.update();
 
 		if (this.alive) {
-			addRadarDot(this.sprite.x, this.sprite.y, (this.isLocalPlayer ? 0x00FF00 : 0xFF0000), 2);
+			addRadarDot(this.ship.bodySprite.x, this.ship.bodySprite.y, (this.isLocalPlayer ? 0x00FF00 : 0xFF0000), 2);
+
+			if (this.id == window.lockedPlayerId) {
+				addRadarDot(this.ship.bodySprite.x, this.ship.bodySprite.y, 0x000000, 3);
+				addRadarDot(this.ship.bodySprite.x, this.ship.bodySprite.y, 0xFF0000, 4);
+			}
 		}
 
 		if (this.isLocalPlayer) {
-			centerOn(this.sprite);
-			this.container.zIndex = 3;
+			centerOn(this.ship.bodySprite);
+			this.ship.container.zIndex = 100;
 		} else {
-			this.sprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
+			this.ship.bodySprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}
 
-		this.thrustSprites.forward.renderable = this.alive && this.controls.thrustForward;
-		this.thrustSprites.backward.renderable = this.alive && this.controls.thrustBackward;
+		this.ship.controls = this.controls;
+		this.ship.alive = this.alive;
+		this.ship.update();
+	}
 
-		this.overlaySprite.alpha = lerp(this.overlaySprite.alpha, 0, 0.05);
+	receiveProperties(data) {
+		if (this.isLocalPlayer) {
+			delete data.controls;
 
-		if (!this.alive) {
-			this.sprite.alpha = lerp(this.sprite.alpha, 0, 0.05);
+			return data;
 		}
-
-		this.sprite.attach(this.outlineSprite);
-		this.sprite.attach(this.shadowSprite, 2, 2);
-		this.sprite.attach(this.overlaySprite);
-		this.sprite.attach(this.thrustSprites.forward);
-		this.sprite.attach(this.thrustSprites.backward);
 	}
 
 	cull(visible) {
-		this.container.visible = visible;
+		this.ship.container.visible = visible;
 	}
 
 	createNameTag() {
@@ -156,7 +121,7 @@ class EntityPlayer extends EntityBase {
 	}
 
 	updateNameTag() {
-		var nameTagPosition = ENT.stageContainer.toGlobal(this.sprite.position);
+		var nameTagPosition = ENT.stageContainer.toGlobal(this.ship.bodySprite.position);
 		var nameTagWidth = $(this.nameTag).outerWidth();
 		var nameTagHeight = $(this.nameTag).outerHeight();
 
@@ -183,16 +148,14 @@ class EntityPlayer extends EntityBase {
 
 	getBoostAttachmentPosition() {
 		return {
-			x: this.sprite.x + Math.cos(this.sprite.rotation) * 11,
-			y: this.sprite.y + Math.sin(this.sprite.rotation) * 11
+			x: this.ship.bodySprite.x + Math.cos(this.ship.bodySprite.rotation) * 11,
+			y: this.ship.bodySprite.y + Math.sin(this.ship.bodySprite.rotation) * 11
 		};
 	}
 
-	remove() {
-		this.container.removeChildren();
-		ENT.stageContainer.removeChild(this.container);
-		this.container.destroy();
-
+	remove() {	
+		this.sprite.destroy();
+		this.ship.remove();
 		document.body.removeChild(this.nameTag);
 	}
 }

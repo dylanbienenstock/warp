@@ -2,14 +2,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityShield extends EntityBase {
 		constructor(data) {
 			super(data);
-
+			
 			this.doNotNetwork = true;
 			this.ownerId = data.ownerId;
 			this.radius = data.radius || 32;
 			this.showHits = data.showHits;
 			this.hitSize = data.hitSize || data.radius || 32;
-			this.damageFactor = 0.5;
+			this.damageFactor = data.damageFactor || 0.5;
 			this.power = 100;
+			this.lastDamageTime = 0;
 
 			if (this.showHits == undefined) {
 				this.showHits = true;
@@ -27,6 +28,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		takeDamage(damage, entity, collision) {
 			if (this.ownerId != undefined) {
+				this.lastDamageTime = Date.now();
 				var owner = ENT.getById(this.ownerId);
 
 				if (owner != undefined) {
@@ -38,7 +40,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					this.power -= damage;
 
 					if (this.power < 0) {
-						var hullDamage = -this.power;
+						var hullDamage = -this.power / this.damageFactor;
 						this.power = 0;
 
 						return hullDamage;
@@ -67,7 +69,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					this.physicsObject.active = (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius);
 				}
 
-				this.power = Math.min(this.power + 0.1 * timeMult, 100);
+				if (Date.now() - this.lastDamageTime >= 2500) {
+					this.power = Math.min(this.power + 0.1 * timeMult, 100);
+				}
 			}
 		}
 
