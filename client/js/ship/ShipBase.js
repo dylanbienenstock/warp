@@ -125,7 +125,7 @@ class ShipBase {
 		this.shadowSprite.renderable = false;
 	}
 
-	update() {
+	update() {	
 		if (!this.alive) {
 			this.bodySprite.alpha = lerp(this.bodySprite.alpha, 0, 0.05);
 			this.outlineSprite.renderable = true;
@@ -144,7 +144,7 @@ class ShipBase {
 
 	remove() {
 		ENT.stageContainer.removeChild(this.container);
-		this.container.destroy(true);
+		this.container.removeChildren();
 	}
 }
 
