@@ -2,10 +2,10 @@ var ENT;
 var PHYS;
 
 class WeaponBase {
-	constructor(ownerId) {
+	constructor(player) {
 		this.doNotNetwork = true;
 
-		this.ownerId = ownerId;
+		this.ownerId = player.id;
 		this.fireInterval = 500;
 		this.lastFire = 0;
 	}

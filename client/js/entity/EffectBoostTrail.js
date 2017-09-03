@@ -27,7 +27,7 @@ class EffectBoostTrail extends EntityBase {
 		var entity = ENT.getById(this.ownerId);
 
 		if (entity != undefined && entity instanceof EntityPlayer && entity.boosting) {
-			var lineEnd = entity.getBoostAttachmentPosition();
+			var lineEnd = entity.ship.getBoostAttachmentPosition();
 
 			this.graphics.beginFill(PIXI.utils.rgb2hex([ 0, 0.85, 1 ]));
 			this.graphics.drawCircle(lineEnd.x - this.graphics.x, lineEnd.y - this.graphics.y, boostTrailMaxLineThickness / 2);

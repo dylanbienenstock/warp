@@ -54,14 +54,16 @@ function randomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatCredits(number, doNotReplaceZeros) {
-	var formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function formatCredits(number) {
+    return replaceZeros(addCommas(number));;
+}
 
-	if (!doNotReplaceZeros) {
-		formattedNumber = formattedNumber.replace(/0/g, "O");
-	}
+function addCommas(number) {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
-    return formattedNumber;
+function replaceZeros(number) {
+	return number.toString().replace(/0/g, "O");
 }
 
 function getLocalPlayerCredits() {

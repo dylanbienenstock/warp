@@ -216,6 +216,20 @@ class EntityManager {
 		return null;
 	}
 
+	getPlayerById(id, callback) {
+		for (var i = this.players.length - 1; i >= 0; i--) {
+			if (this.players[i].id == id) {
+				if (callback instanceof Function) {
+					callback(this.players[i]);
+				}
+
+				return this.players[i];
+			}
+		}
+
+		return null;
+	}
+
 	getAllByClassName(className) {
 		var found = [];
 

@@ -251,6 +251,32 @@
 	box-sizing: border-box;
 }
 
+#shop-listing-stats-container-weapons {
+	position: absolute;
+	width: 338px;
+}
+
+.shop-listing-stats {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 8px 0 8px;
+	box-sizing: border-box;
+}
+
+.shop-listing-stats-bottom {
+	border-radius: 0px 0px 6px 6px;
+	-moz-border-radius: 0px 0px 6px 6px;
+	-webkit-border-radius: 0px 0px 6px 6px;
+}
+
+.shop-listing-stats-label {
+	opacity: 0.7;
+}
+
 .shop-listing-buy {
 	outline: none;
 	border: none;
@@ -355,4 +381,11 @@
 
 #shop-buy-weapon-modal-replace-secondary:hover {
 	background-color: rgba(0, 225, 0, 0.8);
+}
+
+#shop-buy-weapon-modal-receipt {
+	display: none;
+	position: absolute;
+	font-size: 24px;
+	cursor: none;
 }
