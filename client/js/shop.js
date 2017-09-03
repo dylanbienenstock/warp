@@ -204,7 +204,6 @@ function selectListing(listing, data) {
 
 	listing.className = "shop-listing-active";
 
-	console.log(ENT.localPlayer.primaryWeaponListing.className, data.className);
 	var owned = (ENT.localPlayer.primaryWeaponListing != undefined && ENT.localPlayer.primaryWeaponListing.className == data.className) || 
 				(ENT.localPlayer.secondaryWeaponListing != undefined && ENT.localPlayer.secondaryWeaponListing.className == data.className);
 
