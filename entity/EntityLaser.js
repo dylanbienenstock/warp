@@ -9,6 +9,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			data.angle = data.angle || 0;
 			data.speed = data.speed || 0;
 
+			console.log(data.ownerId);
 			this.ownerId = data.ownerId;
 			this.damage = data.damage || 10;
 			this.thickness = data.thickness || 2;
