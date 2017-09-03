@@ -35,13 +35,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				y: this.physicsObject.y
 			});
 		}
-
+		
 		collideWith(entity, collision) {	
 			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId ||
 				entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid") &&
 				!this.stuck) {
-				debugger;
 				console.log("sticky hit: " + entity.className);
+				this.physicsObject.thrustX = 0;
+				this.physicsObject.thrustY = 0;
 				ENT.trigger(this, "stick",
 					{"collision":
 						{

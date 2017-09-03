@@ -10,9 +10,9 @@ class EntitySticky extends EntityBase {
 
 		// For blast radius
 		this.graphics = new PIXI.Graphics();
-		this.graphics.x = this.x;
-		this.graphics.y = this.y;
-		this.graphics.lineStyle(1, 0xFF0000, 1);
+		// this.graphics.x = this.x;
+		// this.graphics.y = this.y;
+		// this.graphics.lineStyle(1, 0xFF0000, 1);
 
 		// Position relative to collided entity
 		this.localX = 0;
@@ -20,7 +20,7 @@ class EntitySticky extends EntityBase {
 		this.angle = 0;
 
 		// center the sprite's anchor point
-		this.sprite = PIXI.Sprite.fromImage("img/sticky.png");
+		this.sprite = PIXI.Sprite.fromImage(""); //img/sticky.png
 		this.sprite.anchor.set(0.5);
 		this.sprite.x = this.x;
 		this.sprite.y = this.y;
@@ -38,7 +38,7 @@ class EntitySticky extends EntityBase {
 		this.target = ENT.getById(info.targetId);
 		this.stuck = true;
 		this.localX = this.target.x - info.collision.x;
-		this.localY = this.target.y - info.collision.y
+		this.localY = this.target.y - info.collision.y;
 
 		// local coords seem to be correct
 		console.log("local coords: " + this.localX + ',' + this.localY);
