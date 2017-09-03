@@ -2,13 +2,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntityShield extends EntityBase {
 		constructor(data) {
 			super(data);
-
+			
 			this.doNotNetwork = true;
 			this.ownerId = data.ownerId;
 			this.radius = data.radius || 32;
 			this.showHits = data.showHits;
 			this.hitSize = data.hitSize || data.radius || 32;
-			this.damageFactor = 0.5;
+			this.damageFactor = data.damageFactor || 0.5;
 			this.power = 100;
 
 			if (this.showHits == undefined) {
