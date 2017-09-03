@@ -1,7 +1,7 @@
 module.exports = function(WeaponBase, ENT, PHYS) {
 	return class WeaponPeashooter extends WeaponBase {
-		constructor(ownerId) {
-			super(ownerId);
+		constructor(player) {
+			super(player);
 
 			this.fireInterval = 400;
 			this.damage = 6;
@@ -12,7 +12,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			return {
 				displayName: "Peashooter",
 				className: "Peashooter",
-				price: 0,
+				price: 1000,
 				description: "This is the default weapon...<br /><br />...don't buy it.",
 				stats: {
 					"Type": "Standard laser weapon",

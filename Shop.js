@@ -41,9 +41,9 @@ module.exports = function(Weapon) {
 					player.credits -= listing.price;
 
 					if (data.primary) {
-						player.primaryWeapon = new weaponType(player.id);
+						player.primaryWeapon = new weaponType(player);
 					} else {
-						player.secondaryWeapon = new weaponType(player.id);
+						player.secondaryWeapon = new weaponType(player);
 					}
 				}
 			}

@@ -1,7 +1,7 @@
 module.exports = function(WeaponBase, ENT, PHYS) {
 	return class WeaponSpreadshot extends WeaponBase {
-		constructor(ownerId) {
-			super(ownerId);
+		constructor(player) {
+			super(player);
 
 			this.fireInterval = 1200;
 			this.damage = 6;
