@@ -28,6 +28,10 @@ class EntityBase {
 		}
 	}
 
+	receiveProperties(data) {
+
+	}
+
 	cull(visible) {
 
 	}
@@ -38,7 +42,7 @@ class EntityBase {
 
 	setProperties(data) {
 		for (var property in data) {
-			if (data.hasOwnProperty(property) && this.hasOwnProperty(property)) {
+			if (data.hasOwnProperty(property) && this.hasOwnProperty(property) && data[property] != undefined) {
 				this[property] = data[property];
 			}
 		}

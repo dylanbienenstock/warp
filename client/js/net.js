@@ -41,6 +41,10 @@ function connect(name) {
 						var data2 = data[i];
 
 						ENT.getById(data2.id, function(entity) {
+							if (entity.receiveProperties instanceof Function) {
+								data2.properties = entity.receiveProperties(data2.properties) || data2.properties;
+							}
+
 							entity.setProperties(data2.properties);
 						});
 					}
