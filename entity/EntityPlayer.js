@@ -121,7 +121,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 							ownerId: this.id,
 							x: this.physicsObject.x - Math.cos(this.physicsObject.rotation) * 24,
 							y: this.physicsObject.y - Math.sin(this.physicsObject.rotation) * 24,
-							radius: 9,
+							radius: 7,
 							thrustX: -Math.cos(this.physicsObject.rotation) * 32,
 							thrustY: -Math.sin(this.physicsObject.rotation) * 32
 						}));

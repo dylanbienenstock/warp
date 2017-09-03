@@ -11,7 +11,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.stuck = false;
 			this.target = undefined;
 			this.networkGlobally = true;
-			this.EXPLODE_TIME = 2000;
+			this.EXPLODE_TIME = 10000;
 
 			this.x = data.x;
 			this.y = data.y;
@@ -43,32 +43,42 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		update() {
 			super.update();
+			if (this. stuck && this.target) {
+				// update this.x and this.y accordingly
+			}
 			if (this.launchTime + this.EXPLODE_TIME < Date.now()) {
-				console.log("sticky exploded");
-				// this.explode();
+				this.explode();
 				ENT.remove(this);
 			}
 		}
 		
 		collideWith(entity, collision) {	
-			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId ||
+			if (entity instanceof ENT.type("Player") && entity.id != this.ownerId ||
 				entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid") &&
 				!this.stuck) {
 				console.log("sticky hit: " + entity.className);
-				this.target = entity;
 
-				this.physicsObject.x = collision.position.x;
-				this.physicsObject.y = collision.position.y;
+				this.target = entity;
+				//HYS.remove(this.physicsObject);
+				this.physicsObject.active = false;
+
 				ENT.trigger(this, "stick",
-					{"collision":
-						{
-							"x": collision.position.x,
-							"y": collision.position.y
-						}, "targetId": entity.id}
+					{
+						"collision": {
+								"x": collision.position.x,
+								"y": collision.position.y
+						}, 
+						"targetId": entity.id
+					}
 				);
-				PHYS.remove(this.physicsObject);
+				
 				this.stuck = true;
 			}
+		}
+
+		explode() {
+			console.log("sticky exploded");
+
 		}
 	}
 }
