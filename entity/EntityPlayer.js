@@ -14,6 +14,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastBoostTime = 0;
 			this.alive = true;
 
+			this.lockedPlayerId = null;
+			this.lockOnPosition = null;
+
 			this.x = data.x || 0;
 			this.y = data.y || 0;
 
@@ -93,6 +96,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 				if (this.ship.health == 0) {
 					ENT.trigger(this, "death");
+					console.log("! Player " + this.name + " was destroyed!");
 
 					this.ship.physicsObject.active = false;
 					this.ship.shield.physicsObject.active = false;
@@ -119,6 +123,25 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			if (this.alive) {
 				var now = Date.now();
+
+				if (this.lockedPlayerId != null) {
+					var lockedPlayer = ENT.getPlayerById(this.lockedPlayerId);
+
+					if (lockedPlayer != undefined) {
+						this.lockedPlayerPosition = {
+							x: lockedPlayer.physicsObject.x,
+							y: lockedPlayer.physicsObject.y
+						};
+
+						if (this.physicsObject.distanceTo(this.lockedPlayerPosition.x, this.lockedPlayerPosition.y) > 2048 ||
+							!lockedPlayer.alive) {
+							
+							this.lockedPlayerId = null;
+							this.lockedPlayerPosition = null;
+							ENT.trigger(this, "lockBroken");
+						}
+					}
+				}
 
 				if (this.ship.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
 					var firePosition = {

@@ -1,5 +1,6 @@
 function loadContent(setup) {
 	PIXI.loader
+		.add("lockon", "./img/lockon.svg")
 		.add("ship:skiff", "./img/ships/skiff/body.svg")
 		.add("ship:skiff:outline", "./img/ships/skiff/outline.svg")
 		.add("ship:skiff:shadow", "./img/ships/skiff/shadow.svg")

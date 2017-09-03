@@ -6,6 +6,7 @@ class EntityPlayer extends EntityBase {
 		this.triggers.hit = this.onHit.bind(this);
 		this.triggers.death = this.onDeath.bind(this);
 		this.triggers.boost = this.onBoost.bind(this);
+		this.triggers.lockBroken = this.onLockBroken.bind(this);
 
 		this.name = data.name;
 		this.credits = data.credits || 0;
@@ -33,6 +34,7 @@ class EntityPlayer extends EntityBase {
 		this.sprite = this.ship.bodySprite;
 		this.ship.controls = this.controls;
 
+		this.shipListing = null;
 		this.primaryWeaponListing = null;
 		this.secondaryWeaponListing = null;
 
@@ -51,6 +53,8 @@ class EntityPlayer extends EntityBase {
 	}
 
 	onDeath() {
+		this.health = 0;
+		this.alive = false;
 		this.ship.onDeath();
 	}
 
@@ -66,11 +70,20 @@ class EntityPlayer extends EntityBase {
 		}));
 	}
 
+	onLockBroken() {
+		window.lockedPlayerId = null;
+	}
+
 	update() {
 		super.update();
 
 		if (this.alive) {
 			addRadarDot(this.ship.bodySprite.x, this.ship.bodySprite.y, (this.isLocalPlayer ? 0x00FF00 : 0xFF0000), 2);
+
+			if (this.id == window.lockedPlayerId) {
+				addRadarDot(this.ship.bodySprite.x, this.ship.bodySprite.y, 0x000000, 3);
+				addRadarDot(this.ship.bodySprite.x, this.ship.bodySprite.y, 0xFF0000, 4);
+			}
 		}
 
 		if (this.isLocalPlayer) {
@@ -140,7 +153,8 @@ class EntityPlayer extends EntityBase {
 		};
 	}
 
-	remove() {
+	remove() {	
+		this.sprite.destroy();
 		this.ship.remove();
 		document.body.removeChild(this.nameTag);
 	}

@@ -88,6 +88,10 @@ function sendViewportDimensions() {
 	});
 }
 
+function sendLockOn(id) {
+	socket.emit("lockon", id);
+}
+
 function sendBuyWeapon(className, primary) {
 	socket.emit("buy weapon", {
 		className: className,

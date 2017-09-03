@@ -132,6 +132,7 @@ function setup() {
 
 	setupBackdrop(backdropContainer);
 	setupHUD(HUDContainer);
+	setupLockOn();
 	update();
 }
 
@@ -156,6 +157,7 @@ function update() {
 
 	renderBackdrop();
 	ENT.update();
+	updateLockOn();
 	drawHUD();
 	
 	renderer.render(baseContainer);

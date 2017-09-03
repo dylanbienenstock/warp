@@ -125,6 +125,10 @@ function acceptConnection(name, socket) {
 		player.viewport.height = data.height;
 	});
 
+	socket.on("lockon", function(id) {
+		player.lockedPlayerId = id;
+	});
+
 	socket.on("buy weapon", function(data) {
 		Shop.buyWeapon(player, data);
 	});
