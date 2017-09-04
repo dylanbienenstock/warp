@@ -73,3 +73,7 @@ function getLocalPlayerCredits() {
 
 	return 0;
 }
+
+function randomInRange(min, max) {
+	return Math.random() * (max - min) + min;
+}

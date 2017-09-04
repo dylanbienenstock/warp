@@ -13,6 +13,8 @@ ENT.localPlayer;
 
 ENT.physicsDebug = true;
 
+ENT.ParticleManager = new ParticleManager();
+
 ENT.new = function(data) {
 	var entity = new window.Entity[data.className](data);
 
@@ -107,6 +109,8 @@ ENT.update = function() {
 	for (var i = effects.length - 1; i >= 0; i--) {
 		effects[i].update();
 	}
+
+	ENT.ParticleManager.update();
 }
 
 // TO DO: Make get functions for effects
