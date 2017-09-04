@@ -4,6 +4,10 @@ zIndex reference
 1: Credits glow
 2: Credits
 3: Asteroids
+
+49: Tracker trail
+50: Projectiles
+
 96-97: Lock-on system
 98: Boost trails
 99: Players

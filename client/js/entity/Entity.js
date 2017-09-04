@@ -5,5 +5,6 @@ window.Entity = {
 	Credits: EntityCredits,
 	Player: EntityPlayer,
 	Shield: EntityShield,
-	Laser: EntityLaser
+	Laser: EntityLaser,
+	Tracker: EntityTracker
 };
