@@ -39,9 +39,9 @@ class EntitySticky extends EntityBase {
 
 	onStick(info) {
 		this.stuck = true;
+		this.target = ENT.getById(info.targetId);
 		this.localX = this.target.x - info.collision.x;
 		this.localY = this.target.y - info.collision.y;
-		this.target = ENT.getById(info.targetId);
 		this.initialTargetRotation = this.target.rotation;
 		this.collisionAngle = info.collision.angle;
 	}
