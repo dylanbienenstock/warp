@@ -25,8 +25,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				radius: data.radius,
 				localX: 0,
 				localY: 0,
-				thrustX: data.thrustX,
-				thrustY: data.thrustY
+				thrustX: -Math.cos(data.angle) * data.speed,
+				thrustY: -Math.sin(data.angle) * data.speed
 			});
 		}
 
@@ -57,6 +57,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid") &&
 				!this.stuck) {
 				console.log("sticky hit: " + entity.className);
+				console.log(entity.id);
+				console.log(this.ownerId);
 
 				this.target = entity;
 				//HYS.remove(this.physicsObject);
