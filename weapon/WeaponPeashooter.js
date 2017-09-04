@@ -12,8 +12,8 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			return {
 				displayName: "Peashooter",
 				className: "Peashooter",
-				price: 1000,
-				description: "This is the default weapon...<br /><br />...don't buy it.",
+				price: 0,
+				description: "This is the default weapon. Fires a weak single laser.",
 				stats: {
 					"Type": "Standard laser weapon",
 					"Damage": 6,

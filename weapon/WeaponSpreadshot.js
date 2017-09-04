@@ -4,7 +4,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			super(player);
 
 			this.fireInterval = 1200;
-			this.damage = 6;
+			this.damage = 10;
 			this.shotSpeed = 32;
 			this.projectilesPerShot = 4;
 			this.spreadAngleDegrees = 30;  
@@ -14,11 +14,11 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			return {
 				displayName: "Spreadshot",
 				className: "Spreadshot",
-				price: 2500,
-				description: "It's the second weapon.",
+				price: 0,
+				description: "Fires four moderately powerful lasers in a tight spread.",
 				stats: {
 					"Type": "Standard laser weapon",
-					"Damage": 6,
+					"Damage": 8,
 					"Shots/min": 50,
 					"Proj./shot": 4,
 					"Shot speed": 32
@@ -31,6 +31,8 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			var spreadAngleIncrement = spreadAngle / this.projectilesPerShot;
 
 			for (var i = 0; i < this.projectilesPerShot; i++) {
+				var angle2 = angle - spreadAngle / 2 + spreadAngleIncrement / 2 + spreadAngleIncrement * i;
+
 				ENT.create(ENT.new("Laser", {
 					ownerId: this.ownerId,
 					damage: this.damage,
@@ -39,7 +41,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 					length: 32,
 					x: position.x,
 					y: position.y,
-					angle: angle - spreadAngle / 2 + spreadAngleIncrement / 2 + spreadAngleIncrement * i,
+					angle: angle2,
 					speed: this.shotSpeed
 				}));
 			}
