@@ -128,16 +128,16 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					var lockedPlayer = ENT.getPlayerById(this.lockedPlayerId);
 
 					if (lockedPlayer != undefined) {
-						this.lockedPlayerPosition = {
+						this.lockOnPosition = {
 							x: lockedPlayer.physicsObject.x,
 							y: lockedPlayer.physicsObject.y
 						};
 
-						if (this.physicsObject.distanceTo(this.lockedPlayerPosition.x, this.lockedPlayerPosition.y) > 2048 ||
+						if (this.physicsObject.distanceTo(this.lockOnPosition.x, this.lockOnPosition.y) > 2048 ||
 							!lockedPlayer.alive) {
 							
 							this.lockedPlayerId = null;
-							this.lockedPlayerPosition = null;
+							this.lockOnPosition = null;
 							ENT.trigger(this, "lockBroken");
 						}
 					}
