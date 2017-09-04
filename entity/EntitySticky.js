@@ -54,14 +54,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					this.target = entity;
 					this.collision = collision;
 					// store these for later, need to calculate explosion pos
-					//PHYS.remove(this.physicsObject);
+
 					this.physicsObject.active = false;
+					// PHYS.remove(this.physicsObject);
 
 					ENT.trigger(this, "stick",
 						{
 							"collision": {
-									"x": collision.position.x,
-									"y": collision.position.y
+								"x": collision.position.x,
+								"y": collision.position.y
 							}, 
 							"targetId": entity.id
 						}
@@ -73,9 +74,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		explode() {
-			//calculate difference between collision position
+			// calculate difference between collision position
 			// and target position to find where to create explosion
 			console.log("sticky exploded");
+			ENT.trigger(this, "explode", {});
 			ENT.remove(this);
 
 		}
