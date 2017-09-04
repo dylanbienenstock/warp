@@ -24,10 +24,11 @@ class EntitySticky extends EntityBase {
 		this.sprite.anchor.set(0.5, 0.5);
 		this.sprite.x = this.x;
 		this.sprite.y = this.y;
-		// if these are small, will likely have to make sprite slightly
-		// smaller than the actual hitbox radius
 		this.sprite.width = 15;  // this.radius * 2 eventually (?)
 		this.sprite.height = 15; //this.radius * 2 eventually (?)
+		// if these are small, will likely have to make sprite slightly
+		// smaller than the actual hitbox radius so collision is still
+		// detected properly
 
 		ENT.stageContainer.addChild(this.sprite);
 		this.triggers.stick = this.onStick.bind(this);
@@ -41,8 +42,8 @@ class EntitySticky extends EntityBase {
 		this.stuck = true;
 		this.localX = this.target.x - info.collision.x;
 		this.localY = this.target.y - info.collision.y;
-		this.sprite.x = info.collision.x;
-		this.sprite.y = info.collision.y;
+		//this.sprite.x = info.collision.x;
+		//this.sprite.y = info.collision.y;
 
 		// local coords seem to be correct
 		console.log("local coords: " + this.localX + ',' + this.localY);
@@ -53,8 +54,9 @@ class EntitySticky extends EntityBase {
 		super.update();
 		if (this.stuck && this.target.sprite !== null) {
 			console.log("UPDATING STUCK POS");
-			// this.target.sprite.attach(this.sprite, this.localX,
-			// 	   this.localY, this.target.rotation - this.angle);
+
+			this.target.sprite.attach(this.sprite, this.localX,
+				   this.localY, this.target.rotation - this.angle);
 
 			// attach was acting fucky, replicating functionality here
 			// to understand whats goin on, once working will revert to
