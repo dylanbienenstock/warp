@@ -13,7 +13,10 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 				displayName: "Sticky",
 				className: "Sticky",
 				price: 0,
-				description: "This is the best weapon...<br /><br />...do buy it.",
+				description: "Angel of death<br /><br />" +
+							 "Monarch to the kingdom of the dead<br /><br /> " +
+							 "Sadistic, surgeon of demise<br /><br />" +
+							 "Sadist of the noblest blood",
 				stats: {
 					"Type": "Standard sticky weapon",
 					"Damage": 666,
