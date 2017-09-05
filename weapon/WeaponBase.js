@@ -10,7 +10,11 @@ class WeaponBase {
 		this.lastFire = 0;
 	}
 
-	fire(position, angle) { }
+	update(position, angle, timeMult) { } // Called on every update regardless of control state
+	remove() { } // Called when the player replaces it with another weapon
+	beginFire(position, angle) { } // Called on control down
+	endFire(position, angle) { } // Called on control up
+	fire(position, angle) { } // Called repeatedly according to this.fireInterval
 }
 
 module.exports = function(__ENT, __PHYS) {
