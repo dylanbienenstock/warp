@@ -18,7 +18,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.y = data.y;
 			this.initialSpeedMult = data.initialSpeedMult || 2;
 
-			var owner = ENT.getPlayerById(this.ownerId);
+			var owner = ENT.getById(this.ownerId);
 			var velocityX = 0;
 			var velocityY = 0;
 
@@ -53,7 +53,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		update() {
 			if (this.ownerId != undefined) {
-				var owner = ENT.getPlayerById(this.ownerId);
+				var owner = ENT.getById(this.ownerId);
 
 				if (owner != undefined && owner.lockOnPosition != undefined) {
 					var destAngle = Math.atan2(this.physicsObject.y - owner.lockOnPosition.y, this.physicsObject.x - owner.lockOnPosition.x);

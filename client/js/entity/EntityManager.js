@@ -1,6 +1,7 @@
 window.ENT = {};
 
 var entities = [];
+var entityIds = {};
 var players = [];
 var effects = [];
 var nextEffectId = 0;
@@ -40,6 +41,7 @@ ENT.newEffect = function(className, data) {
 ENT.create = function(entity) {
 	if (entity != undefined) {
 		entities.push(entity);
+		entityIds[entity.id] = entity;
 
 		if (entity instanceof EntityPlayer) {
 			players.push(entity);
@@ -85,6 +87,8 @@ ENT.removeById = function(id) {
 			break;
 		}
 	}
+
+	delete entityIds[id];
 }
 
 ENT.removeEffectById = function(id) {
@@ -116,35 +120,13 @@ ENT.update = function() {
 // TO DO: Make get functions for effects
 
 ENT.getById = function(id, foundCallback, notFoundCallback) {
-	for (var i = entities.length - 1; i >= 0; i--) {
-		if (entities[i].id == id) {
-			if (foundCallback instanceof Function) {
-				foundCallback(entities[i]);
-			}
-
-			return entities[i];
+	if (entityIds.hasOwnProperty(id)) {
+		if (foundCallback instanceof Function) {
+			foundCallback(entityIds[id]);
 		}
-	}
 
-	if (notFoundCallback instanceof Function) {
-		notFoundCallback();
-	}
-
-	return null;
-}
-
-ENT.getPlayerById = function(id, foundCallback, notFoundCallback) {
-	for (var i = players.length - 1; i >= 0; i--) {
-		if (players[i].id == id) {
-			if (foundCallback instanceof Function) {
-				foundCallback(players[i]);
-			}
-
-			return players[i];
-		}
-	}
-
-	if (notFoundCallback instanceof Function) {
+		return entityIds[id];
+	} else if (notFoundCallback instanceof Function) {
 		notFoundCallback();
 	}
 

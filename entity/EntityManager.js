@@ -14,6 +14,7 @@ class EntityManager {
 		this.Entity = null;
 
 		this.entities = [];
+		this.entityIds = {};
 		this.players = [];
 		this.nextId = 0;
 		this.networkNow = 0;
@@ -54,6 +55,7 @@ class EntityManager {
 
 			entity.id = this.nextId;
 			this.entities.push(entity);
+			this.entityIds[entity.id] = entity;
 			this.nextId++;
 
 			var data = this.getNetworkableProperties(entity);
@@ -85,6 +87,7 @@ class EntityManager {
 		}
 
 		entity.remove();
+		delete this.entityIds[entity.id];
 
 		for (var i = this.entities.length - 1; i >= 0; i--) {
 			if (this.entities[i].id == entity.id) {
@@ -203,31 +206,13 @@ class EntityManager {
 	}
 
 	getById(id, callback) {
-		for (var i = this.entities.length - 1; i >= 0; i--) {
-			if (this.entities[i].id == id) {
-				if (callback instanceof Function) {
-					callback(this.entities[i]);
-				}
-
-				return this.entities[i];
+		if (this.entityIds.hasOwnProperty(id)) {
+			if (callback instanceof Function) {
+				callback(this.entityIds[id]);
 			}
+
+			return this.entityIds[id];
 		}
-
-		return null;
-	}
-
-	getPlayerById(id, callback) {
-		for (var i = this.players.length - 1; i >= 0; i--) {
-			if (this.players[i].id == id) {
-				if (callback instanceof Function) {
-					callback(this.players[i]);
-				}
-
-				return this.players[i];
-			}
-		}
-
-		return null;
 	}
 
 	getAllByClassName(className) {

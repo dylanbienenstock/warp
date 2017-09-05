@@ -27,7 +27,7 @@ function updateLockOn() {
 	var timeMult = (now - lockLastUpdateTime) / (1000 / 60);
 
 	if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
-		ENT.getPlayerById(window.lockedPlayerId, function(lockedPlayer) {
+		ENT.getById(window.lockedPlayerId, function(lockedPlayer) {
 			lockedSprite.x = lockedPlayer.sprite.x;
 			lockedSprite.y = lockedPlayer.sprite.y;
 			lockedSprite.width = lerp(lockedSprite.width, 96, 0.25 * timeMult);
@@ -58,7 +58,7 @@ function updateLockOn() {
 				lockingPlayerId = closestPlayerId;
 			}
 
-			ENT.getPlayerById(lockingPlayerId, function(lockingPlayer) {
+			ENT.getById(lockingPlayerId, function(lockingPlayer) {
 				var distance2 = Math.sqrt(Math.pow(mousePosition.x - lockingPlayer.sprite.x, 2) + 
 								Math.pow(mousePosition.y - lockingPlayer.sprite.y, 2));
 

@@ -125,7 +125,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				var now = Date.now();
 
 				if (this.lockedPlayerId != null) {
-					var lockedPlayer = ENT.getPlayerById(this.lockedPlayerId);
+					var lockedPlayer = ENT.getById(this.lockedPlayerId);
 
 					if (lockedPlayer != undefined) {
 						this.lockOnPosition = {
