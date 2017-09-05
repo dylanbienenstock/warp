@@ -30,6 +30,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		network() {
+			console.log("sending: (" + this.physicsObject.x + ", " + this.physicsObject.y + ")");
 			ENT.sendProperties(this, {
 				x: this.physicsObject.x,
 				y: this.physicsObject.y
@@ -56,7 +57,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					// store these for later, need to calculate explosion pos
 
 					this.physicsObject.active = false;
-					// PHYS.remove(this.physicsObject);
+					PHYS.remove(this.physicsObject);
 
 					ENT.trigger(this, "stick",
 						{

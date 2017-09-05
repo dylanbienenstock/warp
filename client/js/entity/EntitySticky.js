@@ -2,10 +2,10 @@ class EntitySticky extends EntityBase {
 	constructor(data) {
 		super(data);
 
-		this.lerpFactorPosition = 0.8;
+		this.lerpFactorPosition = 0.35;
 
 		this.radius = data.radius || 4;
-		this.target = undefined;	// Entity collided with
+		this.targetId = undefined;	// Entity collided with
 		this.initialTargetRotation = undefined;
 		this.stuck = false;
 
@@ -32,6 +32,8 @@ class EntitySticky extends EntityBase {
 		// smaller than the actual hitbox radius so collision is still
 		// detected properly
 
+		this.collision = undefined;
+
 		ENT.stageContainer.addChild(this.sprite);
 		this.triggers.stick = this.onStick.bind(this);
 
@@ -39,25 +41,39 @@ class EntitySticky extends EntityBase {
 
 	onStick(info) {
 		this.stuck = true;
-		this.target = ENT.getById(info.targetId);
-		this.localX = this.target.x - info.collision.x;
-		this.localY = this.target.y - info.collision.y;
-		this.initialTargetRotation = this.target.rotation;
+		this.targetId = (info.targetId);
+		var target = ENT.getById(this.targetId);
+		this.localX = target.x - info.collision.x;
+		this.localY = target.y - info.collision.y;
+		this.initialTargetRotation = target.rotation;
 		this.collisionAngle = info.collision.angle;
+		this.collision = info.collision;
+
+		console.log("local: (" + this.localX + ", " + this.localY + ")");
+		console.log("collision: (" + info.collision.x + ", " + info.collision.y + ")");
+		console.log("target: (" + target.x + ", " + target.y + ")");
+		console.log("calculated pos: (" + (target.x - this.localX) + ", " + (target.y + this.localY) + ")");
 	}
 
 	update() {
 		super.update();
-		if (this.stuck && this.target.sprite !== null) {
+		//console.log(this.sprite.x);
+		var target = ENT.getById(this.targetId);
+		if (this.stuck && target.sprite !== null) {
 			// attach was acting fucky, replicating functionality here
 			// to understand whats goin on, once working will revert to
 			// PIXI.Sprite.attach
 
-			this.sprite.x = this.target.sprite.x + this.localX;
-			this.sprite.y = this.target.sprite.y + this.localY;
-			this.sprite.roation =
-				this.target.rotation - this.initialTargetRotation +
-				this.collisionAngle;
+			target.sprite.attach(this.sprite, this.localX, this.localY);
+
+			
+			//this.sprite.x = this.collision.x;
+			//this.sprite.y = this.collision.y;
+			// this.sprite.x = target.x - this.localX;
+			// this.sprite.y = target.y + this.localY;
+			// this.sprite.rotation =
+			// 	target.rotation - this.initialTargetRotation +
+			// 	this.collisionAngle;
 		}
 	}
 
