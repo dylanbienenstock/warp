@@ -20,6 +20,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				collisionGroup: "Shield",
 				radius: this.radius
 			});
+
+			this.physicsObject.addChild(PHYS.new("Circle", {
+				radius: this.radius / 3 * 2
+			}));
 		}
 
 		create() {
