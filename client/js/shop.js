@@ -55,6 +55,7 @@ function openShop() {
 
 function closeShop() {
 	$("#shop-veil").hide();
+	closeBuyWeaponModal();
 
 	window.shopOpen = false;
 }
@@ -228,6 +229,7 @@ function selectListing(listing, data) {
 
 		if (owned) {
 			listingBuyButton.innerHTML = "ALREADY OWNED";
+			listingBuyButton.onclick = null;
 		}
 	}
 
