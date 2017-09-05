@@ -15,6 +15,7 @@ class EntityLaser extends EntityBase {
 		this.graphics.moveTo(-this.length, 0);
 		this.graphics.lineTo(0, 0);
 		this.graphics.rotation = this.rotation;
+		this.graphics.zIndex = 50;
 
 		this.sprite = this.graphics;
 		ENT.stageContainer.addChild(this.graphics);
