@@ -9,6 +9,7 @@ module.exports = function(io, ENT, PHYS) {
 		Player: require("../entity/EntityPlayer.js")(EntityBase, ENT, PHYS),
 		Shield: require("../entity/EntityShield.js")(EntityBase, ENT, PHYS),
 		Laser: require("../entity/EntityLaser.js")(EntityBase, ENT, PHYS),
-		Tracker: require("../entity/EntityTracker.js")(EntityBase, ENT, PHYS)
+		Tracker: require("../entity/EntityTracker.js")(EntityBase, ENT, PHYS),
+		BouncerOrb: require("../entity/EntityBouncerOrb.js")(EntityBase, ENT, PHYS)
 	};
 }

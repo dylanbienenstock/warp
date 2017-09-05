@@ -25,8 +25,9 @@ var ENT = require("./entity/EntityManager.js")(io, physicsDebug);
 var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
 ENT.Entity = Entity;
 
-var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
 var Ship = require("./ship/Ship.js")(ENT, PHYS);
+var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
+var SpecialWeapon = require("./weapon/SpecialWeapon.js")(ENT, PHYS);
 var Shop = require("./Shop.js")(Weapon);
 
 console.log("Initializing game...");
@@ -91,6 +92,7 @@ function acceptConnection(name, socket) {
 
 	player.ship = new Ship.Skiff(player);
 	player.primaryWeapon = new Weapon.Peashooter(player);
+	player.specialWeapon = new SpecialWeapon.Bouncer(player);
 
 	if (!physicsDebug) {
 		console.log("+ Player " + name + " has connected.");

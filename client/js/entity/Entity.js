@@ -6,5 +6,6 @@ window.Entity = {
 	Player: EntityPlayer,
 	Shield: EntityShield,
 	Laser: EntityLaser,
-	Tracker: EntityTracker
+	Tracker: EntityTracker,
+	BouncerOrb: EntityBouncerOrb
 };

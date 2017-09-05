@@ -148,6 +148,12 @@ function bindControls() {
 					}
 
 					break;
+				case " ":
+					if (!ENT.localPlayer.controls.fireSpecial) {
+						sendControl("fireSpecial", true);
+					}
+
+					break;
 				case "Shift":
 					if (!ENT.localPlayer.controls.boost) {
 						sendControl("boost", true);
@@ -178,11 +184,17 @@ function bindControls() {
 				case "D":
 					sendControl("thrustRight", false);
 					break;
+				case " ":
+					sendControl("fireSpecial", false);
+					break;
 				case "Shift":
 					sendControl("boost", false);
 					break;
-				case " ":
-					toggleShop();
+				case "Enter":
+					if (window.connected) {
+						toggleShop();
+					}
+					
 					break;
 				case "p":
 				case "P":

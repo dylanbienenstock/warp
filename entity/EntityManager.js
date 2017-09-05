@@ -215,6 +215,10 @@ class EntityManager {
 		}
 	}
 
+	getAllPlayers() {
+		return this.players;
+	}
+
 	getAllByClassName(className) {
 		var found = [];
 

@@ -27,7 +27,8 @@ class EntityPlayer extends EntityBase {
 			thrustRight: false,
 			boost: false,
 			firePrimary: false,
-			fireSecondary: false
+			fireSecondary: false,
+			fireSpecial: false
 		};
 
 		this.ship = new ShipSkiff(this.alive);
