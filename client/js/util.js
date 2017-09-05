@@ -77,3 +77,12 @@ function getLocalPlayerCredits() {
 function randomInRange(min, max) {
 	return Math.random() * (max - min) + min;
 }
+
+function pointIsOnScreen(position) {
+	var screenPosition = ENT.stageContainer.toGlobal(position);
+
+	return (screenPosition.x >= 0 &&
+			screenPosition.x <= ENT.ww &&
+			screenPosition.y >= 0 &&
+			screenPosition.y <= ENT.wh);
+}

@@ -28,11 +28,14 @@ window.lastDestZoom = window.currentZoom;
 window.overrideZoom = -1;
 window.useOverrideZoom = false;
 
+window.fpsMeter = null;
+
 $(function() {
 	var ww = $(window).innerWidth();
 	var wh = $(window).innerHeight();
 
 	window.renderer = new PIXI.CanvasRenderer(ww, wh);
+	window.renderer.backgroundColor = 0x000000;
 
 	document.body.appendChild(renderer.view);
 
@@ -45,13 +48,6 @@ $(function() {
 	boundaryContainer = new PIXI.Container();
 	HUDContainer = new PIXI.Container();
 
-	blackness = new PIXI.Graphics();
-	blackness.beginFill(0x000000);
-	blackness.drawRect(0, 0, ww, wh);
-	blackness.endFill();
-	blackness.cacheAsBitmap = true;
-
-	backdropContainer.addChild(blackness);
 	gameContainer.addChild(backdropContainer, boundaryContainer, stageContainer, HUDContainer);
 	baseContainer.addChild(titleScreenContainer, gameContainer);
 
@@ -73,6 +69,12 @@ $(function() {
 	drawBoundary();
 	resizeRenderer();
 	loadContent(setup);
+
+	window.fpsMeter = new FPSMeter({
+		left: "initial",
+		right: "5px",
+		graph: 1
+	});
 });
 
 function drawBoundary() {
@@ -98,12 +100,6 @@ function drawBoundary() {
 
 function resizeRenderer() {
 	renderer.resize($(window).innerWidth(), $(window).innerHeight());
-
-	blackness.clear();
-	blackness.beginFill(0x000000);
-	blackness.drawRect(0, 0, $(window).innerWidth(), $(window).innerHeight());
-	blackness.endFill();
-	blackness.cacheAsBitmap = true;
 }
 
 function setup() {
@@ -161,6 +157,7 @@ function update() {
 	drawHUD();
 	
 	renderer.render(baseContainer);
+	window.fpsMeter.tick();
 }
 
 function getRenderer() {

@@ -4,9 +4,9 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			super(player);
 
 			this.fireInterval = 1335;
-			this.damage = 4;
+			this.damage = 5;
 			this.shotSpeed = 10;
-			this.projectilesPerShot = 6;
+			this.projectilesPerShot = 5;
 			this.spreadAngleDegrees = 75;  
 		}
 
@@ -20,7 +20,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 					"Type": "Homing energy weapon",
 					"Damage": 4,
 					"Shots/min": 45,
-					"Proj./shot": 6,
+					"Proj./shot": 5,
 					"Shot speed": 10
 				}
 			};

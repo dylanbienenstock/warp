@@ -17,13 +17,14 @@ class EntityTracker extends EntityBase {
 		ENT.stageContainer.addChild(this.sprite);
 
 		this.emitter = new ParticleEmitter({
+			useParticleContainer: true,
 			radius: this.radius,
 			x: this.sprite.x,
 			y: this.sprite.y,
 			minSpeed: 0.1, 
 			maxSpeed: 0.15,
-			minLifespan: 500,
-			maxLifespan: 1000,
+			minLifespan: 400,
+			maxLifespan: 800,
 			startAlpha: 0.6,
 			endAlpha: 0,
 			minStartSize: 6,

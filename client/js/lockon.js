@@ -3,6 +3,7 @@ var lockMinRadius = 40;
 var lockRadius = lockMaxRadius;
 var lockingGraphics;
 var lockedSprite;
+var lockLastUpdateTime = Date.now();
 
 var lockingPlayerId = null;
 window.lockedPlayerId = null;
@@ -22,12 +23,14 @@ function setupLockOn() {
 
 function updateLockOn() {
 	lockOnGraphics.clear();
+	var now = Date.now();
+	var timeMult = (now - lockLastUpdateTime) / (1000 / 60);
 
 	if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
 		ENT.getPlayerById(window.lockedPlayerId, function(lockedPlayer) {
 			lockedSprite.x = lockedPlayer.sprite.x;
 			lockedSprite.y = lockedPlayer.sprite.y;
-			lockedSprite.width = lerp(lockedSprite.width, 96, 0.25);
+			lockedSprite.width = lerp(lockedSprite.width, 96, 0.25 * timeMult);
 			lockedSprite.height = lockedSprite.width;
 			lockedSprite.renderable = true;
 		}, function() {
@@ -66,7 +69,7 @@ function updateLockOn() {
 					lockOnGraphics.drawCircle(lockingPlayer.sprite.x, lockingPlayer.sprite.y, lockRadius);
 					lockOnGraphics.endFill();
 
-					lockRadius -= 1;
+					lockRadius -= timeMult;
 
 					if (lockRadius <= lockMinRadius) {
 						window.lockedPlayerId = lockingPlayerId;
@@ -80,4 +83,6 @@ function updateLockOn() {
 			});
 		}
 	}
+
+	lockLastUpdateTime = now;
 }

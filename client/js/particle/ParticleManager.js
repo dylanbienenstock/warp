@@ -2,6 +2,7 @@ class ParticleManager {
 	constructor() {
 		this.emitters = [];
 		this.nextId = 0;
+		this.lastUpdateTime = Date.now();
 	}
 
 	addEmitter(emitter) {
@@ -20,8 +21,12 @@ class ParticleManager {
 	}
 
 	update() {
+		var now = Date.now();
+
 		for (var i = this.emitters.length - 1; i >= 0; i--) {
-			this.emitters[i].update();
+			this.emitters[i].update((now - this.lastUpdateTime) / (1000 / 60));
 		}
+
+		this.lastUpdateTime = now;
 	}
 }

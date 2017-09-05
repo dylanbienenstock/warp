@@ -3,6 +3,7 @@ class ParticleEmitter {
 		this.id = -1;
 		this.active = true;
 		this.removed = false;
+		this.useParticleContainer = data.useParticleContainer;
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.startX = this.x;
@@ -32,8 +33,12 @@ class ParticleEmitter {
 		this.lastSpawnTime = 0;
 
 		this.particles = [];
-		this.container = new PIXI.Container();
+		this.container = (this.useParticleContainer ? new PIXI.particles.ParticleContainer() : new PIXI.Container());
 		this.container.zIndex = data.zIndex || 1000;
+
+		if (this.useParticleContainer) {
+			this.container.roundPixels = true;
+		}
 
 		ENT.stageContainer.addChild(this.container);
 		ENT.ParticleManager.addEmitter(this);
@@ -47,7 +52,7 @@ class ParticleEmitter {
 		this.container.zIndex = value;
 	}
 
-	update() {
+	update(timeMult) {
 		var now = Date.now();
 
 		if (this.active && !this.removed) {
@@ -70,21 +75,28 @@ class ParticleEmitter {
 		for (var i = this.particles.length - 1; i >= 0; i--) {
 			var particle = this.particles[i];
 			var life = particle.lifespan - (now - particle.spawnTime);
-			var lifeNormalized = life / particle.lifespan;
-			var inverseLifeNormalized = 1 - lifeNormalized;
 
-			if (life <= 0) {
+			if (life <= 0 || !pointIsOnScreen(particle.sprite.position)) {
 				this.container.removeChild(particle.sprite);
 				particle.sprite.destroy();
 				this.particles.splice(i, 1);
 			} else {
-				particle.sprite.x += -Math.cos(particle.angle) * particle.speed;
-				particle.sprite.y += -Math.sin(particle.angle) * particle.speed;
-				particle.sprite.width = lerp(particle.startSize, particle.endSize, inverseLifeNormalized);
-				particle.sprite.height = particle.sprite.width;
-				particle.sprite.alpha = lerp(this.startAlpha, this.endAlpha, inverseLifeNormalized);
+				var lifeNormalized = life / particle.lifespan;
+				var inverseLifeNormalized = 1 - lifeNormalized;
 
-				if (this.startColor != this.endColor) {
+				particle.sprite.x += (-Math.cos(particle.angle) * particle.speed) * timeMult;
+				particle.sprite.y += (-Math.sin(particle.angle) * particle.speed) * timeMult;
+
+				if (particle.startSize != particle.endSize) {
+					particle.sprite.width = lerp(particle.startSize, particle.endSize, inverseLifeNormalized);
+					particle.sprite.height = particle.sprite.width;
+				}
+
+				if (this.startAlpha != this.endAlpha) {
+					particle.sprite.alpha = lerp(this.startAlpha, this.endAlpha, inverseLifeNormalized);
+				}
+
+				if (!this.useParticleContainer && this.startColor != this.endColor) {
 					var startColorRGB = PIXI.utils.hex2rgb(this.startColor);
 					var endColorRGB = PIXI.utils.hex2rgb(this.endColor);
 					var currentColorRGB = [];
@@ -110,31 +122,36 @@ class ParticleEmitter {
 
 		var spawnPositionAngle = Math.random() * Math.PI * 2;
 		var velocityAngle = Math.random() * Math.PI * 2;
+		var position = {
+			x: this.x + -Math.cos(spawnPositionAngle) * this.radius * Math.random(),
+			y: this.y + -Math.sin(spawnPositionAngle) * this.radius * Math.random()
+		};
 
-		if (this.angle != undefined) {
-			velocityAngle = this.angle;
+		if (pointIsOnScreen(position)) {
+			if (this.angle != undefined) {
+				velocityAngle = this.angle;
 
-			if (this.angleSpread == undefined && this.angleSpreadDegrees != undefined) {
-				this.angleSpread = this.angleSpreadDegrees * Math.PI / 180;
+				if (this.angleSpread == undefined && this.angleSpreadDegrees != undefined) {
+					this.angleSpread = this.angleSpreadDegrees * Math.PI / 180;
+				}
+
+				velocityAngle -= this.angleSpread / 2;
+				velocityAngle += this.angleSpread * Math.random();
 			}
 
-			velocityAngle -= this.angleSpread / 2;
-			velocityAngle += this.angleSpread * Math.random();
+			this.particles.push(new Particle({
+				container: this.container,
+				lifespan: randomInRange(this.minLifespan, this.maxLifespan),
+				spawnTime: now,
+				position: position,
+				speed: randomInRange(this.minSpeed, this.maxSpeed),
+				angle: velocityAngle,
+				startSize: randomInRange(this.minStartSize, this.maxStartSize),
+				endSize: randomInRange(this.minEndSize, this.maxEndSize),
+				color: this.startColor,
+				blendMode: this.blendMode
+			}));
 		}
-
-		this.particles.push(new Particle({
-			container: this.container,
-			lifespan: randomInRange(this.minLifespan, this.maxLifespan),
-			spawnTime: now,
-			x: this.x + -Math.cos(spawnPositionAngle) * this.radius * Math.random(),
-			y: this.y + -Math.sin(spawnPositionAngle) * this.radius * Math.random(),
-			speed: randomInRange(this.minSpeed, this.maxSpeed),
-			angle: velocityAngle,
-			startSize: randomInRange(this.minStartSize, this.maxStartSize),
-			endSize: randomInRange(this.minEndSize, this.maxEndSize),
-			color: this.startColor,
-			blendMode: this.blendMode
-		}));
 	}
 
 	remove() {

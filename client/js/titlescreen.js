@@ -2,6 +2,7 @@ var titleScreenBackground;
 var titleScreenCircles;
 var titleScreenCircleColor = 0xFFFFFF;
 var titleScreenTransition;
+var titleScreenTransitionRadius = 0;
 var transitioning = false;
 var transitionProgress = 0;
 var done = false;
@@ -39,16 +40,16 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 
 		if (transitioning) {
 			transitionProgress = lerp(transitionProgress, 1, 0.03);
-			var windowDiagonal = (ww + wh) / 2;
+			titleScreenTransitionRadius = transitionProgress * (ww + wh) / 2;
 
 			titleScreenTransition.clear();
 
 			titleScreenTransition.beginFill(0xFFFFFF);
-			titleScreenTransition.drawCircle(ww / 2, wh / 2, transitionProgress * windowDiagonal);
+			titleScreenTransition.drawCircle(ww / 2, wh / 2, titleScreenTransitionRadius);
 			titleScreenTransition.endFill();
 
 			titleScreenBackground.lineStyle(2, 0x00FF00);
-			titleScreenBackground.drawCircle(ww / 2, wh / 2, (transitionProgress * windowDiagonal) + 2);
+			titleScreenBackground.drawCircle(ww / 2, wh / 2, titleScreenTransitionRadius + 2);
 
 			if (transitionProgress >= 0.9) {
 				transitioning = false;
@@ -64,6 +65,8 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 				window.showNameTags = true;
 			}
 		}
+	} else {
+		baseContainer.removeChild(titleScreenContainer);
 	}
 }
 
@@ -81,8 +84,12 @@ function drawOscillatingCircles(ww, wh) {
 	var titleContainerColor = PIXI.utils.rgb2hex([ titleContainerColorRaw.red() / 255, titleContainerColorRaw.green() / 255, titleContainerColorRaw.blue() / 255 ]);
 
 	for (var i = circleIntervals.length - 1; i >= 0; i--) {
-		titleScreenBackground.lineStyle(2, titleContainerColor, minCircleAlpha + (1 - minCircleAlpha) - Math.abs(Math.cos(time / circleIntervals[i])) * (1 - minCircleAlpha));
-		titleScreenBackground.drawCircle(ww / 2, wh / 2, minCircleRadius + Math.abs(Math.cos(time / circleIntervals[i])) * maxCircleRadius);
+		var radius = minCircleRadius + Math.abs(Math.cos(time / circleIntervals[i])) * maxCircleRadius;
+
+		if (!transitioning || radius > titleScreenTransitionRadius) {
+			titleScreenBackground.lineStyle(2, titleContainerColor, minCircleAlpha + (1 - minCircleAlpha) - Math.abs(Math.cos(time / circleIntervals[i])) * (1 - minCircleAlpha));
+			titleScreenBackground.drawCircle(ww / 2, wh / 2, radius);
+		}
 	}
 }
 
