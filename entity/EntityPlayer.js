@@ -302,5 +302,17 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			ENT.sendProperties(this, toSend);
 		}
+
+		remove() {
+			this.primaryWeapon.remove();
+
+			if (this.secondaryWeapon != undefined) {
+				this.secondaryWeapon.remove();
+			}
+
+			if (this.specialWeapon != undefined) {
+				this.specialWeapon.remove();
+			}
+		}
 	}
 }
