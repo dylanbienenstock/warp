@@ -26,15 +26,16 @@ class EntityBouncerAura extends EntityBase {
 		this.alpha = lerp(this.alpha, this.destAlpha, 0.4);
 
 		this.graphics.clear();
-		this.graphics.beginFill(this.color, this.alpha * maxAlpha);
 
-		for (var i = 0; i < ringCount; i++) {
-			this.graphics.drawCircle(0, 0, (this.radius) / ringCount * i + Math.abs(Math.cos(Date.now() / 1000)) * oscillateAmount + oscillateAmount);
+		if (this.alpha >= 0.05) {
+			this.graphics.beginFill(this.color, this.alpha * maxAlpha);
+
+			for (var i = 0; i < ringCount; i++) {
+				this.graphics.drawCircle(0, 0, (this.radius) / ringCount * i + Math.abs(Math.cos(Date.now() / 1000)) * oscillateAmount + oscillateAmount);
+			}
+
+			this.graphics.endFill();
 		}
-
-		this.graphics.endFill();
-
-		addRadarDot(this.graphics.x, this.graphics.y, 0xFFFFFF, 1);
 	}
 
 	cull(visible) {
