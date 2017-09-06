@@ -176,10 +176,11 @@ class EntityManager {
 			}
 		};
 
-		if (entity.physicsObject.sleeping && this.networkNow - entity.lastNetworkPosition < 8000) {
+		if (entity.physicsObject != undefined && entity.physicsObject.sleeping && this.networkNow - entity.lastNetworkPosition < 8000) {
 			delete data2.packet.properties.x;
 			delete data2.packet.properties.y;
-			delete data2.packet.properties.rotation;this.lastNetworkPosition = this.networkNow;
+			delete data2.packet.properties.rotation;
+			this.lastNetworkPosition = this.networkNow;
 		} else {
 			this.lastNetworkPosition = this.networkNow;
 		}
