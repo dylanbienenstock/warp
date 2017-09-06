@@ -31,7 +31,7 @@ class EntityPlayer extends EntityBase {
 			fireSpecial: false
 		};
 
-		this.ship = new ShipSkiff(this.alive);
+		this.ship = new ShipCartel(this.alive);
 		this.sprite = this.ship.bodySprite;
 		this.ship.controls = this.controls;
 
@@ -96,6 +96,7 @@ class EntityPlayer extends EntityBase {
 
 		this.ship.controls = this.controls;
 		this.ship.alive = this.alive;
+		this.ship.boosting = this.boosting;
 		this.ship.update();
 	}
 

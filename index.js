@@ -90,7 +90,7 @@ function acceptConnection(name, socket) {
 
 	ENT.create(player, socket); 
 
-	player.ship = new Ship.Skiff(player);
+	player.ship = new Ship.Cartel(player);
 	player.primaryWeapon = new Weapon.Peashooter(player);
 	player.specialWeapon = new SpecialWeapon.Bouncer(player);
 
@@ -101,16 +101,6 @@ function acceptConnection(name, socket) {
 	socket.on("disconnect", function() {
 		if (!physicsDebug) {
 			console.log("- Player " + name + " has disconnected.");
-		}
-
-		player.primaryWeapon.remove();
-
-		if (player.secondaryWeapon != undefined) {
-			player.secondaryWeapon.remove();
-		}
-
-		if (player.specialWeapon != undefined) {
-			player.specialWeapon.remove();
 		}
 
 		ENT.remove(player);

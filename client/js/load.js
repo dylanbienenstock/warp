@@ -11,6 +11,12 @@ function loadContent(setup) {
 		.add("ship:skiff:forward", "./img/ships/skiff/forward.svg")
 		.add("ship:skiff:backward","./img/ships/skiff/backward.svg")
 
+		.add("ship:cartel", "./img/ships/cartel/body.svg")
+		.add("ship:cartel:outline", "./img/ships/cartel/outline.svg")
+		.add("ship:cartel:shadow", "./img/ships/cartel/shadow.svg")
+		.add("ship:cartel:forward", "./img/ships/cartel/forward.svg")
+		.add("ship:cartel:backward","./img/ships/cartel/backward.svg")
+
 		.add("shield", "./img/shield.svg")
 
 		.add("station:outer", "./img/station-outer.svg")

@@ -1,3 +1,4 @@
 window.Ship = {
-	Skiff: ShipSkiff
+	Skiff: ShipSkiff,
+	Cartel: ShipCartel
 };
