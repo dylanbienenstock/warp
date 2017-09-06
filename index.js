@@ -103,6 +103,16 @@ function acceptConnection(name, socket) {
 			console.log("- Player " + name + " has disconnected.");
 		}
 
+		player.primaryWeapon.remove();
+
+		if (player.secondaryWeapon != undefined) {
+			player.secondaryWeapon.remove();
+		}
+
+		if (player.specialWeapon != undefined) {
+			player.specialWeapon.remove();
+		}
+
 		ENT.remove(player);
 	});
 
