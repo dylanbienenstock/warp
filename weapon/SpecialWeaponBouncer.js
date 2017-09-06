@@ -6,6 +6,12 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			this.fireInterval = 3000;
 			this.damage = 15;
 			this.shotSpeed = 16;
+
+			this.aura = ENT.create(ENT.new("BouncerAura", {
+				radius: 200,
+				color: 0xFF00FF,
+				ownerId: this.ownerId
+			}));
 		}
 
 		static getListing() {
@@ -35,6 +41,10 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 				angle: angle,
 				speed: this.shotSpeed
 			}));
+		}
+
+		remove() {
+			ENT.remove(this.aura);
 		}
 	}
 }

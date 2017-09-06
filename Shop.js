@@ -41,9 +41,19 @@ module.exports = function(Weapon) {
 					player.credits -= listing.price;
 
 					if (data.primary) {
+						if (player.primaryWeapon != undefined) {
+							player.primaryWeapon.remove();
+						}
+
 						player.primaryWeapon = new weaponType(player);
+						player.shouldNetworkPrimaryWeaponListing = true;
 					} else {
+						if (player.secondaryWeapon != undefined) {
+							player.secondaryWeapon.remove();
+						}
+						
 						player.secondaryWeapon = new weaponType(player);
+						player.shouldNetworkSecondaryWeaponListing = true;
 					}
 				}
 			}
