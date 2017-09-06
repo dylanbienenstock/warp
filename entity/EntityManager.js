@@ -98,7 +98,7 @@ class EntityManager {
 		}
 
 		for (var i = this.players.length - 1; i >= 0; i--) {
-			if (this.players.id == entity.id) {
+			if (this.players[i].id == entity.id) {
 				this.players.splice(i, 1);
 
 				break;
