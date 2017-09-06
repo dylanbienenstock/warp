@@ -9,10 +9,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.damage = data.damage || 10;
 			this.radius = data.radius || 4;
 			this.explodeTime = data.explodeTime || 10000;
+			this.explosionRadius = data.explosionRadius || data.radius * 3;
 
 			this.stuck = false;
-			this.target = undefined;
 			this.networkGlobally = true;
+			this.targetId = undefined;
 			this.launchTime = Date.now();
 
 			this.physicsObject = PHYS.new("Circle", {
@@ -30,7 +31,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		network() {
-			console.log("sending: (" + this.physicsObject.x + ", " + this.physicsObject.y + ")");
 			ENT.sendProperties(this, {
 				x: this.physicsObject.x,
 				y: this.physicsObject.y
@@ -52,8 +52,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					entity instanceof ENT.type("Planet") || 
 					entity instanceof ENT.type("Asteroid")) {
 
-					this.target = entity;
 					this.collision = collision;
+					this.targetId = entity.Id;
 					// store these for later, need to calculate explosion pos
 
 					this.physicsObject.active = false;
@@ -63,7 +63,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 						{
 							"collision": {
 								"x": collision.position.x,
-								"y": collision.position.y
+								"y": collision.position.y,
+								"angle": collision.angle
 							}, 
 							"targetId": entity.id
 						}
