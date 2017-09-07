@@ -36,6 +36,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 				ENT.create(ENT.new("Laser", {
 					ownerId: this.ownerId,
 					damage: this.damage,
+					createParticles: i == 0,
 					thickness: 4,
 					color: 0x00FF00,
 					length: 32,

@@ -29,7 +29,7 @@ class ParticleEmitter {
 		this.spawnAmount = data.spawnAmount || 1;
 		this.maxParticles = data.maxParticles || 256;
 		this.totalParticlesCreated = 0;
-		this.removeAfter = data.removeAfter;
+		this.removeAfter = data.removeAfter; // Number of particles, not ms
 		this.lastSpawnTime = 0;
 
 		this.particles = [];

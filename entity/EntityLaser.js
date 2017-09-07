@@ -17,6 +17,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.x = data.x;
 			this.y = data.y;
 			this.rotation = data.angle;
+			this.createParticles = data.createParticles;
+
+			if (this.createParticles == undefined) {
+				this.createParticles = true;
+			}
 
 			this.physicsObject = PHYS.new("Box", {
 				collisionGroup: "Projectile",

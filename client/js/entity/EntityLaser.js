@@ -2,7 +2,7 @@ class EntityLaser extends EntityBase {
 	constructor(data) {
 		super(data);
 
-		this.lerpFactorPosition = 0.8;
+		this.lerpFactorPosition = 0.65;
 
 		this.thickness = data.thickness || 2;
 		this.color = data.color || 0xFF0000;
@@ -26,6 +26,29 @@ class EntityLaser extends EntityBase {
 			y: this.y
 		}));
 
+		if (data.createParticles) {
+			this.emitter = new ParticleEmitter({
+				radius: 5,
+				x: this.graphics.x,
+				y: this.graphics.y,
+				minSpeed: 0.2, 
+				maxSpeed: 0.3,
+				minLifespan: 400,
+				maxLifespan: 800,
+				startAlpha: 0.6,
+				endAlpha: 0,
+				startColor: this.color,
+				endColor: this.color,
+				minStartSize: 10,
+				maxStartSize: 12,
+				minEndSize: 4,
+				maxEndSize: 6,
+				spawnAmount: 8,
+				removeAfter: 8,
+				zIndex: 101,
+				blendMode: PIXI.BLEND_MODES.ADD
+			});
+		}
 	}
 
 	update() {
