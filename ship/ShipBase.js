@@ -17,13 +17,19 @@ class ShipBase {
 		this.boostDeplete = 0.5;
 		this.boostRegen = 0.3;
 
-		for (var i = 1; i < physicsObjects.length; i++) {
+		for (var i = 0; i < physicsObjects.length; i++) {
 			this.physicsObject.addChild(physicsObjects[i]);
 		}
 
 		player.physicsObject = this.physicsObject;
 
 		PHYS.create(player, this.physicsObject);
+
+		if (ENT.physicsDebug) {
+			player.physicsObject.debugEntity = ENT.create(ENT.new("PhysicsDebug", {
+				physicsObject: this.physicsObject
+			}), null, true);
+		}
 
 		this.shield = ENT.create(ENT.new("Shield", {
 			ownerId: this.ownerId,
