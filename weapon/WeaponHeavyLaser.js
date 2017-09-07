@@ -5,7 +5,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 
 			this.fireInterval = 445;
 			this.damage = 15;
-			this.shotSpeed = 32;
+			this.shotSpeed = 40;
 		}
 
 		static getListing() {
@@ -19,7 +19,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 					"Damage": 15,
 					"Shots/min": 135,
 					"Proj./shot": 1,
-					"Shot speed": 32
+					"Shot speed": 40
 				}
 			};
 		}
@@ -27,6 +27,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 		fire(position, angle) {
 			ENT.create(ENT.new("Laser", {
 				ownerId: this.ownerId,
+				lifespan: 1250,
 				damage: this.damage,
 				thickness: 4,
 				color: 0x0055FF,
