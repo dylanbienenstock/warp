@@ -6,16 +6,16 @@ module.exports = function(ShipBase, ENT, PHYS) {
 					restrictToMap: true,
 					x: player.x,
 					y: player.y,
-					localX: -6,
-					localY: -16,
-					width: 16,
-					height: 32
+					localX: -8,
+					localY: -20,
+					width: 20,
+					height: 40
 				}),
 
 				PHYS.new("Box", {
-					localX: -22,
+					localX: -26,
 					localY: -5,
-					width: 16,
+					width: 18,
 					height: 10
 				})
 			]);
