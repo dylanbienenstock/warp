@@ -14,6 +14,8 @@ class HUDMeter {
 		this.icon = document.createElement("img");
 		this.icon.className = "meter-icon";
 		this.icon.src = this.iconURL;
+		this.icon.ondragstart = function() { return false; };
+
 		this.container.appendChild(this.icon);
 
 		for (var i = 0; i < this.segmentCount; i++) {
