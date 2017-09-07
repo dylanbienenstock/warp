@@ -31,21 +31,28 @@ class EntityPlayer extends EntityBase {
 			fireSpecial: false
 		};
 
-		this.ship = new ShipCartel(this.alive);
+		this.ship = new Ship.Skiff(this.alive);
 		this.sprite = this.ship.bodySprite;
 		this.ship.controls = this.controls;
 
 		this.shipListing = null;
 		this.primaryWeaponListing = null;
 		this.secondaryWeaponListing = null;
+		this.specialWeaponListing = null;
 
 		this.createNameTag();
 	}
 
 	onChangeShip(className) {
 		if (Ship.hasOwnProperty(className)) {
+			var newShip = new Ship[className](this.alive);
+			newShip.bodySprite.x = this.ship.bodySprite.x;
+			newShip.bodySprite.y = this.ship.bodySprite.y;
+
 			this.ship.remove();
-			this.ship = new Ship[className](this.alive);
+			this.ship = newShip;
+			this.sprite = this.ship.bodySprite;
+			this.ship.controls = this.controls;
 		}
 	}
 

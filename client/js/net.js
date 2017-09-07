@@ -92,10 +92,22 @@ function sendLockOn(id) {
 	socket.emit("lockon", id);
 }
 
+function sendBuyShip(className) {
+	socket.emit("buy ship", {
+		className: className
+	});
+}
+
 function sendBuyWeapon(className, primary) {
 	socket.emit("buy weapon", {
 		className: className,
 		primary: primary
+	});
+}
+
+function sendBuySpecialWeapon(className) {
+	socket.emit("buy special", {
+		className: className
 	});
 }
 

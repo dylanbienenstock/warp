@@ -94,4 +94,6 @@
 	user-select: none;
 
 	cursor: default;
+
+	z-index: 9999;
 }

@@ -31,7 +31,17 @@ module.exports = function(ShipBase, ENT, PHYS) {
 
 		static getListing() {
 			return {
-				className: "Skiff"
+				displayName: "Skiff",
+				className: "Skiff",
+				price: 0,
+				description: "This is the default ship.",
+				stats: {
+					"Type": "Standard fighter",
+					"Health": "100",
+					"Shield factor": "2",
+					"Speed": "6",
+					"Boost factor": "1.8"
+				}
 			};
 		}
 	}

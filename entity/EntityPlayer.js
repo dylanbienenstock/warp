@@ -6,7 +6,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.networkGlobally = true;
 
 			this.name = data.name || "Unnamed";
-			this.credits = data.credits || 25000;
+			this.credits = data.credits || 0;
 			this.shieldPower = 100;
 			this.boost = 100;
 			this.boosting = false;
@@ -30,9 +30,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.secondaryWeaponListing = null;
 			this.specialWeaponListing = null;
 
-			this.shouldNetworkPrimaryWeaponListing = null;
-			this.shouldNetworkSecondaryWeaponListing = null;
-			this.shouldNetworkSpecialWeaponListing = null;
+			this.shouldNetworkShipListing = true;
+			this.shouldNetworkPrimaryWeaponListing = true;
+			this.shouldNetworkSecondaryWeaponListing = true;
+			this.shouldNetworkSpecialWeaponListing = true;
 
 			this.viewport = {
 				width: 1920,
@@ -77,7 +78,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.shipListing = value.constructor.getListing();
 
 			if (shouldNetwork) {
-				ENT.trigger("changeShip", this.shipListing.className);
+				ENT.trigger(this, "changeShip", this.shipListing.className);
 			}
 		}
 
@@ -285,6 +286,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				boosting: this.boosting
 			};
 
+			if (this.shouldNetworkShipListing) {
+				toSend.shipListing = this.shipListing;
+				this.shouldNetworkShipListing = false;
+			}
+
 			if (this.shouldNetworkPrimaryWeaponListing) {
 				toSend.primaryWeaponListing = this.primaryWeaponListing;
 				this.shouldNetworkPrimaryWeaponListing = false;
@@ -304,6 +310,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		remove() {
+			this.ship.remove();
 			this.primaryWeapon.remove();
 
 			if (this.secondaryWeapon != undefined) {

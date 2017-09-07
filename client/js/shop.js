@@ -14,6 +14,7 @@ $(function() {
 		addShopTab("Your ship", "shop-page-your-ship");
 		addShopTab("Ships", "shop-page-ships");
 		addShopTab("Weapons", "shop-page-weapons");
+		addShopTab("Specials", "shop-page-specials");
 		addShopTab("Equipment", "shop-page-equipment");
 		addShopTab("Upgrades", "shop-page-upgrades");
 	});
@@ -74,10 +75,10 @@ function layoutShop() {
 	var $shopContainer = $("#shop-container");
 	var $shopClose = $("#shop-close");
 	var $shopListingInfoWeapons = $("#shop-listing-info-weapons");
-	var $shopListingStatsContainerWeapon = $("#shop-listing-stats-container-weapons");
-	var $shopBuyWeaponModal = $("#shop-buy-weapon-modal");
-	var $shopBuyWeaponModalClose = $("#shop-buy-weapon-modal-close");
-	var $shopBuyWeaponModalReceipt = $("#shop-buy-weapon-modal-receipt");
+	var $shopListingStatsContainer = $(".shop-listing-stats-container");
+	var $shopBuyWeaponModal = $("#shop-buy-modal-weapons");
+	var $shopBuyWeaponModalClose = $("#shop-buy-modal-close-weapons");
+	var $shopBuyWeaponModalReceipt = $("#shop-buy-modal-receipt-weapons");
 
 	$shopVeil.width($(window).innerWidth());
 	$shopVeil.height($(window).innerHeight());
@@ -92,10 +93,14 @@ function layoutShop() {
 		top: $shopContainer.offset().top - 0
 	});
 
-	$shopListingStatsContainerWeapon.offset({
-		left: $shopListingInfoWeapons.offset().left,
-		top: $shopListingInfoWeapons.offset().top + $shopListingInfoWeapons.outerHeight() - $shopListingStatsContainerWeapon.outerHeight()
-	});
+	$shopListingStatsContainer.each(function(index, element) {
+		var $parent = $($(element).parent().get(0));
+
+		$(element).offset({
+			left: $parent.offset().left,
+			top: $parent.offset().top + 258
+		});
+	})
 
 	$shopBuyWeaponModal.css({
 		left: $shopContainer.width() / 2 - $shopBuyWeaponModal.width() / 2,
@@ -154,6 +159,9 @@ function selectShopTab(tab, pageId) {
 }
 
 function addShopListing(data) {
+	data.price = data.price || 0;
+	data.description = data.description || " ";
+
 	var listingContainer = document.getElementById("shop-listing-container-" + data.section);
 
 	var listing = document.createElement("div");
@@ -192,6 +200,42 @@ function addShopListing(data) {
 	}
 }
 
+function alreadyOwned(data) {
+	switch (data.section) {
+		case "ships":
+			return (ENT.localPlayer.shipListing != undefined && ENT.localPlayer.shipListing.className == data.className);
+		case "weapons":
+			return (ENT.localPlayer.primaryWeaponListing != undefined && ENT.localPlayer.primaryWeaponListing.className == data.className) || 
+				   (ENT.localPlayer.secondaryWeaponListing != undefined && ENT.localPlayer.secondaryWeaponListing.className == data.className);
+		case "specials":
+			return (ENT.localPlayer.specialWeaponListing != undefined && ENT.localPlayer.specialWeaponListing.className == data.className);
+		case "equipment":
+			break;
+	}
+
+	return false;
+}
+
+function createCreditsText(price, event) {
+	var creditsText = document.createElement("span");
+	creditsText.className = "collect-credits";
+	creditsText.innerHTML = "-" + formatCredits(price) + " credits";
+
+	document.body.appendChild(creditsText);
+
+	$(creditsText).offset({
+		top: event.clientY - $(creditsText).outerHeight() / 2 - 8,
+		left: event.clientX - $(creditsText).outerWidth() / 2
+	});
+
+	$(creditsText).animate({
+		top: "-=64",
+		opacity: 0
+	}, 750, function() {
+		document.body.removeChild(creditsText);
+	});
+}
+
 function selectListing(listing, data) {
 	var listingInfo = document.getElementById("shop-listing-info-" + data.section);
 	var listingBuyButton = document.getElementById("shop-listing-buy-" + data.section);
@@ -205,19 +249,33 @@ function selectListing(listing, data) {
 
 	listing.className = "shop-listing-active";
 
-	var owned = (ENT.localPlayer.primaryWeaponListing != undefined && ENT.localPlayer.primaryWeaponListing.className == data.className) || 
-				(ENT.localPlayer.secondaryWeaponListing != undefined && ENT.localPlayer.secondaryWeaponListing.className == data.className);
+	var owned = alreadyOwned(data);
 
 	if (!owned && getLocalPlayerCredits() >= data.price) {
-
 		listingBuyButton.className = "shop-listing-buy";
 
 		switch (data.section) {
 			case "ships":
+				listingBuyButton.onclick = function(event) {
+					sendBuyShip(data.className);
+					ENT.localPlayer.shipListing = data;
+					createCreditsText(data.price, event);
+					selectListing(listing, data);
+				}
+
 				break;
 			case "weapons":
 				listingBuyButton.onclick = function() {
 					openBuyWeaponModal(listing, data);
+				}
+
+				break;
+			case "specials":
+				listingBuyButton.onclick = function(event) {
+					sendBuySpecialWeapon(data.className);
+					ENT.localPlayer.specialWeaponListing = data;
+					createCreditsText(data.price, event);
+					selectListing(listing, data);
 				}
 
 				break;
@@ -295,9 +353,9 @@ function createListingStats(data) {
 
 function openBuyWeaponModal(listing, data) {
 	$("#shop-veil-over").show();
-	$("#shop-buy-weapon-modal").show();
-	$("#shop-buy-weapon-modal-content").css({ visibility: "visible" });
-	$("#shop-buy-weapon-modal-receipt").hide();
+	$("#shop-buy-modal-weapons").show();
+	$("#shop-buy-modal-content-weapons").css({ visibility: "visible" });
+	$("#shop-buy-modal-receipt-weapons").hide();
 
 	var replacePrimaryButton = document.getElementById("shop-buy-weapon-modal-replace-primary");
 	var replaceSecondaryButton = document.getElementById("shop-buy-weapon-modal-replace-secondary");
@@ -306,8 +364,8 @@ function openBuyWeaponModal(listing, data) {
 		replacePrimaryButton.onclick = null;
 		replaceSecondaryButton.onclick = null;
 
-		$("#shop-buy-weapon-modal-content").css({ visibility: "hidden" });
-		$("#shop-buy-weapon-modal-receipt").show();
+		$("#shop-buy-modal-content-weapons").css({ visibility: "hidden" });
+		$("#shop-buy-modal-receipt-weapons").show();
 
 		layoutShop();
 
@@ -319,11 +377,13 @@ function openBuyWeaponModal(listing, data) {
 		selectListing(listing, data);
 	}
 
-	replacePrimaryButton.onclick = function() {
+	replacePrimaryButton.onclick = function(event) {
+		createCreditsText(data.price, event);
 		completePurchase(true);
 	}
 
-	replaceSecondaryButton.onclick = function() {
+	replaceSecondaryButton.onclick = function(event) {
+		createCreditsText(data.price, event);
 		completePurchase(false);
 	}
 
@@ -334,10 +394,10 @@ function closeBuyWeaponModal(purchasedWeapon) {
 	if (purchasedWeapon) {
 		setTimeout(function() {
 			$("#shop-veil-over").fadeOut();
-			$("#shop-buy-weapon-modal").fadeOut();
+			$("#shop-buy-modal-weapons").fadeOut();
 		}, 600);
 	} else {
 		$("#shop-veil-over").stop().hide();
-		$("#shop-buy-weapon-modal").stop().hide();
+		$("#shop-buy-modal-weapons").stop().hide();
 	}
 }

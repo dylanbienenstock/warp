@@ -31,7 +31,17 @@ module.exports = function(ShipBase, ENT, PHYS) {
 
 		static getListing() {
 			return {
-				className: "Cartel"
+				displayName: "Cartel",
+				className: "Cartel",
+				price: 0,
+				description: "This is the second ship.",
+				stats: {
+					"Type": "Standard fighter",
+					"Health": "100",
+					"Shield factor": "2",
+					"Speed": "7",
+					"Boost factor": "2"
+				}
 			};
 		}
 	}

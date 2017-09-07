@@ -251,8 +251,8 @@
 	box-sizing: border-box;
 }
 
-#shop-listing-stats-container-weapons {
-	position: absolute;
+.shop-listing-stats-container {
+	position: relative;
 	width: 338px;
 }
 
@@ -304,6 +304,11 @@
 
 .shop-listing-buy:hover {
 	background-color: rgba(225, 200, 55, 0.8);
+}
+
+.shop-listing-buy:active {
+	position: relative;
+	top: 1px;
 }
 
 .shop-listing-buy-disabled {
@@ -383,7 +388,7 @@
 	background-color: rgba(0, 225, 0, 0.8);
 }
 
-#shop-buy-weapon-modal-receipt {
+.shop-buy-modal-receipt {
 	display: none;
 	position: absolute;
 	font-size: 24px;

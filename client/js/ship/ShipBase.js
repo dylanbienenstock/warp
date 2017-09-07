@@ -40,24 +40,18 @@ class ShipBase {
 		this.shadowSprite.height = data.shadowSprite.dimensions.height;
 		this.shadowSprite.alpha = 0.5;
 		this.shadowSprite.renderable = this.alive;
-		this.shadowSprite.scale.x = this.scale;
-		this.shadowSprite.scale.y = this.scale;
 
 		this.outlineSprite = new PIXI.Sprite(PIXI.loader.resources[data.outlineSprite.texture].texture);
 		this.outlineSprite.anchor.set(data.outlineSprite.anchor.x, data.outlineSprite.anchor.y);
 		this.outlineSprite.width = data.outlineSprite.dimensions.width;
 		this.outlineSprite.height = data.outlineSprite.dimensions.height;
 		this.outlineSprite.renderable = !this.alive;
-		this.outlineSprite.scale.x = this.scale;
-		this.outlineSprite.scale.y = this.scale;
 
 		this.bodySprite = new PIXI.Sprite(PIXI.loader.resources[data.bodySprite.texture].texture);
 		this.bodySprite.anchor.set(data.bodySprite.anchor.x, data.bodySprite.anchor.y);
 		this.bodySprite.width = data.bodySprite.dimensions.width;
 		this.bodySprite.height = data.bodySprite.dimensions.height;
 		this.bodySprite.renderable = this.alive;
-		this.bodySprite.scale.x = this.scale;
-		this.bodySprite.scale.y = this.scale;
 
 		this.overlaySprite = new PIXI.Sprite(PIXI.loader.resources[data.overlaySprite.texture].texture);
 		this.overlaySprite.anchor.set(data.overlaySprite.anchor.x, data.overlaySprite.anchor.y);
@@ -65,22 +59,31 @@ class ShipBase {
 		this.overlaySprite.height = data.overlaySprite.dimensions.height;
 		this.overlaySprite.alpha = 0;
 		this.overlaySprite.renderable = this.alive;
-		this.overlaySprite.scale.x = this.scale;
-		this.overlaySprite.scale.y = this.scale;
 
 		this.forwardSprite = new PIXI.Sprite(PIXI.loader.resources[data.forwardSprite.texture].texture);
 		this.forwardSprite.anchor.set(data.forwardSprite.anchor.x, data.forwardSprite.anchor.y);
 		this.forwardSprite.width = data.forwardSprite.dimensions.width;
 		this.forwardSprite.height = data.forwardSprite.dimensions.height;
-		this.forwardSprite.scale.x = this.scale;
-		this.forwardSprite.scale.y = this.scale;
 
 		this.backwardSprite = new PIXI.Sprite(PIXI.loader.resources[data.backwardSprite.texture].texture);
 		this.backwardSprite.anchor.set(data.backwardSprite.anchor.x, data.backwardSprite.anchor.y);
 		this.backwardSprite.width = data.backwardSprite.dimensions.width;
 		this.backwardSprite.height = data.backwardSprite.dimensions.height;
-		this.backwardSprite.scale.x = this.scale;
-		this.backwardSprite.scale.y = this.scale;
+
+		if (this.scale != undefined) {
+			this.shadowSprite.scale.x = this.scale;
+			this.shadowSprite.scale.y = this.scale;
+			this.outlineSprite.scale.x = this.scale;
+			this.outlineSprite.scale.y = this.scale;
+			this.bodySprite.scale.x = this.scale;
+			this.bodySprite.scale.y = this.scale;
+			this.overlaySprite.scale.x = this.scale;
+			this.overlaySprite.scale.y = this.scale;
+			this.forwardSprite.scale.x = this.scale;
+			this.forwardSprite.scale.y = this.scale;
+			this.backwardSprite.scale.x = this.scale;
+			this.backwardSprite.scale.y = this.scale;
+		}
 
 		this.container.addChild(this.shadowSprite,
 								this.outlineSprite,
@@ -157,8 +160,8 @@ class ShipBase {
 	}
 
 	remove() {
-		ENT.stageContainer.removeChild(this.container);
 		this.container.removeChildren();
+		ENT.stageContainer.removeChild(this.container);
 	}
 }
 

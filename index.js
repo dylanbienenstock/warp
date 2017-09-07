@@ -28,7 +28,7 @@ ENT.Entity = Entity;
 var Ship = require("./ship/Ship.js")(ENT, PHYS);
 var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
 var SpecialWeapon = require("./weapon/SpecialWeapon.js")(ENT, PHYS);
-var Shop = require("./Shop.js")(Weapon);
+var Shop = require("./Shop.js")(Ship, Weapon, SpecialWeapon);
 
 console.log("Initializing game...");
 var startTime = Date.now();
@@ -90,9 +90,8 @@ function acceptConnection(name, socket) {
 
 	ENT.create(player, socket); 
 
-	player.ship = new Ship.Cartel(player);
+	player.ship = new Ship.Skiff(player);
 	player.primaryWeapon = new Weapon.Peashooter(player);
-	player.specialWeapon = new SpecialWeapon.Bouncer(player);
 
 	if (!physicsDebug) {
 		console.log("+ Player " + name + " has connected.");
@@ -131,8 +130,16 @@ function acceptConnection(name, socket) {
 		player.lockedPlayerId = id;
 	});
 
+	socket.on("buy ship", function(data) {
+		Shop.buyShip(player, data);
+	});
+
 	socket.on("buy weapon", function(data) {
 		Shop.buyWeapon(player, data);
+	});
+
+	socket.on("buy special", function(data) {
+		Shop.buySpecialWeapon(player, data);
 	});
 }
 

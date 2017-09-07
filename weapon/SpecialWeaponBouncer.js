@@ -19,7 +19,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 				displayName: "Bouncer",
 				className: "Bouncer",
 				price: 0,
-				description: "Active: Fires a magnetic orb of energy that attracts enemies and drags them away from you<br />Passive: Repels nearby enemies",
+				description: "Active: Fires a magnetic orb of energy that attracts enemies and drags them away from you<br /><br />Passive: Repels nearby enemies",
 				stats: {
 					"Type": "Special weapon",
 					"Damage": 0,
