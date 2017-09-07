@@ -31,14 +31,19 @@ class EntityPlayer extends EntityBase {
 			fireSpecial: false
 		};
 
-		this.ship = new Ship.Skiff(this.alive);
+		this.shipListing = data.shipListing;
+		this.primaryWeaponListing = data.primaryWeaponListing;
+		this.secondaryWeaponListing = data.secondaryWeaponListing;
+		this.specialWeaponListing = data.specialWeaponListing;
+
+		if (this.shipListing != undefined) {
+			this.ship = new Ship[this.shipListing.className](this.alive);
+		} else {
+			this.ship = new Ship.Skiff(this.alive);
+		}
+
 		this.sprite = this.ship.bodySprite;
 		this.ship.controls = this.controls;
-
-		this.shipListing = null;
-		this.primaryWeaponListing = null;
-		this.secondaryWeaponListing = null;
-		this.specialWeaponListing = null;
 
 		this.createNameTag();
 	}
