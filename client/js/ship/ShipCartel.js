@@ -36,7 +36,7 @@ class ShipCartel extends ShipBase {
 			backwardSprite: "ship:cartel:backward"
 		});
 
-		this.boostLocalX = 14;
+		this.boostLocalX = 12;
 		this.boostLocalY = 0;
 	}
 }
