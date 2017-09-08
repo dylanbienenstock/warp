@@ -67,6 +67,10 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 		}
 	} else {
 		baseContainer.removeChild(titleScreenContainer);
+		$("#title-container").remove();
+		$("#notes-container").remove();
+
+		window.inGame = true; // Removes title screen from update loop
 	}
 }
 

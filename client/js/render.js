@@ -17,6 +17,8 @@ window.boundaryRadius = 4096;
 window.protectedSpaceRadius = 600;
 window.DMZRadius = 200;
 
+window.inGame = false;
+
 window.maxZoom = 3;
 window.minZoom = 1;
 window.zoomLerpFactor = 0.2;
@@ -31,6 +33,16 @@ window.useOverrideZoom = false;
 window.fpsMeter = null;
 
 $(function() {
+	// Disable context menu
+	document.oncontextmenu = function () {
+	  return false;
+	};
+
+	window.addEventListener('contextmenu', function (e) {
+	  e.preventDefault();
+	}, false);
+	//
+
 	var ww = $(window).innerWidth();
 	var wh = $(window).innerHeight();
 
@@ -135,7 +147,9 @@ function setup() {
 function update() {
 	window.requestAnimationFrame(update);
 
-	updateTitleScreen(baseContainer, titleScreenContainer, gameContainer);
+	if (!window.inGame) {
+		updateTitleScreen(baseContainer, titleScreenContainer, gameContainer);
+	}
 
 	ENT.stageContainer.children.sort(function(a, b) {
 		a.zIndex = a.zIndex || 0;
