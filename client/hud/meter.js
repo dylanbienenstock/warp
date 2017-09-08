@@ -9,12 +9,14 @@ class HUDMeter {
 
 		this.container = document.getElementById(this.containerId);
 		this.container.className = "meter-container";
+		this.emptySegments = [];
 		this.segments = [];
 
 		this.icon = document.createElement("img");
 		this.icon.className = "meter-icon";
 		this.icon.src = this.iconURL;
 		this.icon.ondragstart = function() { return false; };
+		$(this.icon).load(this.layout.bind(this));
 
 		this.container.appendChild(this.icon);
 
@@ -35,16 +37,25 @@ class HUDMeter {
 			this.container.appendChild(newSegmentEmpty);
 			this.container.appendChild(newSegment);
 
-			$(newSegmentEmpty).offset($(newSegment).offset());
 			$(newSegmentEmpty).css({
 				width: $(newSegment).outerWidth(),
 				height: $(newSegment).outerHeight()
 			});
 
+			this.emptySegments.push(newSegmentEmpty);
 			this.segments.push(newSegment);
 		}
 
 		this.setValue(this.value);
+	}
+
+	layout() {
+		for (var i = 0; i < this.segmentCount; i++) {
+			var emptySegment = this.emptySegments[i];
+			var segment = this.segments[i];
+
+			$(emptySegment).offset($(segment).offset());
+		}
 	}
 
 	setValue(value, lerpFactor) {
