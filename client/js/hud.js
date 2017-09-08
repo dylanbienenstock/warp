@@ -1,11 +1,9 @@
-var creditsText;
-
+var meterCredits;
 var meterBoost;
 var meterShield;
 var meterHealth;
 var metersVisible = false;
 
-var textPadding = 3;
 var windowPadding = 16;
 
 var radar;
@@ -18,19 +16,20 @@ var radarY = windowPadding + radarRadius;
 function setupHUD(HUDContainer) {
 	radar = new PIXI.Graphics();
 
-	creditsText = new PIXI.Text("Credits: 0", new PIXI.TextStyle({
-	    fontFamily: "Helvetica",
-	    fontSize: 18,
-	    fontWeight: "bold",
-	    fill: "yellow",
-	    letterSpacing: 0.25
-	}));
-
-	HUDContainer.addChild(creditsText, radar);
+	HUDContainer.addChild(radar);
 }
 
 function setupHUDMeters() {
+	meterCredits = new HUDMeter({
+		type: "text",
+		containerId: "meter-credits",
+		iconURL: "./img/hud/credits.svg",
+		color: "#FFD200",
+		value: 0
+	});
+
 	meterBoost = new HUDMeter({
+		type: "segmented",
 		containerId: "meter-boost",
 		iconURL: "./img/hud/boost.svg",
 		color: "#40FF40",
@@ -40,6 +39,7 @@ function setupHUDMeters() {
 	});
 
 	meterShield = new HUDMeter({
+		type: "segmented",
 		containerId: "meter-shield",
 		iconURL: "./img/hud/shield.svg",
 		color: "#0088FF",
@@ -49,6 +49,7 @@ function setupHUDMeters() {
 	});
 
 	meterHealth = new HUDMeter({
+		type: "segmented",
 		containerId: "meter-health",
 		iconURL: "./img/hud/health.svg",
 		color: "#FF4040",
@@ -62,7 +63,7 @@ function setupHUDMeters() {
 
 function drawHUD() {
 	drawRadar();
-	drawLevels();
+	drawMeters();
 }
 
 function addRadarDot(x, y, color, radius) {
@@ -108,11 +109,12 @@ function drawRadar() {
 	}
 }
 
-function drawLevels() {
+function drawMeters() {
 	var windowWidth = $(window).innerWidth();
 	var windowHeight = $(window).innerHeight();
 
 	if (ENT.localPlayer != undefined && metersVisible) {
+		meterCredits.setValue(ENT.localPlayer.credits, 0.2);
 		meterBoost.setValue(ENT.localPlayer.alive ? ENT.localPlayer.boost : 0, 0.2);
 		meterShield.setValue(ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0, 0.2);
 		meterHealth.setValue(ENT.localPlayer.alive ? ENT.localPlayer.health : 0, 0.2);
