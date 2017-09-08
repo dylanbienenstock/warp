@@ -1,17 +1,9 @@
-var levels;
-
-var healthText;
-var shieldText;
-var boostText;
 var creditsText;
 
-var boost = 100;
-var shield = 100;
-var health = 100;
-var barMaxValue = 100;
-var barWidth = 300;
-var barHeight = 20;
-var barPadding = 5;
+var meterBoost;
+var meterShield;
+var meterHealth;
+
 var textPadding = 3;
 var windowPadding = 16;
 
@@ -25,29 +17,44 @@ var radarY = windowPadding + radarRadius;
 function setupHUD(HUDContainer) {
 	radar = new PIXI.Graphics();
 
-	var textStyle = new PIXI.TextStyle({
-	    fontFamily: "Helvetica",
-	    fontSize: 14,
-	    fontWeight: "bold",
-	    fill: "#000000",
-	    letterSpacing: 0.25
-	});
-
-	var textStyle2 = new PIXI.TextStyle({
+	creditsText = new PIXI.Text("Credits: 0", new PIXI.TextStyle({
 	    fontFamily: "Helvetica",
 	    fontSize: 18,
 	    fontWeight: "bold",
 	    fill: "yellow",
 	    letterSpacing: 0.25
+	}));
+
+	HUDContainer.addChild(creditsText, radar);
+}
+
+function setupHUDMeters() {
+	meterBoost = new HUDMeter({
+		containerId: "meter-boost",
+		iconURL: "./img/hud/boost.svg",
+		color: "#40FF40",
+		value: 100,
+		maxValue: 100,
+		segmentCount: 12
 	});
 
-	levels = new PIXI.Graphics();
-	healthText = new PIXI.Text("health 100", textStyle);
-	shieldText = new PIXI.Text("shield 100", textStyle);
-	boostText = new PIXI.Text("boost 100", textStyle);
-	creditsText = new PIXI.Text("Credits: 0", textStyle2);
+	meterShield = new HUDMeter({
+		containerId: "meter-shield",
+		iconURL: "./img/hud/shield.svg",
+		color: "#0088FF",
+		value: 100,
+		maxValue: 100,
+		segmentCount: 12
+	});
 
-	HUDContainer.addChild(levels, healthText, shieldText, boostText, creditsText, radar);
+	meterHealth = new HUDMeter({
+		containerId: "meter-health",
+		iconURL: "./img/hud/health.svg",
+		color: "#FF4040",
+		value: 100,
+		maxValue: 100,
+		segmentCount: 12
+	});
 }
 
 function drawHUD() {
@@ -99,47 +106,10 @@ function drawRadar() {
 }
 
 function drawLevels() {
-	levels.clear();
-
 	var windowWidth = $(window).innerWidth();
 	var windowHeight = $(window).innerHeight();
 
 	if (ENT.localPlayer != undefined) {
-		var destHealth = (ENT.localPlayer.alive ? ENT.localPlayer.health : 0);
-		var destShield = (ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0);
-		var destBoost = (ENT.localPlayer.alive ? ENT.localPlayer.boost : 0);
 
-		health = lerp(health, destHealth, 0.1);
-		shield = lerp(shield, destShield, 0.1);
-		boost = lerp(boost, destBoost, 0.1);
-
-		levels.beginFill(0x202020);
-		levels.drawRect(windowPadding, windowHeight - windowPadding - barHeight, barWidth, barHeight);
-		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding - barHeight * 2, barWidth, barHeight);
-		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding * 2 - barHeight * 3, barWidth, barHeight);
-		levels.endFill();
-
-		levels.beginFill(0xFFFFFF);
-		levels.drawRect(windowPadding, windowHeight - windowPadding - barHeight, health * (barWidth / barMaxValue), barHeight);
-		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding - barHeight * 2, shield * (barWidth / barMaxValue), barHeight);
-		levels.drawRect(windowPadding, windowHeight - windowPadding - barPadding * 2 - barHeight * 3, boost * (barWidth / barMaxValue), barHeight);
-		levels.endFill();
-
-		healthText.text = "health " + Math.floor(destHealth);
-		shieldText.text = "shield " + Math.floor(destShield);
-		boostText.text = "boost " + Math.floor(destBoost);
-		creditsText.text = "Credits: " + addCommas(Math.floor(ENT.localPlayer.credits));
-
-		healthText.x = windowPadding + textPadding;
-		healthText.y = windowHeight - windowPadding - barHeight + 1;
-
-		shieldText.x = windowPadding + textPadding;
-		shieldText.y = windowHeight - windowPadding - barPadding - barHeight * 2 + 1;
-
-		boostText.x = windowPadding + textPadding;
-		boostText.y = windowHeight - windowPadding - barPadding * 2 - barHeight * 3 + 1;
-
-		creditsText.x = windowPadding + textPadding;
-		creditsText.y = windowHeight - windowPadding - barPadding * 3 - barHeight * 4 + 1;
 	}
 }
