@@ -3,6 +3,7 @@ var creditsText;
 var meterBoost;
 var meterShield;
 var meterHealth;
+var metersVisible = false;
 
 var textPadding = 3;
 var windowPadding = 16;
@@ -55,6 +56,8 @@ function setupHUDMeters() {
 		maxValue: 100,
 		segmentCount: 12
 	});
+
+	metersVisible = true;
 }
 
 function drawHUD() {
@@ -109,7 +112,9 @@ function drawLevels() {
 	var windowWidth = $(window).innerWidth();
 	var windowHeight = $(window).innerHeight();
 
-	if (ENT.localPlayer != undefined) {
-
+	if (ENT.localPlayer != undefined && metersVisible) {
+		meterBoost.setValue(ENT.localPlayer.alive ? ENT.localPlayer.boost : 0, 0.2);
+		meterShield.setValue(ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0, 0.2);
+		meterHealth.setValue(ENT.localPlayer.alive ? ENT.localPlayer.health : 0, 0.2);
 	}
 }

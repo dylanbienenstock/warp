@@ -56,6 +56,10 @@ class HUDMeter {
 
 			$(emptySegment).offset($(segment).offset());
 		}
+
+		$(this.container).animate({
+			opacity: 1
+		});
 	}
 
 	setValue(value, lerpFactor) {
@@ -66,8 +70,6 @@ class HUDMeter {
 		var fullSegments = Math.floor(this.value / segmentValue);
 		var partialSegmentAlpha = Math.min(Math.max((this.value - (segmentValue * fullSegments)) * (1 / segmentValue), 0.01), 0.99);
 		var partialSegmentDrawn = false;
-
-		console.log(partialSegmentAlpha);
 
 		for (var i = 0; i < this.segmentCount; i++) {
 			$(this.segments[i]).css({

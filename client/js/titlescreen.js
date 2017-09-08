@@ -69,6 +69,7 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 		baseContainer.removeChild(titleScreenContainer);
 		$("#title-container").remove();
 		$("#notes-container").remove();
+		setupHUDMeters();
 
 		window.inGame = true; // Removes title screen from update loop
 	}
