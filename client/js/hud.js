@@ -91,7 +91,15 @@ function drawRadar() {
 		var dot = radarDots[i];
 
 		radar.beginFill(dot.color);
-		radar.drawCircle(dot.x, dot.y, dot.radius);
+
+		if (dot.radius > 1) {
+			radar.drawCircle(Math.round(dot.x), Math.round(dot.y), dot.radius);
+		} else if (dot.radius == 1) {
+			radar.drawRect(Math.round(dot.x) - 1, Math.round(dot.y) - 1, 2, 2);
+		} else {
+			radar.drawRect(Math.round(dot.x), Math.round(dot.y), 1, 1);
+		}
+
 		radar.endFill();
 
 		radarDots.splice(i, 1);
