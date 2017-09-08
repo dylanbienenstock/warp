@@ -31,7 +31,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 				damage: this.damage,
 				thickness: 4,
 				color: 0x0055FF,
-				length: 32,
+				length: 48,
 				x: position.x,
 				y: position.y,
 				angle: angle,
