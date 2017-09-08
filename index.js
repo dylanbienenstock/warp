@@ -14,6 +14,7 @@ var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var memwatch = require("memwatch-next");
+var sanitizer = require("sanitizer");
 
 const physicsDebug = process.env.PHYS_DEBUG;
 
@@ -144,9 +145,9 @@ function acceptConnection(name, socket) {
 
 	socket.on("chat out", function(message) {
 		io.emit("chat in", {
-			name: player.name,
+			name: sanitizer.escape(player.name),
 			hue: player.chatHue,
-			message: message
+			message: sanitizer.escape(message)
 		});
 	});
 }
