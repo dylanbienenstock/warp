@@ -58,6 +58,10 @@ function connect(name) {
 					});
 				});
 
+				socket.on("chat in", function(data) {
+					displayChatMessage(data.name, data.hue, data.message);
+				});
+
 				socket.on("quadtree", function(data) {
 					window.quadTreeData = data;
 				});
@@ -111,8 +115,62 @@ function sendBuySpecialWeapon(className) {
 	});
 }
 
+function sendChatMessage(message) {
+	socket.emit("chat out", message);
+}
+
+var boundControls = {};
+
+function bindKeyToFunction(key, downCallback, upCallback) {
+	if (downCallback instanceof Function) {
+		boundControls[key] = {};
+		boundControls[key].down = downCallback;
+	}
+
+	if (upCallback instanceof Function) {
+		boundControls[key].up = upCallback;
+	}
+}
+
+function bindPlayerControl(key, control) {
+	bindKeyToFunction(key,
+		function() {
+			if (!window.shopOpen && !ENT.localPlayer.controls[control]) {
+				sendControl(control, true);
+			}
+		},
+
+		function() {
+			sendControl(control, false);
+		}
+	);
+}
+
+function getBinds() {
+	bindPlayerControl(87, "thrustForward"); 	// W
+	bindPlayerControl(83, "thrustBackward"); 	// A
+	bindPlayerControl(65, "thrustLeft"); 		// S
+	bindPlayerControl(68, "thrustRight"); 		// D
+	bindPlayerControl(32, "fireSpecial");		// Space
+	bindPlayerControl(16, "boost");				// Shift
+
+	bindKeyToFunction(81, function() {			// Q
+		if (window.connected) {
+			toggleShop();
+		}
+	});
+
+	bindKeyToFunction(80, function() {			// P
+		ENT.physicsDebug = !ENT.physicsDebug;
+	});
+
+	bindKeyToFunction(13, focusOnChat);			// Enter
+}
+
 function bindControls() {
-	$("body").mousemove(function(event) {
+	getBinds();
+
+	$(window).mousemove(function(event) {
 		if (window.shopOpen) return;
 
 		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
@@ -127,97 +185,28 @@ function bindControls() {
 	});
 
 	$(window).keydown(function(event) {
-		if (window.shopOpen) return;
-
-		if (ENT.localPlayer != undefined && ENT.localPlayer != null) {
-			switch (event.key)
-			{
-				case "w":
-				case "W":
-					if (!ENT.localPlayer.controls.thrustForward) {
-						sendControl("thrustForward", true);
-					}
-
-					break;
-				case "s":
-				case "S":
-					if (!ENT.localPlayer.controls.thrustBackward) {
-						sendControl("thrustBackward", true);
-					}
-
-					break;
-				case "a":
-				case "A":
-					if (!ENT.localPlayer.controls.thrustLeft) {
-						sendControl("thrustLeft", true);
-					}
-
-					break;
-				case "d":
-				case "D":
-					if (!ENT.localPlayer.controls.thrustRight) {
-						sendControl("thrustRight", true);
-					}
-
-					break;
-				case " ":
-					if (!ENT.localPlayer.controls.fireSpecial) {
-						sendControl("fireSpecial", true);
-					}
-
-					break;
-				case "Shift":
-					if (!ENT.localPlayer.controls.boost) {
-						sendControl("boost", true);
-					}
-					event.preventDefault();
-					event.stopPropagation();
-			}
+		if (!window.chatting &&
+			ENT.localPlayer != undefined &&
+			ENT.localPlayer != null &&
+			boundControls.hasOwnProperty(event.which) &&
+			boundControls[event.which].down instanceof Function) {
+			
+			boundControls[event.which].down();
 		}
 	});
 
 	$(window).keyup(function(event) {
-		if (ENT.localPlayer != undefined && ENT.localPlayer != null) {
-			switch (event.key)
-			{
-				case "w":
-				case "W":
-					sendControl("thrustForward", false);
-					break;
-				case "s":
-				case "S":
-					sendControl("thrustBackward", false);
-					break;
-				case "a":
-				case "A":
-					sendControl("thrustLeft", false);
-					break;
-				case "d":
-				case "D":
-					sendControl("thrustRight", false);
-					break;
-				case " ":
-					sendControl("fireSpecial", false);
-					break;
-				case "Shift":
-					sendControl("boost", false);
-					break;
-				case "Enter":
-					if (window.connected) {
-						toggleShop();
-					}
-					
-					break;
-				case "p":
-				case "P":
-					ENT.physicsDebug = !ENT.physicsDebug;
-					break;
-			}
+		if (ENT.localPlayer != undefined &&
+			ENT.localPlayer != null &&
+			boundControls.hasOwnProperty(event.which) &&
+			boundControls[event.which].up instanceof Function) {
+			
+			boundControls[event.which].up();
 		}
 	});
 
 	$(window).mousedown(function(event) {
-		if (window.shopOpen) return;
+		if (window.shopOpen || window.chatting) return;
 
 		switch (event.which) {
 			case (1):
