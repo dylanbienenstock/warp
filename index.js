@@ -141,6 +141,14 @@ function acceptConnection(name, socket) {
 	socket.on("buy special", function(data) {
 		Shop.buySpecialWeapon(player, data);
 	});
+
+	socket.on("chat out", function(message) {
+		io.emit("chat in", {
+			name: player.name,
+			hue: player.chatHue,
+			message: message
+		});
+	});
 }
 
 var nameValidator = /^([A-Za-z0-9\-]+)$/g;

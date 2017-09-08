@@ -6,6 +6,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.networkGlobally = true;
 
 			this.name = data.name || "Unnamed";
+			this.chatHue = Math.floor(Math.random() * 359);
+
 			this.credits = data.credits || 0;
 			this.shieldPower = 100;
 			this.boost = 100;

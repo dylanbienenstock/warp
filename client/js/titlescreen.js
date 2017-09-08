@@ -70,6 +70,7 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 		$("#title-container").remove();
 		$("#notes-container").remove();
 		setupHUDMeters();
+		$("#chat").stop().animate({ opacity: 0.4 });
 
 		window.inGame = true; // Removes title screen from update loop
 	}
@@ -102,7 +103,7 @@ window.connected = false;
 
 $(function() {
 	$("*").keyup(function(event) {
-		if (event.key == "Enter" && !awaitingResponse && !window.connected) {
+		if (event.which == 13 && !awaitingResponse && !window.connected) {
 			awaitingResponse = true;
 			connect($("#name-input").val());
 		}

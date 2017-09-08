@@ -29,6 +29,7 @@
 		<script src="./js/hud/meter.js"></script>
 		<script src="./js/hud.js"></script>
 		<script src="./js/shop.js"></script>
+		<script src="./js/chat.js"></script>
 
 		<script src="./js/particle/ParticleManager.js"></script>
 		<script src="./js/particle/ParticleEmitter.js"></script>
@@ -88,18 +89,28 @@
 				Shift - Boost </br>
 				Left click - Primary fire </br>
 				Right click - Secondary fire </br>
-				Space - Open shop </br>
+				Spacebar - Special fire
+				Q - Open shop </br>
+				Enter - Chat </br>
 				</br>
 				Mouse over an enemy to lock on </br>
 				Scroll to zoom in and out
 			</div>
 		</div>
 
-		<div id="hud-container">
-			<div><div id="meter-credits"></div></div>
-			<div><div id="meter-boost"></div></div>
-			<div><div id="meter-shield"></div></div>
-			<div><div id="meter-health"></div></div>
+		<div id="interface-container">
+			<div id="chat">
+				<div id="chat-titlebar">Chat</div>
+				<div id="chat-content"></div>
+				<input type="text" id="chat-input" maxlength="128" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></input>
+			</div>
+
+			<div id="hud-container">
+				<div class="meter-container"><div id="meter-credits"></div></div>
+				<div class="meter-container"><div id="meter-boost"></div></div>
+				<div class="meter-container"><div id="meter-shield"></div></div>
+				<div class="meter-container"><div id="meter-health"></div></div>
+			</div>
 		</div>
 
 		<div id="shop-veil">

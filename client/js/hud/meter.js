@@ -9,7 +9,7 @@ class HUDMeter {
 		this.segmentCount = data.segmentCount;
 
 		this.container = document.getElementById(this.containerId);
-		this.container.className = "meter-container";
+		this.container.className = "meter";
 
 		this.icon = document.createElement("img");
 		this.icon.className = "meter-icon";
