@@ -34,7 +34,7 @@ class EntityCredits extends EntityBase {
 
 			var collectText = document.createElement("span");
 			collectText.className = "collect-credits";
-			collectText.innerHTML = "+" + this.amount + " credits";
+			collectText.innerHTML = "+" + formatCredits(this.amount) + " credits";
 
 			document.body.appendChild(collectText);
 
