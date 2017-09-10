@@ -24,7 +24,7 @@ $(function() {
 		$chat.stop().animate({ opacity: 0.4 });
 	});
 
-	$chat.mouseenter(function() {
+	$chatInput.mouseenter(function() {
 		if (!window.inGame) return;
 
 		chatHovering = true;
