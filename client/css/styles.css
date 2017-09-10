@@ -66,6 +66,13 @@ body {
 	font-size: 12px;
 }
 
+#fps-meter-container {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 /* In-Game */
 
 .nametag {

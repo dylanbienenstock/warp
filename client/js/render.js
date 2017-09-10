@@ -82,7 +82,7 @@ $(function() {
 	resizeRenderer();
 	loadContent(setup);
 
-	window.fpsMeter = new FPSMeter({
+	window.fpsMeter = new FPSMeter(document.getElementById("fps-meter-container"), {
 		left: "initial",
 		right: "5px",
 		graph: 1
