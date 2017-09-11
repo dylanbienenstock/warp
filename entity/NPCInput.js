@@ -20,9 +20,7 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 		}
 
 		return (MEMORY.TARGET.controls.thrustForward ||
-				MEMORY.TARGET.controls.thrustBackward ||
-				MEMORY.TARGET.controls.thrustLeft ||
-				MEMORY.TARGET.controls.thrustRight);
+				MEMORY.TARGET.controls.thrustBackward);
 	}
 
 	function SHOULD_DODGE_LEFT() {
