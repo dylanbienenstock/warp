@@ -1,5 +1,5 @@
 var angleLerpFactor = 0.8;
-var reactionTime = 250;
+var reactionTime = 400;
 
 module.exports = function(ENT, PHYS) {
 	var NPCInput = require("../entity/NPCInput.js");
@@ -13,6 +13,7 @@ module.exports = function(ENT, PHYS) {
 		constructor(ownerId) {
 			this.ownerId = ownerId;
 			this.__mode = NPC_MODE.WANDER;
+			this.lastControlChangeTimes = null;
 
 			this.MEMORY = {
 				TARGET_POSITION: { x: 0, y: 0 },
@@ -52,6 +53,17 @@ module.exports = function(ENT, PHYS) {
 
 		update(timeMult) {
 			var owner = ENT.getById(this.ownerId);
+			var now = Date.now();
+
+			if (this.lastControlChangeTimes == undefined) {
+				this.lastControlChangeTimes = {};
+
+				for (var control in owner.controls) {
+					if (owner.controls.hasOwnProperty(control)) {
+						this.lastControlChangeTimes[control] = 0;
+					}
+				}
+			}
 
 			if (owner != undefined &&
 				owner.ship != undefined &&
@@ -60,14 +72,22 @@ module.exports = function(ENT, PHYS) {
 				this.lookTowardsTarget(owner, timeMult);
 
 				var INPUT = NPCInput(owner, this.MEMORY, this.ATTRIBUTES, ENT, PHYS);
+				var controls = {};
 
 				switch (this.mode) {
 					case NPC_MODE.WANDER:
-						this.WANDER(owner, INPUT);
+						this.WANDER(owner, controls, INPUT);
 						break;
 					case NPC_MODE.ATTACK:
-						this.ATTACK(owner, INPUT);
+						this.ATTACK(owner, controls, INPUT);
 						break;
+				}
+
+				for (var control in controls) {
+					if (controls.hasOwnProperty(control) && now - this.lastControlChangeTimes[control] >= reactionTime) {
+						this.lastControlChangeTimes[control] = now;
+						owner.controls[control] = controls[control];
+					}
 				}
 			}
 		}
@@ -87,7 +107,7 @@ module.exports = function(ENT, PHYS) {
 			this.mode = NPC_MODE.ATTACK;
 		}
 
-		WANDER(owner, INPUT) {
+		WANDER(owner, controls, INPUT) {
 			if (INPUT.AT_DESTINATION) {
 				var wanderAngle = Math.random() * 2 * Math.PI;
 				var wanderRadius = Math.random() * (PHYS.boundaryRadius - ENT.protectedSpaceRadius - ENT.DMZRadius) +
@@ -100,36 +120,36 @@ module.exports = function(ENT, PHYS) {
 				};
 			}
 
-			owner.controls.thrustForward = true;
+			controls.thrustForward = true;
 		}
 
-		ATTACK(owner, INPUT) {
+		ATTACK(owner, controls, INPUT) {
 			this.MEMORY.TARGET = ENT.getById(this.MEMORY.TARGET_ID);
 
 			if (this.MEMORY.TARGET != undefined) {
 				this.MEMORY.TARGET_POSITION = { x: this.MEMORY.TARGET.ship.physicsObject.x, y: this.MEMORY.TARGET.ship.physicsObject.y };
 
-				owner.controls.thrustForward = true;
-				owner.controls.thrustBackward = false;
+				controls.thrustForward = true;
+				controls.thrustBackward = false;
 
 				if (INPUT.TARGET_IN_RANGE) {
-					owner.controls.firePrimary = true;
-					owner.controls.fireSecondary = true;
+					controls.firePrimary = true;
+					controls.fireSecondary = true;
 				}
 
 				if (INPUT.TARGET_CLOSE) {
 					if (INPUT.SHOULD_DODGE_LEFT) {
-						owner.controls.thrustLeft = !INPUT.TARGET_EVADING;
-						owner.controls.thrustRight = false;
+						controls.thrustLeft = !INPUT.TARGET_EVADING;
+						controls.thrustRight = false;
 					} else {
-						owner.controls.thrustLeft = false;
-						owner.controls.thrustRight = !INPUT.TARGET_EVADING;
+						controls.thrustLeft = false;
+						controls.thrustRight = !INPUT.TARGET_EVADING;
 					}
 				}
 
 				if (INPUT.TARGET_TOO_CLOSE) {
-					owner.controls.thrustForward = false;
-					owner.controls.thrustBackward = true;
+					controls.thrustForward = false;
+					controls.thrustBackward = true;
 				}
 			}
 		}
