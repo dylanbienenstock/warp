@@ -23,6 +23,14 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 				MEMORY.TARGET.controls.thrustBackward);
 	}
 
+	function SHOULD_EVADE() {
+		if (ATTRIBUTES.BRAVE) {
+			return false;
+		}
+
+		return owner.ship.health < 40;
+	}
+
 	function SHOULD_DODGE_LEFT() {
 		if (now - MEMORY.LAST_DODGE_TIME >= MEMORY.DODGE_INTERVAL) {
 			MEMORY.LAST_DODGE_TIME = now;
@@ -42,6 +50,7 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 		TARGET_CLOSE: TARGET_CLOSE(),
 		TARGET_TOO_CLOSE: TARGET_TOO_CLOSE(),
 		TARGET_EVADING: TARGET_EVADING(),
+		SHOULD_EVADE: SHOULD_EVADE(),
 		SHOULD_DODGE_LEFT: SHOULD_DODGE_LEFT(),
 		AT_DESTINATION: AT_DESTINATION(),
 	};

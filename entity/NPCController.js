@@ -7,6 +7,7 @@ module.exports = function(ENT, PHYS) {
 	var NPC_MODE = {
 		WANDER: 0,  // Travels between random locations
 		ATTACK: 1,  // Attacks target
+		EVADE:  2,  // Runs from target
 	};
 
 	return class NPCController {
@@ -21,6 +22,7 @@ module.exports = function(ENT, PHYS) {
 				DODGING_LEFT: false,
 				LAST_DODGE_TIME: 0,
 				DODGE_INTERVAL: 0,
+				WAITING_FOR_BOOST: false
 			}
 
 			this.ATTRIBUTES = {
@@ -47,8 +49,6 @@ module.exports = function(ENT, PHYS) {
 					this.ATTRIBUTES[attribute] = Math.random() <= profile[attribute];
 				}
 			}
-
-			console.log(this.ATTRIBUTES);
 		}
 
 		update(timeMult) {
@@ -74,6 +74,12 @@ module.exports = function(ENT, PHYS) {
 				var INPUT = NPCInput(owner, this.MEMORY, this.ATTRIBUTES, ENT, PHYS);
 				var controls = {};
 
+				if (INPUT.SHOULD_EVADE) {
+					this.mode = NPC_MODE.EVADE;
+				}
+
+				this.MEMORY.TARGET = ENT.getById(this.MEMORY.TARGET_ID);
+
 				switch (this.mode) {
 					case NPC_MODE.WANDER:
 						this.WANDER(owner, controls, INPUT);
@@ -81,6 +87,22 @@ module.exports = function(ENT, PHYS) {
 					case NPC_MODE.ATTACK:
 						this.ATTACK(owner, controls, INPUT);
 						break;
+					case NPC_MODE.EVADE:
+						this.EVADE(owner, controls, INPUT);
+						break;
+				}
+
+				if (owner.boost < 10) {
+					this.MEMORY.WAITING_FOR_BOOST = true;
+				}
+
+				if (this.MEMORY.WAITING_FOR_BOOST) {
+					owner.controls.boost = false;
+					controls.boost = false;
+
+					if (owner.boost > 90) {
+						this.MEMORY.WAITING_FOR_BOOST = false;
+					}
 				}
 
 				for (var control in controls) {
@@ -152,6 +174,23 @@ module.exports = function(ENT, PHYS) {
 					controls.thrustBackward = true;
 				}
 			}
+		}
+
+		EVADE(owner, controls, INPUT) {
+			var evadeAngle = Math.atan2(this.MEMORY.TARGET.ship.physicsObject.y - owner.ship.physicsObject.y,
+										this.MEMORY.TARGET.ship.physicsObject.x - owner.ship.physicsObject.x)
+			this.MEMORY.TARGET_POSITION = {
+											x: owner.ship.physicsObject.x - Math.cos(evadeAngle) * 32,
+											y: owner.ship.physicsObject.y - Math.sin(evadeAngle) * 32 
+										};
+
+			controls.boost = true;
+			controls.thrustForward = true;
+			controls.thrustBackward = false;
+			controls.thrustLeft = false;
+			controls.thrustRight = false;
+			controls.firePrimary = false;
+			controls.fireSecondary = false;
 		}
 
 		// From utils.js
