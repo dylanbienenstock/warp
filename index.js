@@ -210,7 +210,7 @@ function setupGame() {
 		ENT.create(ENT.new("Asteroid"));
 	}
 
-	for (var i = 0; i < 1; i++) {
+	for (var i = 0; i < 16; i++) {
 		var npc = ENT.new("Player", {
 			name: "NPC",
 			NPC: true,
@@ -219,8 +219,18 @@ function setupGame() {
 
 		ENT.create(npc);
 
-		npc.ship = new Ship.Skiff(npc);
-		npc.primaryWeapon = new Weapon.Peashooter(npc);
+		var shipKeys = Object.keys(Ship)
+		var weaponKeys = Object.keys(Weapon);
+		var primaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+		var secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+
+		while (secondaryWeaponChoice == primaryWeaponChoice) {
+			secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+		}
+
+		npc.ship = new Ship[shipKeys[shipKeys.length * Math.random() << 0]](npc);
+		npc.primaryWeapon = new Weapon[weaponKeys[primaryWeaponChoice]](npc);
+		npc.secondaryWeapon = new Weapon[weaponKeys[secondaryWeaponChoice]](npc);
 	}
 }
 
