@@ -207,6 +207,18 @@ function setupGame() {
 
 		ENT.create(ENT.new("Asteroid"));
 	}
+
+	for (var i = 0; i < 8; i++) {
+		var npc = ENT.new("Player", {
+			name: "NPC",
+			NPC: true
+		});
+
+		ENT.create(npc);
+
+		npc.ship = new Ship.Skiff(npc);
+		npc.primaryWeapon = new Weapon.Peashooter(npc);
+	}
 }
 
 var update;

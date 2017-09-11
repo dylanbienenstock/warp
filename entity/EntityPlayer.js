@@ -1,4 +1,5 @@
 module.exports = function(EntityBase, ENT, PHYS) {
+	var NPCController = require("../entity/NPCController.js")(ENT, PHYS);
 	return class EntityPlayer extends EntityBase {
 		constructor(data) {
 			super(data);
@@ -15,6 +16,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastBoosting = false;
 			this.lastBoostTime = 0;
 			this.alive = true;
+
+			this.NPC = data.NPC;
+			this.controller = null;
 
 			this.lockedPlayerId = null;
 			this.lockOnPosition = null;
@@ -99,6 +103,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.specialWeaponListing = value.constructor.getListing();
 		}
 
+		create() {
+			if (this.NPC) {
+				this.controller = new NPCController(this.id);
+			}
+		}
+
 		remove() {
 			this.ship.remove();
 		}
@@ -162,6 +172,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		update(timeMult) {
 			super.update();
+
+			if (this.NPC && this.controller != null) {
+				this.controller.update(timeMult);
+			}
 
 			if (this.alive) {
 				var now = Date.now();
