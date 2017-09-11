@@ -115,29 +115,6 @@ function resizeRenderer() {
 }
 
 function setup() {
-	var stationContainer = new PIXI.Container();
-
-	stationOuter = new PIXI.Sprite(PIXI.loader.resources["station:outer"].texture);
-	stationOuter.width = 512;
-	stationOuter.height = 512;
-	stationOuter.anchor.set(0.5, 0.5);
-
-	stationInnerShadow = new PIXI.Sprite(PIXI.loader.resources["station:inner:shadow"].texture);
-	stationInnerShadow.width = 512;
-	stationInnerShadow.height = 512;
-	stationInnerShadow.x = 2;
-	stationInnerShadow.y = 2;
-	stationInnerShadow.alpha = 0.5;
-	stationInnerShadow.anchor.set(0.5, 0.5);
-
-	stationInner = new PIXI.Sprite(PIXI.loader.resources["station:inner"].texture);
-	stationInner.width = 512;
-	stationInner.height = 512;
-	stationInner.anchor.set(0.5, 0.5);
-
-	stationContainer.addChild(stationOuter, stationInnerShadow, stationInner);
-	stageContainer.addChild(stationContainer);
-
 	setupBackdrop(backdropContainer);
 	setupHUD(HUDContainer);
 	setupLockOn();
@@ -160,10 +137,6 @@ function update() {
 
 		return 0;
 	}); 
-
-	stationOuter.rotation += 0.001;
-	stationInnerShadow.rotation += 0.00025;
-	stationInner.rotation += 0.00025;
 
 	renderBackdrop();
 	ENT.update();

@@ -19,9 +19,13 @@ function loadContent(setup) {
 
 		.add("shield", "./img/shield.svg")
 
-		.add("station:outer", "./img/station-outer.svg")
-		.add("station:inner", "./img/station-inner.svg")
-		.add("station:inner:shadow", "./img/station-inner-shadow.svg")
+		.add("station:outer:neutral", "./img/station/outer-neutral.svg")
+		.add("station:inner:neutral", "./img/station/inner-neutral.svg")
+		.add("station:outer:good", "./img/station/outer-good.svg")
+		.add("station:inner:good", "./img/station/inner-good.svg")
+		.add("station:outer:evil", "./img/station/outer-evil.svg")
+		.add("station:inner:evil", "./img/station/inner-evil.svg")
+		.add("station:inner:shadow", "./img/station/inner-shadow.svg")
 
 		.add("planet:shadow", "./img/planet-shadow.svg")
 

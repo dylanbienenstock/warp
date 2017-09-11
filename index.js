@@ -190,6 +190,12 @@ function processName(name) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
 function setupGame() {
+	ENT.create(ENT.new("Station", {
+		x: 0,
+		y: 0,
+		color: 0x00FF00
+	}));
+
 	for (var i = 0; i < (process.env.PLANETS || 8); i++) {
 		var angle = 2 * Math.PI * Math.random();
 

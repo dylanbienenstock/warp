@@ -1,5 +1,6 @@
 window.Entity = {
 	PhysicsDebug: EntityPhysicsDebug,
+	Station: EntityStation,
 	Planet: EntityPlanet,
 	Asteroid: EntityAsteroid,
 	Credits: EntityCredits,

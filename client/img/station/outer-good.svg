@@ -15,7 +15,7 @@
    version="1.1"
    id="svg1632"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="station-outer.svg">
+   sodipodi:docname="outer-good.svg">
   <defs
      id="defs1626" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="51.437671"
-     inkscape:cy="187.54346"
+     inkscape:zoom="0.7"
+     inkscape:cx="-194.8376"
+     inkscape:cy="103.11465"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -61,7 +61,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -76,7 +76,7 @@
        id="path2189"
        inkscape:connector-curvature="0" />
     <circle
-       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#00ff0f;stroke-width:2.46826577;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:7.40479733, 2.46826577;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#00ff00;stroke-width:2.46826577;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:7.40479741, 2.46826580000000018;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="path2289"
        cx="67.73333"
        cy="229.26669"
