@@ -31,6 +31,8 @@ var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
 var SpecialWeapon = require("./weapon/SpecialWeapon.js")(ENT, PHYS);
 var Shop = require("./Shop.js")(Ship, Weapon, SpecialWeapon);
 
+var NPCProfile = require("./entity/NPCProfile.js");
+
 console.log("Initializing game...");
 var startTime = Date.now();
 setupGame();
@@ -208,10 +210,11 @@ function setupGame() {
 		ENT.create(ENT.new("Asteroid"));
 	}
 
-	for (var i = 0; i < 8; i++) {
+	for (var i = 0; i < 1; i++) {
 		var npc = ENT.new("Player", {
 			name: "NPC",
-			NPC: true
+			NPC: true,
+			NPCProfile: NPCProfile.DEFAULT
 		});
 
 		ENT.create(npc);
