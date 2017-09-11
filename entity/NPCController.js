@@ -147,6 +147,7 @@ module.exports = function(ENT, PHYS) {
 
 		ATTACK(owner, controls, INPUT) {
 			this.MEMORY.TARGET = ENT.getById(this.MEMORY.TARGET_ID);
+			owner.lockedPlayerId = this.MEMORY.TARGET.id;
 
 			if (this.MEMORY.TARGET != undefined) {
 				this.MEMORY.TARGET_POSITION = { x: this.MEMORY.TARGET.ship.physicsObject.x, y: this.MEMORY.TARGET.ship.physicsObject.y };
