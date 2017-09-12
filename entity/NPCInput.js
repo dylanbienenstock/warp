@@ -5,13 +5,13 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 	function TARGET_IN_VIEW() {
 		var toTargetX = (owner.ship.physicsObject.x - MEMORY.TARGET_POSITION.x);
 		var toTargetY = (owner.ship.physicsObject.y - MEMORY.TARGET_POSITION.y);
-		var toTargetLength = Math.abs(Math.sqrt(toTargetX ** 2 + toTargetY ** 2));
+		var toTargetLength = Math.abs(Math.sqrt(toTargetX * toTargetX + toTargetY * toTargetY));
 		toTargetX /= toTargetLength;
 		toTargetY /= toTargetLength;
 
 		var lookX = Math.cos(owner.ship.physicsObject.rotation);
 		var lookY = Math.sin(owner.ship.physicsObject.rotation);
-		var lookLength = Math.abs(Math.sqrt(lookX ** 2 + lookY ** 2));
+		var lookLength = Math.abs(Math.sqrt(lookX * lookX + lookY * lookY));
 		lookX /= lookLength;
 		lookY /= lookLength;
 
