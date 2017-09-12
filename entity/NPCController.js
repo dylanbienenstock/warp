@@ -17,7 +17,7 @@ module.exports = function(ENT, PHYS) {
 			this.lastControlChangeTimes = null;
 
 			this.MEMORY = {
-				TARGET_POSITION: { x: 0, y: 0 },
+				TARGET_POSITION: null,
 				TARGET_ID: -1,
 				TARGET_DOT: 0,
 				DODGING_LEFT: false,
@@ -33,6 +33,8 @@ module.exports = function(ENT, PHYS) {
 				SNIPER: null,   // Leads shots
 				EXPLORER: null, // Prefers to stay far from center of map
 			};
+
+			this.getWanderDestination();
 		}
 
 		get mode() {
@@ -130,17 +132,21 @@ module.exports = function(ENT, PHYS) {
 			this.mode = NPC_MODE.ATTACK;
 		}
 
+		getWanderDestination() {
+			var wanderAngle = Math.random() * 2 * Math.PI;
+			var wanderRadius = Math.random() * (PHYS.boundaryRadius - ENT.protectedSpaceRadius - ENT.DMZRadius) +
+												ENT.protectedSpaceRadius +
+												ENT.DMZRadius;
+
+			this.MEMORY.TARGET_POSITION = {
+				x: Math.cos(wanderAngle) * wanderRadius,
+				y: Math.sin(wanderAngle) * wanderRadius
+			};
+		}
+
 		WANDER(owner, controls, INPUT) {
 			if (INPUT.AT_DESTINATION) {
-				var wanderAngle = Math.random() * 2 * Math.PI;
-				var wanderRadius = Math.random() * (PHYS.boundaryRadius - ENT.protectedSpaceRadius - ENT.DMZRadius) +
-													ENT.protectedSpaceRadius +
-													ENT.DMZRadius;
-
-				this.MEMORY.TARGET_POSITION = {
-					x: Math.cos(wanderAngle) * wanderRadius,
-					y: Math.sin(wanderAngle) * wanderRadius
-				};
+				this.getWanderDestination();
 			}
 
 			controls.thrustForward = true;
@@ -149,10 +155,14 @@ module.exports = function(ENT, PHYS) {
 			controls.thrustRight = false;
 			controls.firePrimary = false;
 			controls.fireSecondary = false;
+
+			if (INPUT.FOUND_TARGET) {
+				this.mode = NPC_MODE.ATTACK;
+			}
 		}
 
 		ATTACK(owner, controls, INPUT) {
-			this.MEMORY.TARGET = ENT.getById(this.MEMORY.TARGET_ID);
+			//this.MEMORY.TARGET = ENT.getById(this.MEMORY.TARGET_ID);
 
 			if (this.MEMORY.TARGET != undefined) {
 				if (!this.MEMORY.TARGET.alive) {
@@ -173,6 +183,7 @@ module.exports = function(ENT, PHYS) {
 
 				controls.thrustForward = true;
 				controls.thrustBackward = false;
+				controls.boost = false;
 
 				if (INPUT.TARGET_IN_RANGE) {
 					controls.firePrimary = INPUT.TARGET_IN_VIEW;
@@ -192,6 +203,8 @@ module.exports = function(ENT, PHYS) {
 				if (INPUT.TARGET_TOO_CLOSE) {
 					controls.thrustForward = false;
 					controls.thrustBackward = true;
+				} else if (INPUT.TARGET_EVADING) {
+					controls.boost = true;
 				}
 			}
 		}

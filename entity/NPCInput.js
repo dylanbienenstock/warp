@@ -37,8 +37,8 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 			return false;
 		}
 
-		return (MEMORY.TARGET.controls.thrustForward ||
-				MEMORY.TARGET.controls.thrustBackward);
+		return (MEMORY.TARGET.controls.thrustForward &&
+				MEMORY.TARGET.boosting);
 	}
 
 	function SHOULD_EVADE() {
@@ -63,6 +63,25 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 		return TARGET_DISTANCE <= 32;
 	}
 
+	function FOUND_TARGET() {
+		if (!ATTRIBUTES.HOSTILE) return false;
+
+		var players = ENT.getAllPlayers();
+
+		for (var i = players.length - 1; i >= 0; i--) {
+			var player = players[i];
+
+			if (player.id != owner.id && !player.NPC) {
+				if (owner.ship.physicsObject.distanceTo(player.ship.physicsObject.x, player.ship.physicsObject.y) <= 400) {
+					MEMORY.TARGET_ID = player.id;
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	return {
 		TARGET_IN_VIEW: TARGET_IN_VIEW(),
 		TARGET_IN_RANGE: TARGET_IN_RANGE(),
@@ -72,5 +91,6 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 		SHOULD_EVADE: SHOULD_EVADE(),
 		SHOULD_DODGE_LEFT: SHOULD_DODGE_LEFT(),
 		AT_DESTINATION: AT_DESTINATION(),
+		FOUND_TARGET: FOUND_TARGET()
 	};
 }
