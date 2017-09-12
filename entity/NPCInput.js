@@ -2,6 +2,24 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 	var now = Date.now();
 	var TARGET_DISTANCE = owner.ship.physicsObject.distanceTo(MEMORY.TARGET_POSITION.x, MEMORY.TARGET_POSITION.y);
 
+	function TARGET_IN_VIEW() {
+		var toTargetX = (owner.ship.physicsObject.x - MEMORY.TARGET_POSITION.x);
+		var toTargetY = (owner.ship.physicsObject.y - MEMORY.TARGET_POSITION.y);
+		var toTargetLength = Math.abs(Math.sqrt(toTargetX ** 2 + toTargetY ** 2));
+		toTargetX /= toTargetLength;
+		toTargetY /= toTargetLength;
+
+		var lookX = Math.cos(owner.ship.physicsObject.rotation);
+		var lookY = Math.sin(owner.ship.physicsObject.rotation);
+		var lookLength = Math.abs(Math.sqrt(lookX ** 2 + lookY ** 2));
+		lookX /= lookLength;
+		lookY /= lookLength;
+
+		MEMORY.TARGET_DOT = (toTargetX * lookX) + (toTargetY * lookY);
+
+		return MEMORY.TARGET_DOT >= 0.5;
+	}
+
 	function TARGET_IN_RANGE() {
 		return TARGET_DISTANCE <= 1024;
 	}
@@ -46,6 +64,7 @@ module.exports = function(owner, MEMORY, ATTRIBUTES, ENT, PHYS) {
 	}
 
 	return {
+		TARGET_IN_VIEW: TARGET_IN_VIEW(),
 		TARGET_IN_RANGE: TARGET_IN_RANGE(),
 		TARGET_CLOSE: TARGET_CLOSE(),
 		TARGET_TOO_CLOSE: TARGET_TOO_CLOSE(),
