@@ -19,6 +19,7 @@ module.exports = function(ENT, PHYS) {
 			this.MEMORY = {
 				TARGET_POSITION: { x: 0, y: 0 },
 				TARGET_ID: -1,
+				TARGET_DOT: 0,
 				DODGING_LEFT: false,
 				LAST_DODGE_TIME: 0,
 				DODGE_INTERVAL: 0,
@@ -143,21 +144,39 @@ module.exports = function(ENT, PHYS) {
 			}
 
 			controls.thrustForward = true;
+			controls.thrustBackward = false;
+			controls.thrustLeft = false;
+			controls.thrustRight = false;
+			controls.firePrimary = false;
+			controls.fireSecondary = false;
 		}
 
 		ATTACK(owner, controls, INPUT) {
 			this.MEMORY.TARGET = ENT.getById(this.MEMORY.TARGET_ID);
-			owner.lockedPlayerId = this.MEMORY.TARGET.id;
 
 			if (this.MEMORY.TARGET != undefined) {
+				if (!this.MEMORY.TARGET.alive) {
+					this.MEMORY.TARGET = null;
+					this.mode = NPC_MODE.WANDER;
+
+					return;
+				} else {
+					owner.lockedPlayerId = this.MEMORY.TARGET.id;
+				}
+
 				this.MEMORY.TARGET_POSITION = { x: this.MEMORY.TARGET.ship.physicsObject.x, y: this.MEMORY.TARGET.ship.physicsObject.y };
+				
+				if (this.ATTRIBUTES.SNIPER) {
+					this.MEMORY.TARGET_POSITION.x += this.MEMORY.TARGET.ship.physicsObject.totalVelocityX * 11;
+					this.MEMORY.TARGET_POSITION.y += this.MEMORY.TARGET.ship.physicsObject.totalVelocityY * 11;
+				}
 
 				controls.thrustForward = true;
 				controls.thrustBackward = false;
 
 				if (INPUT.TARGET_IN_RANGE) {
-					controls.firePrimary = true;
-					controls.fireSecondary = true;
+					controls.firePrimary = INPUT.TARGET_IN_VIEW;
+					controls.fireSecondary = INPUT.TARGET_IN_VIEW;
 				}
 
 				if (INPUT.TARGET_CLOSE) {
@@ -179,11 +198,12 @@ module.exports = function(ENT, PHYS) {
 
 		EVADE(owner, controls, INPUT) {
 			var evadeAngle = Math.atan2(this.MEMORY.TARGET.ship.physicsObject.y - owner.ship.physicsObject.y,
-										this.MEMORY.TARGET.ship.physicsObject.x - owner.ship.physicsObject.x)
+										this.MEMORY.TARGET.ship.physicsObject.x - owner.ship.physicsObject.x);
+
 			this.MEMORY.TARGET_POSITION = {
-											x: owner.ship.physicsObject.x - Math.cos(evadeAngle) * 32,
-											y: owner.ship.physicsObject.y - Math.sin(evadeAngle) * 32 
-										};
+				x: owner.ship.physicsObject.x - Math.cos(evadeAngle) * 32,
+				y: owner.ship.physicsObject.y - Math.sin(evadeAngle) * 32 
+			};
 
 			controls.boost = true;
 			controls.thrustForward = true;
@@ -208,11 +228,11 @@ module.exports = function(ENT, PHYS) {
 
 		lookTowardsTarget(owner, timeMult) {
 			owner.ship.physicsObject.rotation = this.lerpAngle(
-													owner.ship.physicsObject.rotation,
-													Math.atan2(owner.ship.physicsObject.y - this.MEMORY.TARGET_POSITION.y,
-															   owner.ship.physicsObject.x - this.MEMORY.TARGET_POSITION.x),
-													angleLerpFactor * timeMult
-												);
+				owner.ship.physicsObject.rotation,
+				Math.atan2(owner.ship.physicsObject.y - this.MEMORY.TARGET_POSITION.y,
+						   owner.ship.physicsObject.x - this.MEMORY.TARGET_POSITION.x),
+				angleLerpFactor * timeMult
+			);
 		}
 	}
 }
