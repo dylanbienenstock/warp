@@ -210,9 +210,13 @@ function setupGame() {
 		ENT.create(ENT.new("Asteroid"));
 	}
 
-	for (var i = 0; i < 16; i++) {
+	for (var i = 0; i < 8; i++) {
+		var angle = 2 * Math.PI * Math.random();
+
 		var npc = ENT.new("Player", {
 			name: "NPC",
+			x: -Math.cos(angle) * PHYS.boundaryRadius,
+			y: -Math.sin(angle) * PHYS.boundaryRadius,
 			NPC: true,
 			NPCProfile: NPCProfile.DEFAULT
 		});
