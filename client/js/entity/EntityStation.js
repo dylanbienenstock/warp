@@ -6,7 +6,7 @@ class EntityStation extends EntityBase {
 		this.radius = data.radius || 256;
 		this.alignment = data.alignment || "neutral";
 
-		this.container = new PIXI.Container();
+		this.container = new PIXI.ParticleContainer();
 		this.container.x = this.x;
 		this.container.y = this.y;
 
