@@ -41,12 +41,15 @@ class EntityPlanet extends EntityBase {
 
 		addRadarDot(this.sprite.x, this.sprite.y, this.color, 3);
 
-		this.sprite.attach(this.graphics);
-		this.sprite.attach(this.mask);
+		if (this.container.visible) {
+			this.sprite.attach(this.graphics);
+			this.sprite.attach(this.mask);
+		}
 	}
 
 	cull(visible) {
 		this.container.visible = visible;
+		this.sprite.mask = (visible ? this.mask : null);
 	}
 
 	remove() {
