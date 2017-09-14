@@ -184,7 +184,7 @@ function setupGame() {
 	ENT.create(ENT.new("Station", {
 		x: 0,
 		y: 0,
-		color: 0x00FF00
+		alignment: "good"
 	}));
 
 	for (var i = 0; i < (process.env.PLANETS || 8); i++) {
