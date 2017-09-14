@@ -162,6 +162,8 @@ function getBinds() {
 
 	bindKeyToFunction(80, function() {			// P
 		ENT.physicsDebug = !ENT.physicsDebug;
+
+		$("#fps-meter-container").stop().fadeToggle();
 	});
 
 	bindKeyToFunction(13, focusOnChat);			// Enter

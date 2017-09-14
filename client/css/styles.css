@@ -73,6 +73,8 @@ body {
 }
 
 #fps-meter-container {
+	display: none;
+
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
