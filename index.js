@@ -1,14 +1,3 @@
-/*
-
-Environment variables
----------------------
-PHYS_DEBUG
-QUADTREE_CAPACITY
-QUADTREE_MAXLEVEL
-PLANETS
-
-*/
-
 var express = require("express");
 var app = require("express")();
 var http = require("http").Server(app);
@@ -210,7 +199,7 @@ function setupGame() {
 		ENT.create(ENT.new("Asteroid"));
 	}
 
-	for (var i = 0; i < 8; i++) {
+	for (var i = 0; i < (process.env.NPCS || 0); i++) {
 		var angle = 2 * Math.PI * Math.random();
 
 		var npc = ENT.new("Player", {
