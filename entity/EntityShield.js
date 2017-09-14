@@ -36,6 +36,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				var owner = ENT.getById(this.ownerId);
 
 				if (owner != undefined) {
+					if (entity.ownerId != undefined) {
+						owner.offend(entity.ownerId);
+					}
+
 					var angleDegrees = (collision.angle - owner.physicsObject.rotation) * (180 / Math.PI);
 					angleDegrees = ((angleDegrees % 360) + 360) % 360;
 					damage *= this.damageFactor;

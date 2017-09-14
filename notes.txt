@@ -1,3 +1,12 @@
+Environment variables
+---------------------
+PHYS_DEBUG
+QUADTREE_CAPACITY
+QUADTREE_MAXLEVEL
+PLANETS
+ASTEROIDS
+NPCS
+
 zIndex reference
 ----------------
 0: Default

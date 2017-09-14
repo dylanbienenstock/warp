@@ -61,8 +61,11 @@ class EntityManager {
 
 			var data = this.getNetworkableProperties(entity);
 
-			if (playerSocket != undefined) {
-				data.playerSocketId = playerSocket.client.id;
+			if (entity.className == "Player") {
+				if (playerSocket != undefined) {
+					data.playerSocketId = playerSocket.client.id;
+				}
+				
 				this.players.push(entity);
 			}
 

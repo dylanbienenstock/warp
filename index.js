@@ -1,14 +1,3 @@
-/*
-
-Environment variables
----------------------
-PHYS_DEBUG
-QUADTREE_CAPACITY
-QUADTREE_MAXLEVEL
-PLANETS
-
-*/
-
 var express = require("express");
 var app = require("express")();
 var http = require("http").Server(app);
@@ -30,6 +19,8 @@ var Ship = require("./ship/Ship.js")(ENT, PHYS);
 var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
 var SpecialWeapon = require("./weapon/SpecialWeapon.js")(ENT, PHYS);
 var Shop = require("./Shop.js")(Ship, Weapon, SpecialWeapon);
+
+var NPCProfile = require("./entity/NPCProfile.js");
 
 console.log("Initializing game...");
 var startTime = Date.now();
@@ -212,6 +203,33 @@ function setupGame() {
 		var angle = 2 * Math.PI * Math.random();
 
 		ENT.create(ENT.new("Asteroid"));
+	}
+
+	for (var i = 0; i < (process.env.NPCS || 0); i++) {
+		var angle = 2 * Math.PI * Math.random();
+
+		var npc = ENT.new("Player", {
+			name: "NPC",
+			x: -Math.cos(angle) * PHYS.boundaryRadius,
+			y: -Math.sin(angle) * PHYS.boundaryRadius,
+			NPC: true,
+			NPCProfile: NPCProfile.DEFAULT
+		});
+
+		ENT.create(npc);
+
+		var shipKeys = Object.keys(Ship)
+		var weaponKeys = Object.keys(Weapon);
+		var primaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+		var secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+
+		while (secondaryWeaponChoice == primaryWeaponChoice) {
+			secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+		}
+
+		npc.ship = new Ship[shipKeys[shipKeys.length * Math.random() << 0]](npc);
+		npc.primaryWeapon = new Weapon[weaponKeys[primaryWeaponChoice]](npc);
+		npc.secondaryWeapon = new Weapon[weaponKeys[secondaryWeaponChoice]](npc);
 	}
 }
 

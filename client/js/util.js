@@ -3,6 +3,10 @@ function getMousePosition() {
 }
 
 function lerp(v0, v1, t) {
+	if (Math.abs(v0 - v1) <= 0.01) {
+		return v1;
+	}
+
 	return (1 - t) * v0 + t * v1;
 }
 

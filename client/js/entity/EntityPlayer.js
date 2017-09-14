@@ -110,6 +110,8 @@ class EntityPlayer extends EntityBase {
 		this.ship.alive = this.alive;
 		this.ship.boosting = this.boosting;
 		this.ship.update();
+
+		this.updateNameTag();
 	}
 
 	receiveProperties(data) {
@@ -125,38 +127,47 @@ class EntityPlayer extends EntityBase {
 	}
 
 	createNameTag() {
-		this.nameTag = document.createElement("span");
-		this.nameTag.className = "nametag";
-		this.nameTag.innerHTML = this.name;
+		var nameTagStyle = new PIXI.TextStyle({
+			fontFamily: "Source Code Pro",
+			fontSize: 16,
+			fill: "#FFFFFF",
+			padding: 4,
+			dropShadow: true,
+			dropShadowColor: "#000000",
+			dropShadowBlur: 8,
+			dropShadowDistance: 0
+		});
 
-		document.body.appendChild(this.nameTag);
+		this.nameTag = new PIXI.Text(this.name, nameTagStyle);
+		this.nameTag.cacheAsBitmap = true;
+		this.nameTagMetrics = PIXI.TextMetrics.measureText(this.name, nameTagStyle);
 
-		this.updateNameTag();
+		ENT.nameTagContainer.addChild(this.nameTag);
 	}
 
 	updateNameTag() {
-		var nameTagPosition = ENT.stageContainer.toGlobal(this.ship.bodySprite.position);
-		var nameTagWidth = $(this.nameTag).outerWidth();
-		var nameTagHeight = $(this.nameTag).outerHeight();
+		if (!this.isLocalPlayer) {
+			var nameTagPosition = ENT.stageContainer.toGlobal(this.ship.bodySprite.position);
+			var nameTagWidth = Math.floor(this.nameTagMetrics.width);
+			var nameTagHeight = this.nameTagMetrics.height;
 
-		nameTagPosition.x -= nameTagWidth / 2;
-		nameTagPosition.y += 20 * window.currentZoom;
+			nameTagPosition.x -= nameTagWidth / 2;
+			nameTagPosition.y += (nameTagHeight + 4) * window.currentZoom;
 
-		nameTagPosition.x = Math.round(nameTagPosition.x);
-		nameTagPosition.y = Math.round(nameTagPosition.y);
+			nameTagPosition.x = Math.floor(nameTagPosition.x);
+			nameTagPosition.y = Math.floor(nameTagPosition.y);
 
-		if (window.showNameTags &&
-			!this.isLocalPlayer && 
-			((nameTagPosition.x + nameTagWidth > 0 && nameTagPosition.y + nameTagHeight > 0) ||
-			(nameTagPosition.x < $(window).innerWidth() && nameTagPosition.y < $(window).innerHeight()))) {
+			if (window.showNameTags &&
+				((nameTagPosition.x + nameTagWidth > 0 && nameTagPosition.y + nameTagHeight > 0) ||
+				(nameTagPosition.x < ENT.ww && nameTagPosition.y < ENT.wh))) {
 
-			this.nameTag.style.display = "initial";
-			$(this.nameTag).offset({
-				left: nameTagPosition.x,
-				top: nameTagPosition.y
-			});
+				this.nameTag.visible = true;
+				this.nameTag.position = nameTagPosition;
+			} else {
+				this.nameTag.visible = false;
+			}
 		} else {
-			this.nameTag.style.display = "none"
+			this.nameTag.visible = false;
 		}
 	}
 
@@ -170,6 +181,7 @@ class EntityPlayer extends EntityBase {
 	remove() {	
 		this.sprite.destroy();
 		this.ship.remove();
-		document.body.removeChild(this.nameTag);
+		ENT.nameTagContainer.removeChild(this.nameTag);
+		this.nameTag.destroy();
 	}
 }

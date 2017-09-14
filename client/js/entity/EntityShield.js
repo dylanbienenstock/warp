@@ -54,9 +54,7 @@ class EntityShield extends EntityBase {
 			hit.sprite.alpha = (hitDuration - timeSinceHit) / hitDuration;
 
 			if (this.owner != undefined) {
-				var center = this.owner.sprite.getCenter();
-				hit.sprite.position.x = center.x;
-				hit.sprite.position.y = center.y;
+				hit.sprite.position = this.owner.sprite.position;
 				hit.sprite.rotation = this.owner.sprite.rotation + hit.rotationOffset;
 			} else {
 				hit.sprite.position.x = 0;

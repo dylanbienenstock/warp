@@ -1,4 +1,6 @@
 module.exports = function(EntityBase, ENT, PHYS) {
+	var NPCController = require("../entity/NPCController.js")(ENT, PHYS);
+
 	return class EntityPlayer extends EntityBase {
 		constructor(data) {
 			super(data);
@@ -15,6 +17,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastBoosting = false;
 			this.lastBoostTime = 0;
 			this.alive = true;
+
+			this.NPC = data.NPC;
+			this.NPCController = null;
+			this.NPCProfile = data.NPCProfile;
+
+			if (this.NPCProfile != undefined) {
+				this.NPCProfile.doNotNetwork = true;
+			}
 
 			this.lockedPlayerId = null;
 			this.lockOnPosition = null;
@@ -99,12 +109,25 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.specialWeaponListing = value.constructor.getListing();
 		}
 
+		create() {
+			if (this.NPC) {
+				this.NPCController = new NPCController(this.id);
+				this.NPCController.generateAttributes(this.NPCProfile);
+			}
+		}
+
 		remove() {
 			this.ship.remove();
 		}
 
 		giveCredits(amount) {
 			this.credits += Math.max(amount, 0);
+		}
+
+		offend(attackerId) {
+			if (this.NPC && this.NPCController != undefined) {
+				this.NPCController.onAttacked(attackerId);
+			}
 		}
 
 		takeDamage(damage, collision) {
@@ -162,6 +185,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		update(timeMult) {
 			super.update();
+
+			if (this.NPC && this.NPCController != null) {
+				this.NPCController.update(timeMult);
+			}
 
 			if (this.alive) {
 				var now = Date.now();

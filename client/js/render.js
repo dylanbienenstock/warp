@@ -5,6 +5,7 @@ var gameContainer;
 var backdropContainer;
 var stageContainer;
 var boundaryContainer;
+var nameTagContainer;
 var HUDContainer;
 var blackness;
 
@@ -38,11 +39,12 @@ $(function() {
 	  return false;
 	};
 
-	window.addEventListener('contextmenu', function (e) {
+	window.addEventListener("contextmenu", function (e) {
 	  e.preventDefault();
 	}, false);
-	//
+});
 
+function createPIXIRenderer() {
 	var ww = $(window).innerWidth();
 	var wh = $(window).innerHeight();
 
@@ -58,14 +60,16 @@ $(function() {
 	backdropContainer = new PIXI.Container();
 	stageContainer = new PIXI.Container();
 	boundaryContainer = new PIXI.Container();
+	nameTagContainer = new PIXI.Container();
 	HUDContainer = new PIXI.Container();
 
 	gameContainer.addChild(backdropContainer, boundaryContainer, stageContainer, HUDContainer);
-	baseContainer.addChild(titleScreenContainer, gameContainer);
+	baseContainer.addChild(titleScreenContainer, gameContainer, nameTagContainer);
 
 	setupTitleScreen(titleScreenContainer, gameContainer);
 
 	ENT.stageContainer = stageContainer;
+	ENT.nameTagContainer = nameTagContainer;
 
 	$(window).resize(resizeRenderer);
 
@@ -87,7 +91,7 @@ $(function() {
 		right: "5px",
 		graph: 1
 	});
-});
+};
 
 function drawBoundary() {
 	boundary = new PIXI.Graphics();
@@ -173,19 +177,11 @@ function centerOn(sprite) {
 	stageContainer.position.y = renderer.height / 2;
 	stageContainer.scale.x = window.currentZoom;
 	stageContainer.scale.y = window.currentZoom;
-	stageContainer.pivot.x = sprite.position.x;
-	stageContainer.pivot.y = sprite.position.y;
+	stageContainer.pivot = sprite.position;
 
 	boundaryContainer.position.x = renderer.width / 2;
 	boundaryContainer.position.y = renderer.height / 2;
 	boundaryContainer.scale.x = window.currentZoom;
 	boundaryContainer.scale.y = window.currentZoom;
-	boundaryContainer.pivot.x = sprite.position.x;
-	boundaryContainer.pivot.y = sprite.position.y;
-
-	var players = ENT.getAllByClassName("Player");
-
-	for (var i = players.length - 1; i >= 0; i--) {
-		players[i].updateNameTag();
-	}
+	boundaryContainer.pivot = sprite.position;
 }

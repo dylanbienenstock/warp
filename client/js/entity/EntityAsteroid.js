@@ -9,7 +9,7 @@ class EntityAsteroid extends EntityBase {
 		this.hasDied = false;
 		this.textureNumber = randomInt(0, 3);
 
-		this.container = new PIXI.Container();
+		this.container = new PIXI.ParticleContainer();
 		this.container.zIndex = 3;
 
 		this.sprite = new PIXI.Sprite(PIXI.loader.resources["asteroid:" + this.textureNumber].texture);
@@ -54,7 +54,7 @@ class EntityAsteroid extends EntityBase {
 		super.update();
 
 		if (this.alive) {
-			this.sprite.rotation += this.sprite.rotationDelta;
+			addRadarDot(this.sprite.x, this.sprite.y, 0x999999, 1);
 		} else {
 			this.hasDied = true;
 		} 
@@ -63,11 +63,13 @@ class EntityAsteroid extends EntityBase {
 		this.outlineSprite.alpha = this.sprite.alpha;
 		this.overlaySprite.alpha = lerp(this.overlaySprite.alpha, 0, 0.05);
 
-		this.sprite.attach(this.outlineSprite);
-		this.sprite.attach(this.overlaySprite);
+		if (this.container.visible) {
+			if (this.sprite.rotationDelta != undefined) {
+				this.sprite.rotation += this.sprite.rotationDelta;
+			}
 
-		if (this.alive) {
-			addRadarDot(this.sprite.x, this.sprite.y, 0x999999, 1);
+			this.sprite.attach(this.outlineSprite);
+			this.sprite.attach(this.overlaySprite);
 		}
 	}
 
