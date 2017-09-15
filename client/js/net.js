@@ -166,6 +166,10 @@ function getBinds() {
 		$("#fps-meter-container").stop().fadeToggle();
 	});
 
+	bindKeyToFunction(70, function() {			// F
+		$(document).toggleFullScreen();
+	});
+
 	bindKeyToFunction(13, focusOnChat);			// Enter
 }
 
