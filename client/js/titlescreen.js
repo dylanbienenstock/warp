@@ -252,7 +252,7 @@ function layoutTitleScreen() {
 	});
 
 	$controls.css({
-		width: $(window).innerWidth() / 1920 * 1200
+		width: $(window).innerWidth() / 1920 * 1500
 	});
 
 	$controlsUsed.css({
