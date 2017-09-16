@@ -53,25 +53,6 @@ body {
 	font-style: italic;
 }
 
-/* Notes */
-
-#notes-container {
-	position: absolute;
-	top: 0;
-	left: 8px;
-
-	color: yellow;
-}
-
-#notes-title {
-	font-size: 32px;
-	font-style: italic;
-}
-
-#notes-content {
-	font-size: 12px;
-}
-
 #fps-meter-container {
 	display: none;
 
@@ -79,6 +60,42 @@ body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+#title-button-container {
+	position: absolute;
+	top: 10px;
+	padding-bottom: 8px;
+	width: 100%;
+	text-align: center;
+
+	opacity: 0.5;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.title-button {
+	position: relative;
+	padding: 4px 8px 4px 8px;
+
+	color: yellow;
+	background-color: black;
+	font-size: 16px;
+
+	border: 2px solid yellow;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+
+	cursor: pointer;
+	outline: none;
+}
+
+.title-button:active {
+	top: 2px;
 }
 
 /* In-Game */

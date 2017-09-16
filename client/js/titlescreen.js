@@ -6,8 +6,13 @@ var titleScreenTransitionRadius = 0;
 var transitioning = false;
 var transitionProgress = 0;
 var done = false;
+var lastInterfaceColor = "#FFFF00";
 
 window.showNameTags = false;
+window.hoveredButton = null;
+window.activeButton = null;
+window.loginDisabled = false;
+window.connected = false;
 
 function setupTitleScreen(titleScreenContainer, gameContainer) {
 	titleScreenBackground = new PIXI.Graphics();
@@ -99,11 +104,52 @@ function drawOscillatingCircles(ww, wh) {
 	}
 }
 
-window.connected = false;
-
 $(function() {
+	var $buttonContainer = $("#title-button-container");
+	window.activeButton = $buttonContainer.find("*:first");
+
+	window.activeButton.css({
+		backgroundColor: lastInterfaceColor,
+		color: "#000000",
+		borderRadius: 10
+	});
+
+	$buttonContainer.find("*").hover(function() { 
+		if ($(this).attr("id") != window.activeButton.attr("id")) {
+			$(this).stop().animate({
+				backgroundColor: lastInterfaceColor,
+				color: "#000000",
+				borderRadius: 10
+			}, 150);
+
+			window.activeButton.stop().animate({
+				color: lastInterfaceColor,
+				backgroundColor: "#000000",
+				borderRadius: 10
+			}, 150);
+
+			window.hoveredButton = $(this);
+		}
+	}, function() {
+		if ($(this).attr("id") != window.activeButton.attr("id")) {
+			$(this).stop().animate({
+				color: lastInterfaceColor,
+				backgroundColor: "#000000",
+				borderRadius: 10
+			}, 150);
+
+			window.activeButton.stop().animate({
+				backgroundColor: lastInterfaceColor,
+				color: "#000000",
+				borderRadius: 10
+			}, 150);
+
+			window.hoveredButton = null;
+		}
+	});
+
 	$("*").keyup(function(event) {
-		if (event.which == 13 && !awaitingResponse && !window.connected) {
+		if (event.which == 13 && !awaitingResponse && !window.connected && !window.loginDisabled) {
 			awaitingResponse = true;
 			connect($("#name-input").val());
 		}
@@ -112,40 +158,72 @@ $(function() {
 	centerTitleScreen();
 });
 
+var setYellowTimeout;
+
 function processResponse(response) {
 	var $titleContainer = $("#title-container");
-	var $notesContainer = $("#notes-container");
+	var $buttonContainer = $("#title-button-container");
 
 	if (response.accepted) {
 		window.connected = true;
 
-		$notesContainer.animate({
-			color: "#00FF00"
+		setInterfaceColor("#00FF00");
+
+		setTimeout(function() {
+			transitioning = true;
+			$titleContainer.fadeOut();
+			$buttonContainer.fadeOut();
+			bindControls();
 		}, 600);
-
-		$titleContainer.animate({
-			color: "#00FF00"
-		}, 600, function() {
-			setTimeout(function() {
-				$notesContainer.fadeOut();
-				$titleContainer.fadeOut();
-				bindControls();
-
-				transitioning = true;
-			}, 600);
-		});
 	} else {
-		$notesContainer.animate({
-			color: "#FF0000"
-		}, 600);
+		setInterfaceColor("#FF0000");
 
-		$titleContainer.animate({
-			color: "#FF0000"
-		}, 600);
+		clearTimeout(setYellowTimeout);
+		setYellowTimeout = setTimeout(function() {
+			setInterfaceColor("#FFFF00");
+		}, 1000);
 	}
 
 	$("#help-message").text(response.message);
 	awaitingResponse = false;
+}
+
+function setInterfaceColor(color, fadeOut) {
+	var $titleContainer = $("#title-container");
+	var $buttonContainer = $("#title-button-container");
+
+	if (color != lastInterfaceColor) {
+		$buttonContainer.find("*").stop().animate({
+			color: color,
+			backgroundColor: "#000000",
+			borderColor: color
+		}, 600);
+
+		if (window.hoveredButton != null) {
+			window.hoveredButton.stop().animate({
+				color: "#000000",
+				backgroundColor: color,
+				borderColor: color,
+				borderRadius: 10
+			}, 600);
+		}
+
+		$titleContainer.stop().animate({
+			color: color
+		}, 600, function() {
+			setTimeout(function() {
+				if (fadeOut) {
+					$buttonContainer.fadeOut();
+					$titleContainer.fadeOut();
+					bindControls();
+
+					transitioning = true;
+				}
+			}, 600);
+		});
+	}
+
+	lastInterfaceColor = color;
 }
 
 function centerTitleScreen() {
@@ -161,4 +239,19 @@ function centerTitleScreen() {
 	$("#name-input").css({
 		borderBottom: "2px solid " + $titleContainer.css("color")
 	});
+}
+
+function clickTitleButton(id) {
+	var $titleContainer = $("#title-container");
+	var $button = $("#title-button-" + id);
+	window.activeButton = $button;
+
+	if (id == "log-in") {
+		$titleContainer.stop().animate({ opacity: 1 });
+		window.loginDisabled = false;
+		$("#name-input").focus();
+	} else {
+		$titleContainer.stop().animate({ opacity: 0 });
+		window.loginDisabled = true;
+	}
 }
