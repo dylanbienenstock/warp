@@ -1,6 +1,8 @@
 var titleScreenBackground;
 var titleScreenCircles;
 var titleScreenCircleColor = 0xFFFFFF;
+var titleScreenCircleOpacity = 1;
+var titleScreenCircleDestOpacity = 1;
 var titleScreenTransition;
 var titleScreenTransitionRadius = 0;
 var transitioning = false;
@@ -33,7 +35,7 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 		var ww = $(window).innerWidth();
 		var wh = $(window).innerHeight();
 
-		centerTitleScreen();
+		layoutTitleScreen();
 
 		titleScreenBackground.clear();
 
@@ -88,6 +90,8 @@ var circleIntervals = [
 ];
 
 function drawOscillatingCircles(ww, wh) {
+	titleScreenCircleOpacity = lerp(titleScreenCircleOpacity, titleScreenCircleDestOpacity, 0.1);
+
 	var time = Date.now();
 	var minCircleRadius = Math.sqrt(Math.pow($("#title-container").outerWidth(), 2) + Math.pow($("#title-container").outerHeight(), 2)) / 2 + 32;
 	var maxCircleRadius = Math.min(ww, wh) / 2 - 32 - minCircleRadius;
@@ -98,7 +102,7 @@ function drawOscillatingCircles(ww, wh) {
 		var radius = minCircleRadius + Math.abs(Math.cos(time / circleIntervals[i])) * maxCircleRadius;
 
 		if (!transitioning || radius > titleScreenTransitionRadius) {
-			titleScreenBackground.lineStyle(2, titleContainerColor, minCircleAlpha + (1 - minCircleAlpha) - Math.abs(Math.cos(time / circleIntervals[i])) * (1 - minCircleAlpha));
+			titleScreenBackground.lineStyle(2, titleContainerColor, (minCircleAlpha + (1 - minCircleAlpha) - Math.abs(Math.cos(time / circleIntervals[i])) * (1 - minCircleAlpha)) * titleScreenCircleOpacity);
 			titleScreenBackground.drawCircle(ww / 2, wh / 2, radius);
 		}
 	}
@@ -155,7 +159,7 @@ $(function() {
 		}
 	});
 
-	centerTitleScreen();
+	layoutTitleScreen();
 });
 
 var setYellowTimeout;
@@ -163,6 +167,7 @@ var setYellowTimeout;
 function processResponse(response) {
 	var $titleContainer = $("#title-container");
 	var $buttonContainer = $("#title-button-container");
+	var $othersContainer = $("#others-container");
 
 	if (response.accepted) {
 		window.connected = true;
@@ -173,6 +178,7 @@ function processResponse(response) {
 			transitioning = true;
 			$titleContainer.fadeOut();
 			$buttonContainer.fadeOut();
+			$othersContainer.fadeOut();
 			bindControls();
 		}, 600);
 	} else {
@@ -188,7 +194,7 @@ function processResponse(response) {
 	awaitingResponse = false;
 }
 
-function setInterfaceColor(color, fadeOut) {
+function setInterfaceColor(color) {
 	var $titleContainer = $("#title-container");
 	var $buttonContainer = $("#title-button-container");
 
@@ -226,15 +232,36 @@ function setInterfaceColor(color, fadeOut) {
 	lastInterfaceColor = color;
 }
 
-function centerTitleScreen() {
+function layoutTitleScreen() {
 	var ww = $(window).innerWidth();
 	var wh = $(window).innerHeight();
 	var $titleContainer = $("#title-container");
+	var $othersContainer = $("#others-container");
+
+	var $controls = $("#controls");
+	var $controlsUsed = $("#controls-used");
 
 	$titleContainer.offset({
-		left: ww / 2 - $titleContainer.outerWidth() / 2,
-		top: wh / 2 - $titleContainer.outerHeight() / 2,
+		left: Math.floor(ww / 2 - $titleContainer.outerWidth() / 2),
+		top:  Math.floor(wh / 2 - $titleContainer.outerHeight() / 2),
 	});
+
+	$othersContainer.offset({
+		left:  Math.floor(ww / 2 - $othersContainer.outerWidth() / 2),
+		top:  Math.floor(wh / 2 - $othersContainer.outerHeight() / 2),
+	});
+
+	$controls.css({
+		width: $(window).innerWidth() / 1920 * 1200
+	});
+
+	$controlsUsed.css({
+		width: $controls.width(),
+		height: $controls.height(),
+		opacity: Math.sin(Date.now() / 300) * 0.25 + 0.75
+	});
+
+	$controlsUsed.offset($controls.offset());
 
 	$("#name-input").css({
 		borderBottom: "2px solid " + $titleContainer.css("color")
@@ -242,16 +269,39 @@ function centerTitleScreen() {
 }
 
 function clickTitleButton(id) {
+	setInterfaceColor("#FFFF00");
+
 	var $titleContainer = $("#title-container");
+	var $othersContainer = $("#others-container");
 	var $button = $("#title-button-" + id);
 	window.activeButton = $button;
 
 	if (id == "log-in") {
-		$titleContainer.stop().animate({ opacity: 1 });
+		titleScreenCircleDestOpacity = 1;
 		window.loginDisabled = false;
 		$("#name-input").focus();
+
+		$othersContainer.stop().animate({
+			opacity: 0
+		}, 250, function() {
+			$titleContainer.stop().animate({
+				opacity: 1
+			});
+		});
 	} else {
-		$titleContainer.stop().animate({ opacity: 0 });
+		titleScreenCircleDestOpacity = 0.4;
 		window.loginDisabled = true;
+
+		$titleContainer.stop().animate({
+			opacity: 0
+		}, 250, function() {
+			$othersContainer.stop().animate({
+				opacity: 1
+			});
+		});
+
+		if (id == "controls") {
+
+		}
 	}
 }
