@@ -9,10 +9,12 @@ class EntityBase {
 		this.triggers = {};
 	}
 
-	update() {
+	update(shouldLerp) {
 		if (this.sprite != undefined) {
-			this.sprite.x = lerp(this.sprite.x, this.x, this.lerpFactorPosition || ENT.lerpFactorPosition);
-			this.sprite.y = lerp(this.sprite.y, this.y, this.lerpFactorPosition || ENT.lerpFactorPosition);
+			if (shouldLerp == undefined || shouldLerp) {
+				this.sprite.x = lerp(this.sprite.x, this.x, this.lerpFactorPosition || ENT.lerpFactorPosition);
+				this.sprite.y = lerp(this.sprite.y, this.y, this.lerpFactorPosition || ENT.lerpFactorPosition);
+			}
 
 			var bounds = this.sprite.getBounds();
 
