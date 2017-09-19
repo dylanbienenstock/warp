@@ -106,8 +106,14 @@ ENT.update = function() {
 	ENT.ww = $(window).width();
 	ENT.wh = $(window).height();
 
+	for (var i = players.length - 1; i >= 0; i--) {
+		players[i].update();
+	}
+
 	for (var i = entities.length - 1; i >= 0; i--) {
-		entities[i].update();
+		if (entities[i].className != "Player") {
+			entities[i].update();
+		}
 	}
 
 	for (var i = effects.length - 1; i >= 0; i--) {
