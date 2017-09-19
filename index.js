@@ -187,6 +187,19 @@ function setupGame() {
 		alignment: "good"
 	}));
 
+	ENT.create(ENT.new("Sun", {
+		x: 4000,
+		y: 0,
+	}));
+
+	ENT.create(ENT.new("Sun", {
+		x: -4000,
+		y: 0,
+		radius: 256,
+		color: 0x7718B2,
+		isBlackHole: true
+	}));
+
 	for (var i = 0; i < (process.env.PLANETS || 8); i++) {
 		var angle = 2 * Math.PI * Math.random();
 

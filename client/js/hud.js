@@ -8,6 +8,7 @@ var windowPadding = 16;
 
 var radar;
 var radarDots = [];
+var radarZones = [];
 var radarRadius = 100;
 var radarProportion = radarRadius / window.boundaryRadius;
 var radarX = windowPadding + radarRadius;
@@ -66,12 +67,21 @@ function drawHUD() {
 	drawMeters();
 }
 
-function addRadarDot(x, y, color, radius) {
+function addRadarDot(x, y, color, radius, trueRadius) {
 	radarDots.push({
 		x: x * radarProportion + radarX,
 		y: y * radarProportion + radarY,
 		color: color,
-		radius: radius
+		radius: (trueRadius ? radius * radarProportion : radius)
+	});
+}
+
+function addRadarZone(x, y, color, radius, trueRadius) {
+	radarZones.push({
+		x: x * radarProportion + radarX,
+		y: y * radarProportion + radarY,
+		color: color,
+		radius: (trueRadius ? radius * radarProportion : radius)
 	});
 }
 
@@ -87,21 +97,13 @@ function drawRadar() {
 	radar.drawCircle(radarX, radarY, window.protectedSpaceRadius * radarProportion);
 	radar.endFill();
 
+	for (var i = radarZones.length - 1; i >= 0; i--) {
+		drawRadarDot(radarZones[i], true);
+		radarZones.splice(i, 1);
+	}
+
 	for (var i = radarDots.length - 1; i >= 0; i--) {
-		var dot = radarDots[i];
-
-		radar.beginFill(dot.color);
-
-		if (dot.radius > 1) {
-			radar.drawCircle(Math.round(dot.x), Math.round(dot.y), dot.radius);
-		} else if (dot.radius == 1) {
-			radar.drawRect(Math.round(dot.x) - 1, Math.round(dot.y) - 1, 2, 2);
-		} else {
-			radar.drawRect(Math.round(dot.x), Math.round(dot.y), 1, 1);
-		}
-
-		radar.endFill();
-
+		drawRadarDot(radarDots[i]);
 		radarDots.splice(i, 1);
 	}
 
@@ -115,6 +117,20 @@ function drawRadar() {
 						   quadTree.size * radarProportion, quadTree.size * radarProportion);
 		}
 	}
+}
+
+function drawRadarDot(dot, isZone) {
+	radar.beginFill(dot.color, (isZone ? 0.3 : 1));
+
+	if (dot.radius > 1) {
+		radar.drawCircle(Math.round(dot.x), Math.round(dot.y), dot.radius);
+	} else if (dot.radius == 1) {
+		radar.drawRect(Math.round(dot.x) - 1, Math.round(dot.y) - 1, 2, 2);
+	} else {
+		radar.drawRect(Math.round(dot.x), Math.round(dot.y), 1, 1);
+	}
+
+	radar.endFill();
 }
 
 function drawMeters() {

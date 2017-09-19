@@ -39,7 +39,7 @@ class EntityPlanet extends EntityBase {
 	update() {
 		super.update();
 
-		addRadarDot(this.sprite.x, this.sprite.y, this.color, 3);
+		addRadarDot(this.sprite.x, this.sprite.y, this.color, 2);
 
 		if (this.container.visible) {
 			this.sprite.attach(this.graphics);
