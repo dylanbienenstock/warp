@@ -194,7 +194,7 @@ function processResponse(response) {
 	awaitingResponse = false;
 }
 
-function setInterfaceColor(color) {
+function setInterfaceColor(color, fadeOut) {
 	var $titleContainer = $("#title-container");
 	var $buttonContainer = $("#title-button-container");
 
