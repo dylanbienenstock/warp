@@ -65,11 +65,6 @@ class ShipBase {
 		this.forwardSprite.width = data.forwardSprite.dimensions.width;
 		this.forwardSprite.height = data.forwardSprite.dimensions.height;
 
-		// this.backwardSprite = new PIXI.Sprite(PIXI.loader.resources[data.backwardSprite.texture].texture);
-		// this.backwardSprite.anchor.set(data.backwardSprite.anchor.x, data.backwardSprite.anchor.y);
-		// this.backwardSprite.width = data.backwardSprite.dimensions.width;
-		// this.backwardSprite.height = data.backwardSprite.dimensions.height;
-
 		if (this.scale != undefined) {
 			this.shadowSprite.scale.x = this.scale;
 			this.shadowSprite.scale.y = this.scale;
@@ -81,8 +76,6 @@ class ShipBase {
 			this.overlaySprite.scale.y = this.scale;
 			this.forwardSprite.scale.x = this.scale;
 			this.forwardSprite.scale.y = this.scale;
-			// this.backwardSprite.scale.x = this.scale;
-			// this.backwardSprite.scale.y = this.scale;
 		}
 
 		this.container.addChild(this.shadowSprite,
@@ -152,11 +145,9 @@ class ShipBase {
 			this.bodySprite.attach(this.shadowSprite, 2, 2);
 			this.bodySprite.attach(this.overlaySprite);
 			this.bodySprite.attach(this.forwardSprite);
-			//this.bodySprite.attach(this.backwardSprite);
 		}
 
 		this.forwardSprite.renderable = this.alive && this.controls.thrustForward && !this.boosting;
-		//this.backwardSprite.renderable = this.alive && this.controls.thrustBackward;
 		this.overlaySprite.alpha = lerp(this.overlaySprite.alpha, 0, 0.05);
 	}
 
