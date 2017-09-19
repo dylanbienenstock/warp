@@ -137,19 +137,23 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.ship.health = Math.max(this.ship.health - damage, 0);
 
 				if (this.ship.health == 0) {
-					ENT.trigger(this, "death");
-					console.log("! Player " + this.name + " was destroyed!");
-
-					this.ship.physicsObject.active = false;
-					this.ship.shield.physicsObject.active = false;
-					this.alive = false;
-					this.doNotNetwork = true;
+					this.kill();
 				}
 
 				return damage;
 			}
 
 			return 0;
+		}
+
+		kill() {
+			ENT.trigger(this, "death");
+			console.log("! Player " + this.name + " was destroyed!");
+
+			this.ship.physicsObject.active = false;
+			this.ship.shield.physicsObject.active = false;
+			this.alive = false;
+			this.doNotNetwork = true;
 		}
 
 		controlDown(control) {
