@@ -69,9 +69,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.physicsObject.velocityY += -Math.sin(angle) * 0.1;
 			}
 
-			if (entity instanceof ENT.type("Laser") || entity instanceof ENT.type("Tracker")) {
+			if (entity instanceof ENT.type("Laser") || entity instanceof ENT.type("Tracker") || entity instanceof ENT.type("Beam")) {
 				ENT.trigger(this, "hit");
-				ENT.remove(entity);
+
+				if (!entity instanceof ENT.type("Beam")) {
+					ENT.remove(entity);
+				}
 
 				this.health -= entity.damage;
 				

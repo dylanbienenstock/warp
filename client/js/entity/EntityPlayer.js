@@ -1,7 +1,7 @@
 class EntityPlayer extends EntityBase {
 	constructor(data) {
 		super(data);
-
+		
 		this.triggers.changeShip = this.onChangeShip.bind(this);
 		this.triggers.hit = this.onHit.bind(this);
 		this.triggers.death = this.onDeath.bind(this);

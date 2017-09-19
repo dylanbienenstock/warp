@@ -9,5 +9,6 @@ window.Entity = {
 	Laser: EntityLaser,
 	Tracker: EntityTracker,
 	BouncerOrb: EntityBouncerOrb,
-	BouncerAura: EntityBouncerAura
+	BouncerAura: EntityBouncerAura,
+	Beam: EntityBeam
 };
