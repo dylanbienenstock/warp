@@ -19,7 +19,7 @@ class PhysicsManager {
 		this.Physics = null;
 
 		this.nextId = 0;
-		this.boundaryRadius = 4096;
+		this.boundaryRadius = Math.pow(2, 14);
 		this.physicsObjects = [];
 		this.physicsObjectOwners = {};
 		this.collisions = [];

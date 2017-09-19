@@ -14,7 +14,7 @@ var stationInnerShadow;
 var stationInner;
 
 window.renderer;
-window.boundaryRadius = 4096;
+window.boundaryRadius = Math.pow(2, 14);
 window.protectedSpaceRadius = 600;
 window.DMZRadius = 200;
 
@@ -98,7 +98,7 @@ function drawBoundary() {
 	boundaryContainer.addChild(boundary)
 
 	// Map boundary
-	boundary.lineStyle(1, 0xFFFFFF, 1);
+	boundary.lineStyle(3, 0xFFFFFF, 1);
 	boundary.drawCircle(0, 0, window.boundaryRadius);
 
 	// DMZ
