@@ -15,8 +15,6 @@ var stationInner;
 
 window.renderer;
 window.boundaryRadius = Math.pow(2, 14);
-window.protectedSpaceRadius = 600;
-window.DMZRadius = 200;
 
 window.inGame = false;
 
