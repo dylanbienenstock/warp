@@ -106,6 +106,10 @@ class EntityPlanet extends EntityBase {
 
 			this.sprite.attach(this.mask);
 			this.sprite.attach(this.graphics);
+
+			ENT.getById(this.orbitEntityId, function(orbitEntity) {
+				this.sprite.rotation = Math.atan2(this.sprite.y - orbitEntity.sprite.y, this.sprite.x - orbitEntity.sprite.x);
+			}.bind(this));
 		}
 	}
 
