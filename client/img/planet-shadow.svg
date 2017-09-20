@@ -26,19 +26,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="1.513425"
-     inkscape:cy="99.586683"
+     inkscape:cx="168.15491"
+     inkscape:cy="125.41717"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      units="px"
      inkscape:pagecheckerboard="true"
-     inkscape:window-width="1440"
-     inkscape:window-height="810"
+     inkscape:window-width="1817"
+     inkscape:window-height="952"
      inkscape:window-x="0"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
-     inkscape:snap-bbox="true">
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true">
     <inkscape:grid
        type="xygrid"
        id="grid2184"
@@ -65,15 +66,21 @@
      id="layer1"
      transform="translate(0,-263.13333)">
     <path
-       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.99999952;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
-       d="M 101.55078 0 A 71.999997 71.999997 0 0 1 120 48 A 71.999997 71.999997 0 0 1 48 120 A 71.999997 71.999997 0 0 1 0 101.5625 L 0 128 L 128 128 L 128 0 L 101.55078 0 z "
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5.53700733;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       d="M 79.837891 0 A 79.999998 79.999998 0 0 1 112 64 A 79.999998 79.999998 0 0 1 79.863281 128 L 128 128 L 128 0 L 79.837891 0 z "
        transform="matrix(0.26458333,0,0,0.26458333,0,263.13333)"
-       id="rect828" />
+       id="rect8695" />
+    <ellipse
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.46499991;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path8703"
+       cx="8.4666662"
+       cy="280.06665"
+       r="4.2333331" />
     <circle
-       style="fill:#ffffff;fill-opacity:0.62686568;fill-rule:nonzero;stroke:none;stroke-width:2.11666656;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
-       id="path833"
-       cx="12.7"
-       cy="275.83334"
-       r="5.2916665" />
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.46499991;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path8731"
+       cx="8.4666662"
+       cy="280.06665"
+       r="6.3499999" />
   </g>
 </svg>

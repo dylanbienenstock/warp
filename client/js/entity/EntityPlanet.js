@@ -1,9 +1,16 @@
+var outlineRadius = 3;
+
 class EntityPlanet extends EntityBase {
 	constructor(data) {
 		super(data);
 
 		this.radius = data.radius || 64;
-		this.color = data.color || 0xFF6010;
+		this.skinInfo = data.skinInfo;
+		this.colors = data.colors || [ 0x3280B4, 0x82C864, 0xFFFFFF ];
+
+		if (this.colors[2] == null) {
+			this.skinInfo.hasClouds = false;
+		}
 
 		this.container = new PIXI.Container();
 
@@ -19,9 +26,31 @@ class EntityPlanet extends EntityBase {
 		this.graphics.x = this.x;
 		this.graphics.y = this.y;
 
-		this.graphics.beginFill(this.color);
+		this.graphics.beginFill(0xFFFFFF, 0.16);
+		this.graphics.drawCircle(0, 0, this.radius + outlineRadius + 12 * 1);
+		this.graphics.drawCircle(0, 0, this.radius + outlineRadius + 12 * 2);
+		this.graphics.drawCircle(0, 0, this.radius + outlineRadius + 12 * 3);
+		this.graphics.endFill();
+
+		this.graphics.beginFill(0x000000, 1);
+		this.graphics.drawCircle(0, 0, this.radius + 3);
+		this.graphics.endFill();
+
+		this.graphics.beginFill(this.colors[0], 1);
 		this.graphics.drawCircle(0, 0, this.radius);
 		this.graphics.endFill();
+
+		this.landSprite = new PIXI.extras.TilingSprite(
+			PIXI.loader.resources["planet:" + this.skinInfo.id + ":land"].texture,
+			this.radius * 4,
+			this.radius * 2
+		);
+		this.landSprite.tileScale.x = this.radius * 2 / 256; 
+		this.landSprite.tileScale.y = this.radius * 2 / 256; 
+		this.landSprite.tilePosition.x = 0;
+		this.landSprite.tilePosition.y = 0;
+		this.landSprite.mask = this.mask;
+		this.landSprite.tint = this.colors[1];
 
 		this.sprite = new PIXI.Sprite(PIXI.loader.resources["planet:shadow"].texture);
 		this.sprite.anchor.set(0.5, 0.5);
@@ -32,24 +61,49 @@ class EntityPlanet extends EntityBase {
 		this.sprite.x = this.x;
 		this.sprite.y = this.y;
 
-		this.container.addChild(this.graphics, this.mask, this.sprite);
+		if (this.skinInfo.hasClouds) {
+			this.cloudsSprite = new PIXI.extras.TilingSprite(
+				PIXI.loader.resources["planet:" + this.skinInfo.id + ":clouds"].texture,
+				this.radius * 4,
+				this.radius * 2
+			);
+			this.cloudsSprite.tileScale.x = this.radius * 2 / 256; 
+			this.cloudsSprite.tileScale.y = this.radius * 2 / 256; 
+			this.cloudsSprite.tilePosition.x = 0;
+			this.cloudsSprite.tilePosition.y = 0;
+			this.cloudsSprite.mask = this.mask;
+			this.cloudsSprite.tint = this.colors[2];
+
+			this.container.addChild(this.mask, this.graphics, this.landSprite, this.cloudsSprite, this.sprite);
+		} else {
+			this.container.addChild(this.mask, this.graphics, this.landSprite, this.sprite);
+		}
+
 		ENT.stageContainer.addChild(this.container);
 	}
 
 	update() {
 		super.update();
 
-		addRadarDot(this.sprite.x, this.sprite.y, this.color, 2);
+		addRadarDot(this.sprite.x, this.sprite.y, this.colors[0], 2);
 
 		if (this.container.visible) {
-			this.sprite.attach(this.graphics);
+			this.landSprite.position.x = this.sprite.position.x - this.radius * 2;
+			this.landSprite.position.y = this.sprite.position.y - this.radius;
+			this.landSprite.tilePosition.x += 0.15;
+			
+			if (this.skinInfo.hasClouds) {
+				this.landSprite.attach(this.cloudsSprite);
+				this.cloudsSprite.tilePosition.x += 0.1;
+			}
+
 			this.sprite.attach(this.mask);
+			this.sprite.attach(this.graphics);
 		}
 	}
 
 	cull(visible) {
 		this.container.visible = visible;
-		this.sprite.mask = (visible ? this.mask : null);
 	}
 
 	remove() {

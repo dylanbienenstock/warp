@@ -28,6 +28,10 @@ function loadContent(setup) {
 		.add("station:inner:shadow", "./img/station/inner-shadow.svg")
 
 		.add("planet:shadow", "./img/planet-shadow.svg")
+		.add("planet:0:land", "./img/planets/0/land.png")
+		.add("planet:0:clouds", "./img/planets/0/clouds.png")
+		.add("planet:1:land", "./img/planets/1/land.png")
+		.add("planet:1:clouds", "./img/planets/1/clouds.png")
 
 		.add("asteroid:0", "./img/asteroid/0.svg")
 		.add("asteroid:1", "./img/asteroid/1.svg")

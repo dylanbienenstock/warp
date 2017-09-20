@@ -48,8 +48,11 @@ function createPIXIRenderer() {
 	var ww = $(window).innerWidth();
 	var wh = $(window).innerHeight();
 
-	window.renderer = new PIXI.CanvasRenderer(ww, wh);
-	window.renderer.backgroundColor = 0x000000;
+	window.renderer = new PIXI.CanvasRenderer({
+		width: ww,
+		height: wh,
+		backgroundColor: 0x000000
+	});
 
 	document.body.appendChild(renderer.view);
 
