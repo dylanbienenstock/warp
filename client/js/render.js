@@ -98,23 +98,11 @@ function createPIXIRenderer() {
 
 function drawBoundary() {
 	boundary = new PIXI.Graphics();
-	boundaryContainer.addChild(boundary)
 
-	// Map boundary
 	boundary.lineStyle(3, 0xFFFFFF, 1);
 	boundary.drawCircle(0, 0, window.boundaryRadius);
 
-	// DMZ
-	boundary.beginFill(0x00FF00, 0.11);
-	boundary.lineStyle();
-	boundary.drawCircle(0, 0, window.protectedSpaceRadius + window.DMZRadius);
-	boundary.endFill();
-
-	// Protected space
-	boundary.beginFill(0x00FF00, 0.04);
-	boundary.lineStyle(1, 0x00FF00, 0.5);
-	boundary.drawCircle(0, 0, window.protectedSpaceRadius);
-	boundary.endFill();
+	boundaryContainer.addChild(boundary)
 }
 
 function resizeRenderer() {
