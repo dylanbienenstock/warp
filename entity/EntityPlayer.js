@@ -147,13 +147,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		kill() {
-			ENT.trigger(this, "death");
-			console.log("! Player " + this.name + " was destroyed!");
+			if (this.alive) {
+				ENT.trigger(this, "death");
+				console.log("! Player " + this.name + " was destroyed!");
 
-			this.ship.physicsObject.active = false;
-			this.ship.shield.physicsObject.active = false;
-			this.alive = false;
-			this.doNotNetwork = true;
+				this.ship.physicsObject.active = false;
+				this.ship.shield.physicsObject.active = false;
+				this.alive = false;
+				this.doNotNetwork = true;
+			}
 		}
 
 		controlDown(control) {
@@ -229,21 +231,19 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					}
 				}
 
-				if (this.ship.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius + ENT.DMZRadius) {
-					if (this.primaryWeapon != undefined && this.controls.firePrimary && now - this.primaryWeapon.lastFire >= this.primaryWeapon.fireInterval) {
-						this.primaryWeapon.fire(firePosition, fireAngle);
-						this.primaryWeapon.lastFire = now;
-					}
+				if (this.primaryWeapon != undefined && this.controls.firePrimary && now - this.primaryWeapon.lastFire >= this.primaryWeapon.fireInterval) {
+					this.primaryWeapon.fire(firePosition, fireAngle);
+					this.primaryWeapon.lastFire = now;
+				}
 
-					if (this.secondaryWeapon != undefined && this.controls.fireSecondary && now - this.secondaryWeapon.lastFire >= this.secondaryWeapon.fireInterval) {
-						this.secondaryWeapon.fire(firePosition, fireAngle);
-						this.secondaryWeapon.lastFire = now;
-					}
+				if (this.secondaryWeapon != undefined && this.controls.fireSecondary && now - this.secondaryWeapon.lastFire >= this.secondaryWeapon.fireInterval) {
+					this.secondaryWeapon.fire(firePosition, fireAngle);
+					this.secondaryWeapon.lastFire = now;
+				}
 
-					if (this.specialWeapon != undefined && this.controls.fireSpecial && now - this.specialWeapon.lastFire >= this.specialWeapon.fireInterval) {
-						this.specialWeapon.fire(firePosition, fireAngle);
-						this.specialWeapon.lastFire = now;
-					}
+				if (this.specialWeapon != undefined && this.controls.fireSpecial && now - this.specialWeapon.lastFire >= this.specialWeapon.fireInterval) {
+					this.specialWeapon.fire(firePosition, fireAngle);
+					this.specialWeapon.lastFire = now;
 				}
 
 				this.shieldPower = this.ship.shield.power;
