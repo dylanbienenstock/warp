@@ -9,6 +9,7 @@ var windowPadding = 16;
 var radar;
 var radarDots = [];
 var radarZones = [];
+var radarRings = [];
 var radarRadius = 100;
 var radarProportion = radarRadius / window.boundaryRadius;
 var radarX = windowPadding + radarRadius;
@@ -67,21 +68,45 @@ function drawHUD() {
 	drawMeters();
 }
 
-function addRadarDot(x, y, color, radius, trueRadius) {
+function addRadarDot(x, y, color, radius, trueRadius, roundPosition) {
+	if (roundPosition == undefined) {
+		roundPosition = true;
+	}
+
 	radarDots.push({
 		x: x * radarProportion + radarX,
 		y: y * radarProportion + radarY,
 		color: color,
-		radius: (trueRadius ? radius * radarProportion : radius)
+		radius: (trueRadius ? radius * radarProportion : radius),
+		roundPosition: roundPosition
 	});
 }
 
-function addRadarZone(x, y, color, radius, trueRadius) {
+function addRadarZone(x, y, color, radius, trueRadius, roundPosition) {
+	if (roundPosition == undefined) {
+		roundPosition = true;
+	}
+
 	radarZones.push({
 		x: x * radarProportion + radarX,
 		y: y * radarProportion + radarY,
 		color: color,
-		radius: (trueRadius ? radius * radarProportion : radius)
+		radius: (trueRadius ? radius * radarProportion : radius),
+		roundPosition: roundPosition
+	});
+}
+
+function addRadarRing(x, y, color, radius, trueRadius, roundPosition) {
+	if (roundPosition == undefined) {
+		roundPosition = true;
+	}
+
+	radarRings.push({
+		x: x * radarProportion + radarX,
+		y: y * radarProportion + radarY,
+		color: color,
+		radius: (trueRadius ? radius * radarProportion : radius),
+		roundPosition: roundPosition
 	});
 }
 
@@ -93,9 +118,10 @@ function drawRadar() {
 	radar.endFill();
 	radar.lineStyle();
 
-	radar.beginFill(0x00FF00, 0.25);
-	radar.drawCircle(radarX, radarY, window.protectedSpaceRadius * radarProportion);
-	radar.endFill();
+	for (var i = radarRings.length - 1; i >= 0; i--) {
+		drawRadarRing(radarRings[i]);
+		radarRings.splice(i, 1);
+	}
 
 	for (var i = radarZones.length - 1; i >= 0; i--) {
 		drawRadarDot(radarZones[i], true);
@@ -120,17 +146,33 @@ function drawRadar() {
 }
 
 function drawRadarDot(dot, isZone) {
+	radar.lineStyle();
 	radar.beginFill(dot.color, (isZone ? 0.3 : 1));
 
+	if (dot.roundPosition) {
+		dot.x = Math.round(dot.x);
+		dot.y = Math.round(dot.y);
+	}
+
 	if (dot.radius > 1) {
-		radar.drawCircle(Math.round(dot.x), Math.round(dot.y), dot.radius);
+		radar.drawCircle(dot.x, dot.y, dot.radius);
 	} else if (dot.radius == 1) {
-		radar.drawRect(Math.round(dot.x) - 1, Math.round(dot.y) - 1, 2, 2);
+		radar.drawRect(dot.x - 1, dot.y - 1, 2, 2);
 	} else {
-		radar.drawRect(Math.round(dot.x), Math.round(dot.y), 1, 1);
+		radar.drawRect(dot.x, dot.y, 1, 1);
 	}
 
 	radar.endFill();
+}
+
+function drawRadarRing(ring) {
+	if (ring.roundPosition) {
+		ring.x = Math.round(ring.x);
+		ring.y = Math.round(ring.y);
+	}
+
+	radar.lineStyle(1, ring.color);
+	radar.drawCircle(ring.x, ring.y, ring.radius);
 }
 
 function drawMeters() {
