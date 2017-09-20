@@ -5,6 +5,8 @@ class EntityPlanet extends EntityBase {
 		super(data);
 
 		this.radius = data.radius || 64;
+		this.orbitEntityId = data.orbitEntityId;
+		this.orbitRadius = data.orbitRadius;
 		this.skinInfo = data.skinInfo;
 		this.colors = data.colors || [ 0x3280B4, 0x82C864, 0xFFFFFF ];
 
@@ -45,9 +47,9 @@ class EntityPlanet extends EntityBase {
 			this.radius * 4,
 			this.radius * 2
 		);
-		this.landSprite.tileScale.x = this.radius * 2 / 256; 
-		this.landSprite.tileScale.y = this.radius * 2 / 256; 
-		this.landSprite.tilePosition.x = 0;
+		this.landSprite.tileScale.x = this.radius / 128; 
+		this.landSprite.tileScale.y = this.radius / 128; 
+		this.landSprite.tilePosition.x = Math.random() * 256;;
 		this.landSprite.tilePosition.y = 0;
 		this.landSprite.mask = this.mask;
 		this.landSprite.tint = this.colors[1];
@@ -67,8 +69,8 @@ class EntityPlanet extends EntityBase {
 				this.radius * 4,
 				this.radius * 2
 			);
-			this.cloudsSprite.tileScale.x = this.radius * 2 / 256; 
-			this.cloudsSprite.tileScale.y = this.radius * 2 / 256; 
+			this.cloudsSprite.tileScale.x = this.radius / 128; 
+			this.cloudsSprite.tileScale.y = this.radius / 128; 
 			this.cloudsSprite.tilePosition.x = 0;
 			this.cloudsSprite.tilePosition.y = 0;
 			this.cloudsSprite.mask = this.mask;
@@ -85,7 +87,12 @@ class EntityPlanet extends EntityBase {
 	update() {
 		super.update();
 
-		addRadarDot(this.sprite.x, this.sprite.y, this.colors[0], 2);
+		addRadarDot(this.sprite.x, this.sprite.y, 0xFFFFFF, 1, false, false);
+		addRadarDot(this.sprite.x, this.sprite.y, 0x000000, 2, false, false);
+
+		// ENT.getById(this.orbitEntityId, function(orbitEntity) {
+		// 	addRadarRing(orbitEntity.sprite.x, orbitEntity.sprite.y, 0xFFFFFF, this.orbitRadius, true, false);
+		// }.bind(this));
 
 		if (this.container.visible) {
 			this.landSprite.position.x = this.sprite.position.x - this.radius * 2;

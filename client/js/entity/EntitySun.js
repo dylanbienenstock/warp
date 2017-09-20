@@ -8,6 +8,8 @@ class EntitySun extends EntityBase {
 		super(data);
 
 		this.radius = data.radius || 512;
+		this.gravityRadius = data.gravityRadius;
+		this.systemRadius = data.systemRadius;
 		this.color = data.color || 0xFFAA44;
 		this.isBlackHole = data.isBlackHole;
 		this.firstDraw = true;
@@ -36,8 +38,14 @@ class EntitySun extends EntityBase {
 	update() {
 		super.update();
 
-		addRadarZone(this.graphics.x, this.graphics.y, this.color, 2048, true);
-		addRadarDot(this.graphics.x, this.graphics.y, (this.isBlackHole ? 0x000000 : this.color), this.radius, true);
+		addRadarZone(this.graphics.x, this.graphics.y, this.color, this.radius + this.gravityRadius, true, false);
+		addRadarDot(this.graphics.x, this.graphics.y, (this.isBlackHole ? 0x000000 : this.color), this.radius, true, false);
+
+		if (!this.isBlackHole) {
+			addRadarZone(this.graphics.x, this.graphics.y, 0x888888, this.systemRadius, true, false);
+		} else {
+			addRadarDot(this.graphics.x, this.graphics.y, 0x333333, this.radius + 256, true, false);
+		}
 		
 		if (this.container.visible || this.firstDraw) {
 			this.firstDraw == false;
@@ -59,6 +67,8 @@ class EntitySun extends EntityBase {
 				this.graphics.drawCircle(0, 0, this.radius + glowRadius);
 				this.graphics.endFill();
 			}
+
+			this.bodyGraphics.position = this.graphics.position;
 		}
 	}
 

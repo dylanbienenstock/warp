@@ -29,8 +29,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super(data);
 
-			this.radius = data.radius || 64;
-
+			this.networkGlobally = true;
 			this.skinInfo = skinInfo[Math.floor(Math.random() * skinInfo.length)];
 
 			if (this.skinInfo.colorSchemes == "any") {
@@ -38,6 +37,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			} else {
 				this.colors = colorSchemes[this.skinInfo.colorSchemes[Math.floor(Math.random() * this.skinInfo.colorSchemes.length)]];
 			}
+
+			this.radius = data.radius || 64;
+			this.orbitEntityId = data.orbitEntityId;
+			this.orbitRadius = data.orbitRadius;
+			this.orbitOffset = data.orbitOffset;
+			this.orbitSpeedDivisor = data.orbitSpeedDivisor;
 
 			this.physicsObject = PHYS.new("Circle", {
 				restrictToMap: true,
@@ -53,15 +58,20 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		update(timeMult) {
 			super.update();
-		}
 
-		collideWith(entity, collision) {
-			if (entity instanceof ENT.type("Planet")) {
-				var distance = this.physicsObject.distanceTo(entity.physicsObject.x, entity.physicsObject.y);
-				var velocity = (entity.radius / this.radius) * (this.radius + entity.radius - distance) * 0.05 + 0.025;
+			// Orbit
+			if (this.orbitEntityId != undefined) {
+				ENT.getById(this.orbitEntityId, function(orbitEntity) {
+					if (orbitEntity.physicsObject != undefined) {
+						var now = Date.now();
 
-				this.physicsObject.velocityX += -Math.cos(collision.angle) * velocity;
-				this.physicsObject.velocityY += -Math.sin(collision.angle) * velocity;
+						var orbitX = Math.cos(now / this.orbitSpeedDivisor + this.orbitOffset) * this.orbitRadius;
+						var orbitY = Math.sin(now / this.orbitSpeedDivisor + this.orbitOffset) * this.orbitRadius;
+
+						this.physicsObject.x = orbitEntity.physicsObject.x + orbitX - this.radius;
+						this.physicsObject.y = orbitEntity.physicsObject.y + orbitY - this.radius;
+					}
+				}.bind(this));
 			}
 		}
 

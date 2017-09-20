@@ -76,8 +76,8 @@ function acceptConnection(name, socket) {
 	var player = ENT.new("Player", {
 		name: name,
 		socketId: socket.id,
-		x: -Math.cos(angle) * 145,
-		y: -Math.sin(angle) * 145
+		x: -Math.cos(angle) * 4094,
+		y: -Math.sin(angle) * 4096
 	});
 
 	ENT.create(player, socket); 
@@ -181,38 +181,23 @@ function processName(name) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
 function setupGame() {
-	ENT.create(ENT.new("Station", {
+	// ENT.create(ENT.new("Station", {
+	// 	x: 0,
+	// 	y: 0,
+	// 	alignment: "good"
+	// }));
+
+	var blackHole = ENT.create(ENT.new("Sun", {
 		x: 0,
-		y: 0,
-		alignment: "good"
-	}));
-
-	ENT.create(ENT.new("Sun", {
-		x: 4000,
-		y: 0,
-	}));
-
-	ENT.create(ENT.new("Sun", {
-		x: -4000,
 		y: 0,
 		radius: 256,
 		color: 0x7718B2,
 		isBlackHole: true
 	}));
 
-	for (var i = 0; i < (process.env.PLANETS || 8); i++) {
-		var angle = 2 * Math.PI * Math.random();
-
-		ENT.create(ENT.new("Planet", {
-			x: -Math.cos(angle) * (Math.random() * 512 + 1024),
-			y: -Math.sin(angle) * (Math.random() * 512 + 1024),
-			velocityX: -Math.cos(angle) * 2,
-			velocityY: -Math.sin(angle) * 2,
-			radius: Math.random() * 32 + 32
-		}));
-	}
-
-	for (var i = 0; i < (process.env.ASTEROIDS || 256); i++) {
+	blackHole.createUniverse();
+	
+	for (var i = 0; i < (process.env.ASTEROIDS || 0); i++) {
 		var angle = 2 * Math.PI * Math.random();
 
 		ENT.create(ENT.new("Asteroid"));
