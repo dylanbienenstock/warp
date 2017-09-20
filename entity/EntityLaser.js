@@ -61,11 +61,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				ENT.remove(this);
 			}
 
-			if (entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Asteroid")) {
-				var velocity = (entity instanceof ENT.type("Planet") ? 16 : 64);
-
-				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / velocity;
-				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / velocity;
+			if (entity instanceof ENT.type("Asteroid")) {
+				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / 64;
+				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / 64;
 
 				ENT.remove(this);
 			}
