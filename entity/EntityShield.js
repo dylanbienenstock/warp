@@ -73,8 +73,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				if (owner != undefined) {
 					this.physicsObject.x = owner.physicsObject.info.bounds.center.x + this.physicsObject.totalVelocityX;
 					this.physicsObject.y = owner.physicsObject.info.bounds.center.y + this.physicsObject.totalVelocityY;
-
-					this.physicsObject.active = (this.physicsObject.distanceTo(0, 0) > ENT.protectedSpaceRadius);
 				}
 
 				if (Date.now() - this.lastDamageTime >= 2500) {
