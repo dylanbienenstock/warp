@@ -4,7 +4,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super(data);
 
 			this.lifespan = data.lifespan || 1000;
-			this.networkGlobally = true;
 
 			this.angle = data.angle || 0;
 			this.speed = data.speed || 0;
