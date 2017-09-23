@@ -113,7 +113,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		createSolarSystem(hasAsteroidBelt) {
 			var initialCreationRadius = this.gravityRadius + 512
 			var creationRadius = initialCreationRadius;
-			var nextObjectRadius = Math.round(Math.random() * 16 + 32 + 64);
+			var nextObjectRadius = Math.round(Math.random() * 32 + 64);
 
 			while (creationRadius < this.systemRadius - 512) {
 				if (hasAsteroidBelt && creationRadius >= this.systemRadius / 2) {
