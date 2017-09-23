@@ -262,7 +262,8 @@ function bindControls() {
 				if (window.aboutToWarp) {
 					window.aboutToWarp = false;
 					window.warping = true;
-					sendWarp(getWarpPosition());
+					window.warpPosition = getWarpPosition();
+					sendWarp(window.warpPosition);
 				} else {
 					sendControl("firePrimary", false);
 					ENT.localPlayer.controls.firePrimary = false;
