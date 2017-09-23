@@ -18,6 +18,17 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastBoostTime = 0;
 			this.alive = true;
 
+			this.warping = false;
+			this.warpPower = 100;
+			this.warpStartX = null;
+			this.warpStartX = null;
+			this.warpEndX = null;
+			this.warpEndY = null;
+			this.warpEndTriggered = null;
+			this.warpStartTime = null;
+			this.minWarpDistance = 3000;
+			this.maxWarpDistance = 10000;
+
 			this.NPC = data.NPC;
 			this.NPCController = null;
 			this.NPCProfile = data.NPCProfile;
@@ -252,7 +263,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					this.boost = Math.min(this.boost + this.ship.boostRegen * timeMult, 100);
 				}
 
-				this.move(timeMult);
+				if (this.warping) {
+					this.warp();
+				} else {
+					this.move(timeMult);
+				}
 
 				if (this.boosting && !this.lastBoosting) {
 					ENT.trigger(this, "boost");
@@ -306,6 +321,27 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			}
 		}
 
+		// From http://gizma.com/easing/ Thanks :)
+		// time, start, change, duration
+		easeInExpo(t, b, c, d) {
+			return c * Math.pow(2, 10 * (t / d - 1)) + b;
+		}
+
+		warp() {
+			var now = Date.now();
+			var distance = Math.sqrt(Math.pow(this.warpStartX - this.warpEndX, 2) + Math.pow(this.warpStartY - this.warpEndY, 2));
+			var duration = distance / 4;
+
+			if (now - this.warpStartTime >= duration) {
+				this.warping = false;
+				this.warpEndTriggered = false;
+				ENT.trigger(this, "endWarp");
+			} else {
+				this.ship.physicsObject.x = this.easeInExpo(now - this.warpStartTime, this.warpStartX, this.warpEndX - this.warpStartX, duration);
+				this.ship.physicsObject.y = this.easeInExpo(now - this.warpStartTime, this.warpStartY, this.warpEndY - this.warpStartY, duration);
+			}
+		}
+
 		network(ENT) {
 			var toSend = {
 				x: this.ship.physicsObject.x,
@@ -316,7 +352,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				health: this.ship.health,
 				shieldPower: this.shieldPower,
 				boost: this.boost,
-				boosting: this.boosting
+				boosting: this.boosting,
+				warping: this.warping
 			};
 
 			if (this.shouldNetworkShipListing) {
@@ -337,6 +374,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			if (this.shouldNetworkSpecialWeaponListing) {
 				toSend.specialWeaponListing = this.specialWeaponListing;
 				this.shouldNetworkSpecialWeaponListing = false;
+			}
+
+			if (this.warping) {
+				toSend.warpEndX = this.warpEndX;
+				toSend.warpEndY = this.warpEndY;
 			}
 
 			ENT.sendProperties(this, toSend);

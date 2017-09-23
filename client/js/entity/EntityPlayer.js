@@ -7,6 +7,7 @@ class EntityPlayer extends EntityBase {
 		this.triggers.death = this.onDeath.bind(this);
 		this.triggers.boost = this.onBoost.bind(this);
 		this.triggers.lockBroken = this.onLockBroken.bind(this);
+		this.triggers.endWarp = this.onEndWarp.bind(this);
 
 		this.name = data.name;
 		this.credits = data.credits || 0;
@@ -19,6 +20,10 @@ class EntityPlayer extends EntityBase {
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.rotation = data.rotation || 0;
+
+		this.warping = data.warping;
+		this.minWarpDistance = data.minWarpDistance;
+		this.maxWarpDistance = data.maxWarpDistance;
 
 		this.controls = {
 			thrustForward: false,
@@ -85,6 +90,10 @@ class EntityPlayer extends EntityBase {
 
 	onLockBroken() {
 		window.lockedPlayerId = null;
+	}
+
+	onEndWarp() {
+		window.warping = false;
 	}
 
 	update() {

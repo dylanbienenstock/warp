@@ -95,7 +95,7 @@ function acceptConnection(name, socket) {
 		y: -Math.sin(angle) * 4096
 	});
 
-	ENT.create(player, socket); 
+	ENT.create(player, socket);
 
 	player.ship = new Ship.Skiff(player);
 	player.primaryWeapon = new Weapon.Peashooter(player);
@@ -155,6 +155,16 @@ function acceptConnection(name, socket) {
 			hue: player.chatHue,
 			message: sanitizer.escape(message)
 		});
+	});
+
+	socket.on("warp", function(data) {
+		player.warping = true;
+		player.warpStartTime = Date.now();
+		player.warpStartX = player.ship.physicsObject.x;
+		player.warpStartY = player.ship.physicsObject.y;
+		player.warpEndX = data.x;
+		player.warpEndY = data.y;
+		player.warpEndTriggered = false;
 	});
 }
 

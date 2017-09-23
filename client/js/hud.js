@@ -1,12 +1,13 @@
+var windowPadding = 16;
+
 var meterCredits;
 var meterBoost;
 var meterShield;
 var meterHealth;
 var metersVisible = false;
 
-var windowPadding = 16;
-
 var radar;
+var radarMask;
 var radarDots = [];
 var radarZones = [];
 var radarRings = [];
@@ -25,14 +26,18 @@ var radarY = radarInitialX;
 var radarInitialAlpha = 0.5;
 var radarDestAlpha = radarInitialAlpha;
 var radarAlpha = radarInitialAlpha;
-var radarLerpFactor = 0.2;
+var radarWarpCircleRadius = 13;
+var radarLerpFactor = 1;
 
 window.aboutToWarp = false;
+window.warping = false;
 
 function setupHUD(HUDContainer) {
 	radar = new PIXI.Graphics();
+	radarMask = new PIXI.Graphics();
+	radar.mask = radarMask;
 
-	HUDContainer.addChild(radar);
+	HUDContainer.addChild(radar, radarMask);
 }
 
 function setupHUDMeters() {
@@ -126,11 +131,17 @@ function addRadarRing(x, y, color, radius, width, trueDimensions, roundPosition)
 }
 
 function drawRadar() {
+	var radarIsFullSize = false;
+
 	if (window.aboutToWarp) {
-		radarDestScale = (ENT.wh / 2 - 64) / radarInitialRadius;
-		radarDestX = ENT.ww / 2;
-		radarDestY = ENT.wh / 2;
+		var fullSize = (ENT.wh / 2 - 64) / radarInitialRadius;
+
+		radarDestScale = fullSize;
+		radarDestX = Math.round(ENT.ww / 2);
+		radarDestY = Math.round(ENT.wh / 2);
 		radarDestAlpha = 1;
+
+		radarFullSize = radarDestScale == fullSize;
 	} else {
 		radarDestScale = radarInitialScale;
 		radarDestX = radarInitialX;
@@ -145,12 +156,15 @@ function drawRadar() {
 	radarY = lerp(radarY, radarDestY, radarLerpFactor);
 	radarAlpha = lerp(radarAlpha, radarDestAlpha, radarLerpFactor);
 
+	radarMask.clear();
+	radarMask.beginFill(0xFFFFFF);
+	radarMask.drawCircle(radarX, radarY, radarRadius);
+	radarMask.endFill();
+
 	radar.clear();
-	radar.lineStyle(2, 0xFFFFFF, 1);
 	radar.beginFill(0x000000, radarAlpha);
 	radar.drawCircle(radarX, radarY, radarRadius);
 	radar.endFill();
-	radar.lineStyle();
 
 	for (var i = radarRings.length - 1; i >= 0; i--) {
 		drawRadarRing(radarRings[i]);
@@ -177,6 +191,80 @@ function drawRadar() {
 						   quadTree.size * radarProportion, quadTree.size * radarProportion);
 		}
 	}
+
+	if (window.aboutToWarp && radarFullSize) {
+		drawWarpPath();
+	} else {
+		document.body.style.cursor = "auto";
+	}
+
+	radar.lineStyle(2, 0xFFFFFF);
+	radar.drawCircle(radarX, radarY, radarRadius - 1);
+}
+
+function drawWarpPath() {
+	var localPlayerX = Math.round(ENT.localPlayer.sprite.x * radarProportion + radarX);
+	var localPlayerY = Math.round(ENT.localPlayer.sprite.y * radarProportion + radarY);
+	var distanceFromCenter = Math.sqrt(Math.pow(ENT.ww / 2 - window.mouseX, 2) + Math.pow(ENT.wh / 2 - window.mouseY, 2));
+	var distanceFromPlayer = Math.sqrt(Math.pow(localPlayerX - window.mouseX, 2) + Math.pow(localPlayerY - window.mouseY, 2));
+	var angle = Math.atan2(window.mouseY - localPlayerY, window.mouseX - localPlayerX);
+	var minWarpDistance = ENT.localPlayer.minWarpDistance * radarProportion;
+	var maxWarpDistance = ENT.localPlayer.maxWarpDistance * radarProportion;
+	var warpWidth = maxWarpDistance - minWarpDistance;
+	var cursorColor = 0xF44242;
+
+	radar.lineStyle(warpWidth, 0x42E8F8, 0.3);
+	radar.drawCircle(localPlayerX, localPlayerY, minWarpDistance + warpWidth / 2);
+
+	if (distanceFromPlayer > minWarpDistance &&
+		distanceFromPlayer < maxWarpDistance &&
+		distanceFromCenter < radarRadius) {
+
+		cursorColor = 0x42E8F8;
+		document.body.style.cursor = "pointer";
+	} else {
+		document.body.style.cursor = "auto";
+	}
+
+	radar.lineStyle(2, cursorColor, (radarAlpha - radarInitialAlpha) * (1 / radarInitialAlpha));
+	radar.drawCircle(localPlayerX, localPlayerY, radarWarpCircleRadius);
+
+	if (distanceFromPlayer > minWarpDistance && distanceFromCenter < radarRadius) {
+		ENT.localPlayer.sprite.rotation = Math.atan2(localPlayerY - window.mouseY, localPlayerX - window.mouseX);
+
+		radar.beginFill(cursorColor, 0.5);
+		radar.drawCircle(window.mouseX, window.mouseY, radarWarpCircleRadius);
+		radar.endFill();
+
+		var lineStartX = localPlayerX + Math.cos(angle) * radarWarpCircleRadius;
+		var lineStartY = localPlayerY + Math.sin(angle) * radarWarpCircleRadius;
+		var lineEndX = window.mouseX - Math.cos(angle) * radarWarpCircleRadius;
+		var lineEndY = window.mouseY - Math.sin(angle) * radarWarpCircleRadius;
+
+		radar.moveTo(lineStartX, lineStartY);
+		radar.lineTo(lineEndX, lineEndY);
+
+		lineStartX = lineEndX;
+		lineStartY = lineEndY;
+		lineEndX = window.mouseX - Math.cos(angle - 0.25) * radarWarpCircleRadius * 2;
+		lineEndY = window.mouseY - Math.sin(angle - 0.25) * radarWarpCircleRadius * 2;
+
+		radar.moveTo(lineStartX, lineStartY);
+		radar.lineTo(lineEndX, lineEndY);
+
+		lineEndX = window.mouseX - Math.cos(angle + 0.25) * radarWarpCircleRadius * 2;
+		lineEndY = window.mouseY - Math.sin(angle + 0.25) * radarWarpCircleRadius * 2;
+
+		radar.moveTo(lineStartX, lineStartY);
+		radar.lineTo(lineEndX, lineEndY);
+	}
+}
+
+function getWarpPosition() {
+	return {
+		x: (window.mouseX - ENT.ww / 2) / radarProportion,
+		y: (window.mouseY - ENT.wh / 2) / radarProportion
+	};
 }
 
 function drawRadarDot(dot, isZone) {

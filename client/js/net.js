@@ -119,6 +119,10 @@ function sendChatMessage(message) {
 	socket.emit("chat out", message);
 }
 
+function sendWarp(position) {
+	socket.emit("warp", position);
+}
+
 var boundControls = {};
 
 function bindKeyToFunction(key, downCallback, upCallback) {
@@ -170,9 +174,15 @@ function getBinds() {
 		$(document).toggleFullScreen();
 	});
 
+	var eDown = false;
 	bindKeyToFunction(69, function() {			// E
-		window.aboutToWarp = true;
+		if (!eDown) {
+			eDown = true;
+			window.aboutToWarp = true;
+			sendControl("firePrimary", false);
+		}
 	}, function() {
+		eDown = false;
 		window.aboutToWarp = false;
 	});
 
@@ -182,8 +192,14 @@ function getBinds() {
 function bindControls() {
 	getBinds();
 
+	window.mouseX = 0;
+	window.mouseY = 0;
+
 	$(window).mousemove(function(event) {
-		if (window.shopOpen) return;
+		window.mouseX = event.pageX;
+		window.mouseY = event.pageY;
+
+		if (window.shopOpen || window.aboutToWarp || window.warping) return;
 
 		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
 			var mousePos = getMousePosition();
@@ -223,8 +239,10 @@ function bindControls() {
 		switch (event.which) {
 			case (1):
 				if (!ENT.localPlayer.controls.firePrimary) {
-					sendControl("firePrimary", true);
-					ENT.localPlayer.controls.firePrimary = true;
+					if (!window.aboutToWarp) {
+						sendControl("firePrimary", true);
+						ENT.localPlayer.controls.firePrimary = true;
+					}
 				}
 
 				break;
@@ -241,8 +259,14 @@ function bindControls() {
 	$(window).mouseup(function(event) {
 		switch (event.which) {
 			case (1):
-				sendControl("firePrimary", false);
-				ENT.localPlayer.controls.firePrimary = false;
+				if (window.aboutToWarp) {
+					window.aboutToWarp = false;
+					window.warping = true;
+					sendWarp(getWarpPosition());
+				} else {
+					sendControl("firePrimary", false);
+					ENT.localPlayer.controls.firePrimary = false;
+				}
 
 				break;
 			case (3):
