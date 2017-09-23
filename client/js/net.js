@@ -260,10 +260,13 @@ function bindControls() {
 		switch (event.which) {
 			case (1):
 				if (window.aboutToWarp) {
-					window.aboutToWarp = false;
-					window.warping = true;
 					window.warpPosition = getWarpPosition();
-					sendWarp(window.warpPosition);
+
+					if (window.warpPosition != null) {
+						window.aboutToWarp = false;
+						window.warping = true;
+						sendWarp(window.warpPosition);
+					}
 				} else {
 					sendControl("firePrimary", false);
 					sendControl("boost", false);

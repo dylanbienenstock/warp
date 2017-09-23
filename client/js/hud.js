@@ -261,10 +261,24 @@ function drawWarpPath() {
 }
 
 function getWarpPosition() {
-	return {
-		x: (window.mouseX - ENT.ww / 2) / radarProportion,
-		y: (window.mouseY - ENT.wh / 2) / radarProportion
-	};
+	var localPlayerX = Math.round(ENT.localPlayer.sprite.x * radarProportion + radarX);
+	var localPlayerY = Math.round(ENT.localPlayer.sprite.y * radarProportion + radarY);
+	var distanceFromCenter = Math.sqrt(Math.pow(ENT.ww / 2 - window.mouseX, 2) + Math.pow(ENT.wh / 2 - window.mouseY, 2));
+	var distanceFromPlayer = Math.sqrt(Math.pow(localPlayerX - window.mouseX, 2) + Math.pow(localPlayerY - window.mouseY, 2));
+	var minWarpDistance = ENT.localPlayer.minWarpDistance * radarProportion;
+	var maxWarpDistance = ENT.localPlayer.maxWarpDistance * radarProportion;
+
+	if (distanceFromPlayer > minWarpDistance && 
+		distanceFromPlayer < maxWarpDistance && 
+		distanceFromCenter < radarRadius) {
+
+		return {
+			x: (window.mouseX - ENT.ww / 2) / radarProportion,
+			y: (window.mouseY - ENT.wh / 2) / radarProportion
+		};
+	}
+
+	return null;
 }
 
 function drawRadarDot(dot, isZone) {
