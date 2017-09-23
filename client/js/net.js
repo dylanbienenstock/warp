@@ -139,7 +139,7 @@ function bindKeyToFunction(key, downCallback, upCallback) {
 function bindPlayerControl(key, control) {
 	bindKeyToFunction(key,
 		function() {
-			if (!window.shopOpen && !ENT.localPlayer.controls[control]) {
+			if (!window.shopOpen && !window.warping && !ENT.localPlayer.controls[control]) {
 				sendControl(control, true);
 			}
 		},
@@ -266,7 +266,7 @@ function bindControls() {
 					sendWarp(window.warpPosition);
 				} else {
 					sendControl("firePrimary", false);
-					ENT.localPlayer.controls.firePrimary = false;
+					sendControl("boost", false);
 				}
 
 				break;
