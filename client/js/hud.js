@@ -10,10 +10,24 @@ var radar;
 var radarDots = [];
 var radarZones = [];
 var radarRings = [];
-var radarRadius = 100;
+var radarInitialRadius = 100;
+var radarRadius = radarInitialRadius;
 var radarProportion = radarRadius / window.boundaryRadius;
-var radarX = windowPadding + radarRadius;
-var radarY = windowPadding + radarRadius;
+var radarInitialScale = 1;
+var radarDestScale = radarInitialScale;
+var radarScale = radarInitialScale;
+var radarInitialX = windowPadding + radarRadius;
+var radarInitialY = windowPadding + radarRadius;
+var radarDestX = radarInitialX;
+var radarDestY = radarInitialX;
+var radarX = radarInitialX;
+var radarY = radarInitialX;
+var radarInitialAlpha = 0.5;
+var radarDestAlpha = radarInitialAlpha;
+var radarAlpha = radarInitialAlpha;
+var radarLerpFactor = 0.2;
+
+window.aboutToWarp = false;
 
 function setupHUD(HUDContainer) {
 	radar = new PIXI.Graphics();
@@ -77,7 +91,7 @@ function addRadarDot(x, y, color, radius, trueRadius, roundPosition) {
 		x: x * radarProportion + radarX,
 		y: y * radarProportion + radarY,
 		color: color,
-		radius: (trueRadius ? radius * radarProportion : radius),
+		radius: (trueRadius ? radius * radarProportion : radius * radarScale),
 		roundPosition: roundPosition
 	});
 }
@@ -91,12 +105,12 @@ function addRadarZone(x, y, color, radius, trueRadius, roundPosition) {
 		x: x * radarProportion + radarX,
 		y: y * radarProportion + radarY,
 		color: color,
-		radius: (trueRadius ? radius * radarProportion : radius),
+		radius: (trueRadius ? radius * radarProportion : radius * radarScale),
 		roundPosition: roundPosition
 	});
 }
 
-function addRadarRing(x, y, color, radius, trueRadius, roundPosition) {
+function addRadarRing(x, y, color, radius, width, trueDimensions, roundPosition) {
 	if (roundPosition == undefined) {
 		roundPosition = true;
 	}
@@ -105,15 +119,35 @@ function addRadarRing(x, y, color, radius, trueRadius, roundPosition) {
 		x: x * radarProportion + radarX,
 		y: y * radarProportion + radarY,
 		color: color,
-		radius: (trueRadius ? radius * radarProportion : radius),
+		radius: (trueDimensions ? radius * radarProportion : radius * radarScale),
+		width: (trueDimensions ? width * radarProportion : width),
 		roundPosition: roundPosition
 	});
 }
 
 function drawRadar() {
+	if (window.aboutToWarp) {
+		radarDestScale = (ENT.wh / 2 - 64) / radarInitialRadius;
+		radarDestX = ENT.ww / 2;
+		radarDestY = ENT.wh / 2;
+		radarDestAlpha = 1;
+	} else {
+		radarDestScale = radarInitialScale;
+		radarDestX = radarInitialX;
+		radarDestY = radarInitialY;
+		radarDestAlpha = radarInitialScale;
+	}
+
+	radarScale = lerp(radarScale, radarDestScale, radarLerpFactor);
+	radarRadius = radarInitialRadius * radarScale;
+	radarProportion = radarRadius / window.boundaryRadius;
+	radarX = lerp(radarX, radarDestX, radarLerpFactor);
+	radarY = lerp(radarY, radarDestY, radarLerpFactor);
+	radarAlpha = lerp(radarAlpha, radarDestAlpha, radarLerpFactor);
+
 	radar.clear();
 	radar.lineStyle(2, 0xFFFFFF, 1);
-	radar.beginFill(0x000000, 0.5);
+	radar.beginFill(0x000000, radarAlpha);
 	radar.drawCircle(radarX, radarY, radarRadius);
 	radar.endFill();
 	radar.lineStyle();
@@ -171,7 +205,7 @@ function drawRadarRing(ring) {
 		ring.y = Math.round(ring.y);
 	}
 
-	radar.lineStyle(1, ring.color);
+	radar.lineStyle(ring.width, ring.color);
 	radar.drawCircle(ring.x, ring.y, ring.radius);
 }
 
