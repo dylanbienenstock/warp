@@ -170,6 +170,12 @@ function getBinds() {
 		$(document).toggleFullScreen();
 	});
 
+	bindKeyToFunction(69, function() {			// E
+		window.aboutToWarp = true;
+	}, function() {
+		window.aboutToWarp = false;
+	});
+
 	bindKeyToFunction(13, focusOnChat);			// Enter
 }
 
