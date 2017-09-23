@@ -14,6 +14,9 @@ class EntitySun extends EntityBase {
 		this.isBlackHole = data.isBlackHole;
 		this.firstDraw = true;
 
+		this.asteroidBeltWidth = data.asteroidBeltWidth;
+		this.asteroidBeltRadius = data.asteroidBeltRadius;
+
 		this.container = new PIXI.Container();
 
 		this.graphics = new PIXI.Graphics();
@@ -40,6 +43,10 @@ class EntitySun extends EntityBase {
 
 		addRadarZone(this.graphics.x, this.graphics.y, this.color, this.radius + this.gravityRadius, true, false);
 		addRadarDot(this.graphics.x, this.graphics.y, (this.isBlackHole ? 0x000000 : this.color), this.radius, true, false);
+
+		if (this.asteroidBeltRadius != undefined) {
+			addRadarRing(this.graphics.x, this.graphics.y, 0x999999, this.asteroidBeltRadius + this.asteroidBeltWidth / 2, this.asteroidBeltWidth, true, false);
+		}
 
 		if (!this.isBlackHole) {
 			addRadarZone(this.graphics.x, this.graphics.y, 0x888888, this.systemRadius, true, false);

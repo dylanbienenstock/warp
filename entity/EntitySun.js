@@ -1,6 +1,8 @@
 var gravityRadius = 1028;
 var gravityFalloff = 256;
 var systemRadius = 4096 - 128;
+var asteroidBeltWidth = 512;
+var asteroidCount = 128;
 
 module.exports = function(EntityBase, ENT, PHYS) {
 	return class EntitySun extends EntityBase {
@@ -21,6 +23,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.orbitOffset = data.orbitOffset;
 			this.orbitSpeedDivisor = data.orbitSpeedDivisor;
 
+			this.asteroidBeltWidth = asteroidBeltWidth;
+			this.asteroidBeltRadius = null;
+
 			this.physicsObject = PHYS.new("Circle", {
 				restrictToMap: true,
 				x: this.x,
@@ -31,10 +36,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		create() {
 			PHYS.create(this, this.physicsObject);
+			this.orbit();
 		}
 
 		update(timeMult) {
 			super.update();
+			this.orbit();
 
 			// Gravity
 			for (var i = ENT.getAllPlayers().length - 1; i >= 0; i--) {
@@ -57,8 +64,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					player.kill();
 				}
 			}
+		}
 
-			// Orbit
+		orbit() {
 			if (this.orbitEntityId != undefined) {
 				ENT.getById(this.orbitEntityId, function(orbitEntity) {
 					if (orbitEntity.physicsObject != undefined) {
@@ -71,7 +79,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 						this.physicsObject.y = orbitEntity.physicsObject.y + orbitY;
 					}
 				}.bind(this));
-			}
+			}	
 		}
 
 		network() {
@@ -82,6 +90,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		createUniverse() {
+			var asteroidBeltIndices = [ 0, 1, 2, 3, 4, 5, 6, 7 ];
+
+			for (var i = asteroidBeltIndices.length - 4; i >= 0; i--) {
+				asteroidBeltIndices.splice(Math.floor(Math.random() * asteroidBeltIndices.length), 1);
+			}
+
 			for (var i = 0; i < 8; i++) {
 				var sun = ENT.create(ENT.new("Sun", {
 					x: 0,
@@ -92,31 +106,52 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					orbitSpeedDivisor: 24 * 60000
 				}));
 
-				sun.createSolarSystem();
+				sun.createSolarSystem(asteroidBeltIndices.includes(i));
 			}
 		}
 
-		createSolarSystem() {
+		createSolarSystem(hasAsteroidBelt) {
 			var initialCreationRadius = this.gravityRadius + 512
 			var creationRadius = initialCreationRadius;
-			var nextObjectRadius = Math.round(Math.random() * 64 + 32);
+			var nextObjectRadius = Math.round(Math.random() * 16 + 32 + 64);
 
-			while (creationRadius + nextObjectRadius < this.systemRadius - 512) {
-				creationRadius += nextObjectRadius * 4 + Math.random() * 64 + 16;
+			while (creationRadius < this.systemRadius - 512) {
+				if (hasAsteroidBelt && creationRadius >= this.systemRadius / 2) {
+					hasAsteroidBelt = false;
+					creationRadius += 128;
 
-				ENT.create(ENT.new("Planet", {
-					x: 0,
-					y: 0,
-					radius: nextObjectRadius,
-					orbitEntityId: this.id,
-					orbitRadius: creationRadius,
-					orbitOffset: Math.PI * 2 * Math.random(),
-					orbitSpeedDivisor: 8 * 60000 + 
-									   ((creationRadius - initialCreationRadius) /
-									   	(this.systemRadius - initialCreationRadius) * 4 * 60000)
-				}));
+					this.asteroidBeltRadius = creationRadius;
 
-				nextObjectRadius = Math.round(Math.random() * 64 + 32);
+					for (var i = 0; i < asteroidCount; i++) {
+						ENT.create(ENT.new("Asteroid", {
+							x: 0,
+							y: 0,
+							orbitEntityId: this.id,
+							orbitInitialRadius: creationRadius,
+							orbitFieldRadius: asteroidBeltWidth,
+							orbitOffset: Math.PI * 2 * Math.random(),
+							orbitSpeedDivisor: 8 * 60000
+						}));
+					}
+
+					creationRadius += asteroidBeltWidth + 128;
+				} else {
+					creationRadius += nextObjectRadius * 4 + Math.random() * 64 + 16;
+
+					ENT.create(ENT.new("Planet", {
+						x: 0,
+						y: 0,
+						radius: nextObjectRadius,
+						orbitEntityId: this.id,
+						orbitRadius: creationRadius,
+						orbitOffset: Math.PI * 2 * Math.random(),
+						orbitSpeedDivisor: 8 * 60000 + 
+											   ((creationRadius - initialCreationRadius) /
+											   	(this.systemRadius - initialCreationRadius) * 4 * 60000)
+					}));
+
+					nextObjectRadius = Math.round(Math.random() * 64 + 32);
+				}
 			}
 		}
 	}
