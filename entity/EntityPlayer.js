@@ -335,6 +335,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			if (now - this.warpStartTime >= duration) {
 				this.warping = false;
 				this.warpEndTriggered = false;
+				this.ship.physicsObject.x = this.warpEndX;
+				this.ship.physicsObject.y = this.warpEndY;
 				ENT.trigger(this, "endWarp");
 			} else {
 				this.ship.physicsObject.x = this.easeInExpo(now - this.warpStartTime, this.warpStartX, this.warpEndX - this.warpStartX, duration);
