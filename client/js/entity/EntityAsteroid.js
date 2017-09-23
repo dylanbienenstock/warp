@@ -54,7 +54,7 @@ class EntityAsteroid extends EntityBase {
 		super.update();
 
 		if (this.alive) {
-			addRadarDot(this.sprite.x, this.sprite.y, 0x999999, 1);
+			//addRadarDot(this.sprite.x, this.sprite.y, 0x999999, 1);
 		} else {
 			this.hasDied = true;
 		} 
