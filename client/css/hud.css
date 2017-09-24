@@ -166,5 +166,5 @@
 }
 
 .chat-message {
-
+	hyphens: auto;
 }
