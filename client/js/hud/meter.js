@@ -3,7 +3,7 @@ class HUDMeter {
 		this.containerId = data.containerId;
 		this.iconURL = data.iconURL;
 		this.color = data.color;
-		this.value = data.value;
+		this.value = null;
 		this.type = data.type || "segmented"; // "text" | "segmented"
 		this.maxValue = data.maxValue;
 		this.segmentCount = data.segmentCount;
@@ -84,25 +84,27 @@ class HUDMeter {
 	}
 
 	setValue(value, lerpFactor) {
-		this.value = lerp(this.value, Math.max(value, 0), lerpFactor || 1);
+		if (value != this.value) {
+			this.value = lerp(this.value, Math.max(value, 0), lerpFactor || 1);
 
-		if (this.type == "segmented") {
-			var segmentValue = this.maxValue / this.segmentCount;
-			var fullSegments = Math.floor(this.value / segmentValue);
-			var partialSegmentAlpha = Math.min(Math.max((this.value - (segmentValue * fullSegments)) * (1 / segmentValue), 0.01), 0.99);
-			var partialSegmentDrawn = false;
+			if (this.type == "segmented") {
+				var segmentValue = this.maxValue / this.segmentCount;
+				var fullSegments = Math.floor(this.value / segmentValue);
+				var partialSegmentAlpha = Math.min(Math.max((this.value - (segmentValue * fullSegments)) * (1 / segmentValue), 0.01), 0.99);
+				var partialSegmentDrawn = false;
 
-			for (var i = 0; i < this.segmentCount; i++) {
-				$(this.segments[i]).css({
-					opacity: (i < fullSegments ? 0.99 : (!partialSegmentDrawn ? partialSegmentAlpha : 0.01))
-				});
+				for (var i = 0; i < this.segmentCount; i++) {
+					$(this.segments[i]).css({
+						opacity: (i < fullSegments ? 0.99 : (!partialSegmentDrawn ? partialSegmentAlpha : 0.01))
+					});
 
-				if (i >= fullSegments) {
-					partialSegmentDrawn = true;
+					if (i >= fullSegments) {
+						partialSegmentDrawn = true;
+					}
 				}
+			} else if (this.type == "text") {
+				this.text.innerHTML = formatCredits(Math.round(this.value));
 			}
-		} else if (this.type == "text") {
-			this.text.innerHTML = formatCredits(Math.round(this.value));
 		}
 	}
 }

@@ -33,7 +33,7 @@ function setupBackdrop(backdropContainer) {
 		}
 
 		var texture = window.renderer.generateTexture(graphics);
-		var backdropTilingSprite = new PIXI.extras.TilingSprite(texture, 512, 512)
+		var backdropTilingSprite = new PIXI.extras.TilingSprite(texture, 1024, 1024)
 
 		backdropContainer.addChild(backdropTilingSprite);
 		backdropTilingSprites.push(backdropTilingSprite);
@@ -57,14 +57,14 @@ function renderBackdrop() {
 		backdropTilingSprites[i].width = ww;
 		backdropTilingSprites[i].height = wh;
 
-		backdropTilingSprites[i].tilePosition.x = mod((-ENT.stageContainer.pivot.x) / backdropRatios[i], 1024);
-		backdropTilingSprites[i].tilePosition.y = mod((-ENT.stageContainer.pivot.y) / backdropRatios[i], 1024);
+		backdropTilingSprites[i].tilePosition.x = (-ENT.stageContainer.pivot.x) / backdropRatios[i];
+		backdropTilingSprites[i].tilePosition.y = (-ENT.stageContainer.pivot.y) / backdropRatios[i];
 	}
 
 	backdropStarTrailGraphics.clear();
 	backdropStarTrailLength = lerp(backdropStarTrailLength, (window.warping ? 100 : 0), (window.warping ? 0.02 : 0.2));
 
-	if (backdropStarTrailLength > 0.1) {
+	if (backdropStarTrailLength > 1) {
 		renderStarTrails(ww, wh);
 	}
 }
@@ -74,8 +74,8 @@ function renderStarTrails(ww, wh) {
 
 	for (var i = 0; i < backdropTilingSprites.length; i++) {
 		var backdropTilingSprite = backdropTilingSprites[i];
-		var startX = backdropTilingSprites[i].tilePosition.x;
-		var startY = backdropTilingSprites[i].tilePosition.y;
+		var startX = mod(backdropTilingSprites[i].tilePosition.x, 1024);
+		var startY = mod(backdropTilingSprites[i].tilePosition.y, 1024);
 		var xTiles = 0;
 		var yTiles = 0;
 

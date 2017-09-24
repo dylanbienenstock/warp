@@ -53,16 +53,6 @@ class EntityAsteroid extends EntityBase {
 	update() {
 		super.update();
 
-		if (this.alive) {
-			//addRadarDot(this.sprite.x, this.sprite.y, 0x999999, 1);
-		} else {
-			this.hasDied = true;
-		} 
-
-		this.sprite.alpha = lerp(this.sprite.alpha, (this.alive ? 1 : 0), 0.05);
-		this.outlineSprite.alpha = this.sprite.alpha;
-		this.overlaySprite.alpha = lerp(this.overlaySprite.alpha, 0, 0.05);
-
 		if (this.container.visible) {
 			if (this.sprite.rotationDelta != undefined) {
 				this.sprite.rotation += this.sprite.rotationDelta;
@@ -70,11 +60,21 @@ class EntityAsteroid extends EntityBase {
 
 			attachSprite(this.sprite, this.outlineSprite);
 			attachSprite(this.sprite, this.overlaySprite);
+
+			this.sprite.alpha = lerp(this.sprite.alpha, (this.alive ? 1 : 0), 0.05);
+			this.outlineSprite.alpha = this.sprite.alpha;
+			this.overlaySprite.alpha = lerp(this.overlaySprite.alpha, 0, 0.05);
 		}
 	}
 
 	cull(visible) {
 		this.container.visible = visible;
+
+		if (!visible) {
+			this.sprite.alpha = 1;
+			this.outlineSprite.alpha = 1;
+			this.overlaySprite.alpha = 0;
+		}
 	}
 
 	remove() {

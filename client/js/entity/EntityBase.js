@@ -7,6 +7,7 @@ class EntityBase {
 		this.y = data.y || 0;
 		this.rotation = data.rotation || 0;
 		this.triggers = {};
+		this.visible = true;
 	}
 
 	update() {
@@ -21,9 +22,15 @@ class EntityBase {
 				bounds.y < ENT.wh &&
 				bounds.y + bounds.height > 0) {
 
-				this.cull(true);
+				if (!this.visible) {
+					this.cull(true);
+					this.visible = true;
+				}
 			} else {
-				this.cull(false);
+				if (this.visible) {
+					this.cull(false);
+					this.visible = false;
+				}
 			}
 		}
 	}
