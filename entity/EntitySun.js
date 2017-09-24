@@ -150,7 +150,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 											   	(this.systemRadius - initialCreationRadius) * 4 * 60000)
 					}));
 
-					nextObjectRadius = Math.round(Math.random() * 64 + 32);
+					nextObjectRadius = Math.round(Math.random() * 32 + 64);
 				}
 			}
 		}
