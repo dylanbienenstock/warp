@@ -76,7 +76,7 @@ class EntityPlayer extends EntityBase {
 		this.alive = false;
 		this.ship.onDeath();
 
-		if (isLocalPlayer) {
+		if (this.isLocalPlayer) {
 			window.warping = false;
 		}
 	}
