@@ -68,8 +68,8 @@ class EntityAsteroid extends EntityBase {
 				this.sprite.rotation += this.sprite.rotationDelta;
 			}
 
-			this.sprite.attach(this.outlineSprite);
-			this.sprite.attach(this.overlaySprite);
+			attachSprite(this.sprite, this.outlineSprite);
+			attachSprite(this.sprite, this.overlaySprite);
 		}
 	}
 

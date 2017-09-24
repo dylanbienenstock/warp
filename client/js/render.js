@@ -55,6 +55,7 @@ function createPIXIRenderer() {
 	document.body.appendChild(renderer.view);
 
 	baseContainer = new PIXI.Container();
+	baseContainer.interactiveChildren = false;
 	titleScreenContainer = new PIXI.Container();
 	gameContainer = new PIXI.Container();
 

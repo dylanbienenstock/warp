@@ -138,13 +138,13 @@ class ShipBase {
 		if (!this.alive) {
 			this.bodySprite.alpha = lerp(this.bodySprite.alpha, 0, 0.05);
 			this.outlineSprite.renderable = true;
-			this.bodySprite.attach(this.outlineSprite);
+			attachSprite(this.bodySprite, this.outlineSprite);
 		}
 
 		if (this.bodySprite.visible) {
-			this.bodySprite.attach(this.shadowSprite, 2, 2);
-			this.bodySprite.attach(this.overlaySprite);
-			this.bodySprite.attach(this.forwardSprite);
+			attachSprite(this.bodySprite, this.shadowSprite, 2, 2);
+			attachSprite(this.bodySprite, this.overlaySprite);
+			attachSprite(this.bodySprite, this.forwardSprite);
 		}
 
 		this.forwardSprite.renderable = this.alive && this.controls.thrustForward && !this.boosting;

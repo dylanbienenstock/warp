@@ -104,8 +104,8 @@ class EntityPlanet extends EntityBase {
 				this.cloudsSprite.tilePosition.x += 0.2;
 			}
 
-			this.sprite.attach(this.mask);
-			this.sprite.attach(this.graphics);
+			attachSprite(this.sprite, this.mask);
+			attachSprite(this.sprite, this.graphics);
 
 			ENT.getById(this.orbitEntityId, function(orbitEntity) {
 				this.sprite.rotation = Math.atan2(this.sprite.y - orbitEntity.sprite.y, this.sprite.x - orbitEntity.sprite.x);

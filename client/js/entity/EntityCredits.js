@@ -55,7 +55,7 @@ class EntityCredits extends EntityBase {
 	update() {
 		super.update();
 
-		this.sprite.attach(this.glowSprite);
+		attachSprite(this.sprite, this.glowSprite);
 	}
 
 	cull(visible) {
