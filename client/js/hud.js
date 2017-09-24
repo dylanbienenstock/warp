@@ -277,7 +277,7 @@ function getWarpPosition() {
 	var distanceFromCenter = Math.sqrt(Math.pow(ENT.ww / 2 - window.mouseX, 2) + Math.pow(ENT.wh / 2 - window.mouseY, 2));
 	var distanceFromPlayer = Math.sqrt(Math.pow(localPlayerX - window.mouseX, 2) + Math.pow(localPlayerY - window.mouseY, 2));
 	var minWarpDistance = ENT.localPlayer.minWarpDistance * radarProportion;
-	var maxWarpDistance = ENT.localPlayer.maxWarpDistance * radarProportion;
+	var maxWarpDistance = (ENT.localPlayer.minWarpDistance + ENT.localPlayer.warpPower) * radarProportion;
 
 	if (distanceFromPlayer > minWarpDistance && 
 		distanceFromPlayer < maxWarpDistance && 

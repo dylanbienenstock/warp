@@ -329,14 +329,18 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		warp(position) {
 			var distance = this.ship.physicsObject.distanceTo(position.x, position.y);
 
-			this.warping = true;
-			this.warpPower = Math.max(this.warpPower - distance, 0);
-			this.warpStartTime = Date.now();
-			this.warpStartX = this.ship.physicsObject.x;
-			this.warpStartY = this.ship.physicsObject.y;
-			this.warpEndX = position.x;
-			this.warpEndY = position.y;
-			this.warpEndTriggered = false;
+			if (distance > this.minWarpDistance - 256 &&
+				distance < this.minWarpDistance + this.warpPower + 256) {
+
+				this.warping = true;
+				this.warpPower = Math.max(this.warpPower - distance, 0);
+				this.warpStartTime = Date.now();
+				this.warpStartX = this.ship.physicsObject.x;
+				this.warpStartY = this.ship.physicsObject.y;
+				this.warpEndX = position.x;
+				this.warpEndY = position.y;
+				this.warpEndTriggered = false;
+			}
 		}
 
 		// From http://gizma.com/easing/ Thanks :)
