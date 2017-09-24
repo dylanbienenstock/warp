@@ -84,7 +84,7 @@ class HUDMeter {
 	}
 
 	setValue(value, lerpFactor) {
-		this.value = lerp(this.value, value, lerpFactor || 1);
+		this.value = lerp(this.value, Math.max(value, 0), lerpFactor || 1);
 
 		if (this.type == "segmented") {
 			var segmentValue = this.maxValue / this.segmentCount;

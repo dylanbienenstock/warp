@@ -24,6 +24,7 @@ class EntityPlayer extends EntityBase {
 		this.warping = data.warping;
 		this.minWarpDistance = data.minWarpDistance;
 		this.maxWarpDistance = data.maxWarpDistance;
+		this.warpPower = data.warpPower;
 
 		this.controls = {
 			thrustForward: false,
@@ -136,7 +137,7 @@ class EntityPlayer extends EntityBase {
 	}
 
 	cull(visible) {
-		this.ship.container.visible = visible;
+		this.ship.container.visible = visible || this.isLocalPlayer;
 	}
 
 	createNameTag() {

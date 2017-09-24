@@ -2,6 +2,7 @@ var windowPadding = 16;
 
 var meterCredits;
 var meterBoost;
+var meterWarp;
 var meterShield;
 var meterHealth;
 var metersVisible = false;
@@ -59,11 +60,21 @@ function setupHUDMeters() {
 		segmentCount: 12
 	});
 
+	meterWarp = new HUDMeter({
+		type: "segmented",
+		containerId: "meter-warp",
+		iconURL: "./img/hud/warp.svg",
+		color: "#42E8F8",
+		value: 100,
+		maxValue: 100,
+		segmentCount: 12
+	});
+
 	meterShield = new HUDMeter({
 		type: "segmented",
 		containerId: "meter-shield",
 		iconURL: "./img/hud/shield.svg",
-		color: "#0088FF",
+		color: "#b400ff",
 		value: 100,
 		maxValue: 100,
 		segmentCount: 12
@@ -209,7 +220,7 @@ function drawWarpPath() {
 	var distanceFromPlayer = Math.sqrt(Math.pow(localPlayerX - window.mouseX, 2) + Math.pow(localPlayerY - window.mouseY, 2));
 	var angle = Math.atan2(window.mouseY - localPlayerY, window.mouseX - localPlayerX);
 	var minWarpDistance = ENT.localPlayer.minWarpDistance * radarProportion;
-	var maxWarpDistance = ENT.localPlayer.maxWarpDistance * radarProportion;
+	var maxWarpDistance = (ENT.localPlayer.minWarpDistance + ENT.localPlayer.warpPower) * radarProportion;
 	var warpWidth = maxWarpDistance - minWarpDistance;
 	var cursorColor = 0xF44242;
 
@@ -318,6 +329,8 @@ function drawMeters() {
 	if (ENT.localPlayer != undefined && metersVisible) {
 		meterCredits.setValue(ENT.localPlayer.credits, 0.2);
 		meterBoost.setValue(ENT.localPlayer.alive ? ENT.localPlayer.boost : 0, 0.2);
+		meterWarp.maxValue = ENT.localPlayer.maxWarpDistance - ENT.localPlayer.minWarpDistance;
+		meterWarp.setValue(ENT.localPlayer.alive ? ENT.localPlayer.warpPower : 0, 0.2);
 		meterShield.setValue(ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0, 0.2);
 		meterHealth.setValue(ENT.localPlayer.alive ? ENT.localPlayer.health : 0, 0.2);
 	}
