@@ -158,13 +158,7 @@ function acceptConnection(name, socket) {
 	});
 
 	socket.on("warp", function(data) {
-		player.warping = true;
-		player.warpStartTime = Date.now();
-		player.warpStartX = player.ship.physicsObject.x;
-		player.warpStartY = player.ship.physicsObject.y;
-		player.warpEndX = data.x;
-		player.warpEndY = data.y;
-		player.warpEndTriggered = false;
+		player.warp(data);
 	});
 }
 
