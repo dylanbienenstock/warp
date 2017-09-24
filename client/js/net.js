@@ -263,13 +263,16 @@ function bindControls() {
 					window.warpPosition = getWarpPosition();
 
 					if (window.warpPosition != null) {
+						sendControl("boost", false);
+						ENT.localPlayer.boosting = false;
+						ENT.localPlayer.ship.boosting = false;
+
 						window.aboutToWarp = false;
 						window.warping = true;
 						sendWarp(window.warpPosition);
 					}
 				} else {
 					sendControl("firePrimary", false);
-					sendControl("boost", false);
 				}
 
 				break;
