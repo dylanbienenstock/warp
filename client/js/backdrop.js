@@ -57,8 +57,8 @@ function renderBackdrop() {
 		backdropTilingSprites[i].width = ww;
 		backdropTilingSprites[i].height = wh;
 
-		backdropTilingSprites[i].tilePosition.x = mod((-ENT.stageContainer.pivot.x) / backdropRatios[i], 1024);
-		backdropTilingSprites[i].tilePosition.y = mod((-ENT.stageContainer.pivot.y) / backdropRatios[i], 1024);
+		backdropTilingSprites[i].tilePosition.x = -ENT.stageContainer.pivot.x / backdropRatios[i];
+		backdropTilingSprites[i].tilePosition.y = -ENT.stageContainer.pivot.y / backdropRatios[i];
 	}
 
 	backdropStarTrailGraphics.clear();
@@ -74,8 +74,8 @@ function renderStarTrails(ww, wh) {
 
 	for (var i = 0; i < backdropTilingSprites.length; i++) {
 		var backdropTilingSprite = backdropTilingSprites[i];
-		var startX = backdropTilingSprites[i].tilePosition.x;
-		var startY = backdropTilingSprites[i].tilePosition.y;
+		var startX = mod(backdropTilingSprites[i].tilePosition.x, 1024);
+		var startY = mod(backdropTilingSprites[i].tilePosition.y, 1024);
 		var xTiles = 0;
 		var yTiles = 0;
 
