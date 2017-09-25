@@ -200,16 +200,9 @@ function processName(name) {
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
 function setupGame() {
-	// ENT.create(ENT.new("Station", {
-	// 	x: 0,
-	// 	y: 0,
-	// 	alignment: "good"
-	// }));
-
 	var blackHole = ENT.create(ENT.new("Sun", {
 		x: 0,
 		y: 0,
-		radius: 256,
 		color: 0x7718B2,
 		isBlackHole: true
 	}));
