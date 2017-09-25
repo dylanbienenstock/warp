@@ -3,7 +3,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		constructor(data) {
 			super(data);
 
-			this.networkGlobally = true; // TEMP
+			this.networkGlobally = true;
 
 			this.radius = Math.random() * 16 + 32;
 			this.health = 150 * (this.radius / (16 + 32));
@@ -98,7 +98,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		collideWith(entity, collision) {
-			if (entity instanceof ENT.type("Asteroid") || entity instanceof ENT.type("Planet")) {
+			if (entity instanceof ENT.type("Asteroid") || entity instanceof ENT.type("Planet") || entity instanceof ENT.type("Credits")) {
 				var velocity = 0.1;
 				var angle = Math.atan2(this.physicsObject.y - entity.physicsObject.y, this.physicsObject.x - entity.physicsObject.x);
 
