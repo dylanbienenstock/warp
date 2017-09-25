@@ -322,7 +322,7 @@ function drawMeters() {
 	var windowHeight = $(window).innerHeight();
 
 	if (ENT.localPlayer != undefined && metersVisible) {
-		meterCredits.setValue(ENT.localPlayer.credits, 0.2);
+		meterCredits.setValue(ENT.localPlayer.credits, 0.5);
 		meterBoost.setValue(ENT.localPlayer.alive ? ENT.localPlayer.boost : 0, 0.2);
 		meterWarp.maxValue = ENT.localPlayer.maxWarpDistance - ENT.localPlayer.minWarpDistance;
 		meterWarp.setValue(ENT.localPlayer.alive ? ENT.localPlayer.warpPower : 0, 0.2);
