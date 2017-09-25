@@ -216,26 +216,6 @@ function alreadyOwned(data) {
 	return false;
 }
 
-function createCreditsText(price, event) {
-	var creditsText = document.createElement("span");
-	creditsText.className = "collect-credits";
-	creditsText.innerHTML = "-" + formatCredits(price) + " credits";
-
-	document.body.appendChild(creditsText);
-
-	$(creditsText).offset({
-		top: event.clientY - $(creditsText).outerHeight() / 2 - 8,
-		left: event.clientX - $(creditsText).outerWidth() / 2
-	});
-
-	$(creditsText).animate({
-		top: "-=64",
-		opacity: 0
-	}, 750, function() {
-		document.body.removeChild(creditsText);
-	});
-}
-
 function selectListing(listing, data) {
 	var listingInfo = document.getElementById("shop-listing-info-" + data.section);
 	var listingBuyButton = document.getElementById("shop-listing-buy-" + data.section);
@@ -259,8 +239,12 @@ function selectListing(listing, data) {
 				listingBuyButton.onclick = function(event) {
 					sendBuyShip(data.className);
 					ENT.localPlayer.shipListing = data;
-					createCreditsText(data.price, event);
 					selectListing(listing, data);
+
+					createCreditsCollectText(data.price, {
+						x: event.clientX,
+						y: event.clientY
+					});
 				}
 
 				break;
@@ -274,8 +258,12 @@ function selectListing(listing, data) {
 				listingBuyButton.onclick = function(event) {
 					sendBuySpecialWeapon(data.className);
 					ENT.localPlayer.specialWeaponListing = data;
-					createCreditsText(data.price, event);
 					selectListing(listing, data);
+
+					createCreditsCollectText(data.price, {
+						x: event.clientX,
+						y: event.clientY
+					});
 				}
 
 				break;
@@ -378,12 +366,20 @@ function openBuyWeaponModal(listing, data) {
 	}
 
 	replacePrimaryButton.onclick = function(event) {
-		createCreditsText(data.price, event);
+		createCreditsCollectText(data.price, {
+			x: event.clientX,
+			y: event.clientY
+		});
+
 		completePurchase(true);
 	}
 
 	replaceSecondaryButton.onclick = function(event) {
-		createCreditsText(data.price, event);
+		createCreditsCollectText(data.price, {
+			x: event.clientX,
+			y: event.clientY
+		});
+
 		completePurchase(false);
 	}
 

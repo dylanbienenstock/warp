@@ -127,27 +127,12 @@ body {
 
 /* In-Game */
 
-.nametag {
-	position: absolute;
-	display: block;
-	font-size: 16px;
-	color: white;
-	text-shadow: #000 0px 0px 8px;
-	padding: 4px;
-
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-
-	cursor: default;
-}
-
 .collect-credits {
 	position: absolute;
 	display: block;
 	font-size: 24px;
 	color: yellow;
+	opacity: 1;
 	text-shadow: #000 0px 0px 8px;
 	padding: 4px;
 
@@ -156,7 +141,22 @@ body {
 	-ms-user-select: none;
 	user-select: none;
 
-	cursor: default;
+	-webkit-transition: all 750ms linear;
+	-moz-transition: all 750ms linear;
+	-ms-transition: all 750ms linear;
+	-o-transition: all 750ms linear;
+	transition: all 750ms linear;
 
+	cursor: default;
 	z-index: 9999;
+}
+
+.collect-credits-transition {
+	-moz-transform: translateY(-64px);
+	-webkit-transform: translateY(-64px);
+	-o-transform: translateY(-64px);
+	-ms-transform: translateY(-64px);
+	transform: translateY(-64px);
+
+	opacity: 0;
 }
