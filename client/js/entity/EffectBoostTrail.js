@@ -26,7 +26,7 @@ class EffectBoostTrail extends EntityBase {
 
 		var player = ENT.getById(this.ownerId);
 
-		if (player != undefined && player instanceof EntityPlayer && player.boosting) {
+		if (player != undefined && player instanceof EntityPlayer && player.boosting && !player.warping) {
 			var lineEnd = player.ship.getBoostAttachmentPosition();
 
 			this.graphics.beginFill(PIXI.utils.rgb2hex([ 0, 0.85, 1 ]));
