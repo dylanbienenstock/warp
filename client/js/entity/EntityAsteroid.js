@@ -69,12 +69,9 @@ class EntityAsteroid extends EntityBase {
 
 	cull(visible) {
 		this.container.visible = visible;
-
-		if (!visible) {
-			this.sprite.alpha = 1;
-			this.outlineSprite.alpha = 1;
-			this.overlaySprite.alpha = 0;
-		}
+		this.sprite.alpha = (this.alive ? 1 : 0);
+		this.outlineSprite.alpha = this.sprite.alpha;
+		this.overlaySprite.alpha = 0;
 	}
 
 	remove() {
