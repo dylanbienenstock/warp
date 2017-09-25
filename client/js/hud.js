@@ -46,8 +46,7 @@ function setupHUDMeters() {
 		type: "text",
 		containerId: "meter-credits",
 		iconURL: "./img/hud/credits.svg",
-		color: "#FFD200",
-		value: 0
+		color: "#FFD200"
 	});
 
 	meterBoost = new HUDMeter({
@@ -55,7 +54,6 @@ function setupHUDMeters() {
 		containerId: "meter-boost",
 		iconURL: "./img/hud/boost.svg",
 		color: "#40FF40",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
@@ -65,7 +63,6 @@ function setupHUDMeters() {
 		containerId: "meter-warp",
 		iconURL: "./img/hud/warp.svg",
 		color: "#42E8F8",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
@@ -75,7 +72,6 @@ function setupHUDMeters() {
 		containerId: "meter-shield",
 		iconURL: "./img/hud/shield.svg",
 		color: "#b400ff",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
@@ -85,7 +81,6 @@ function setupHUDMeters() {
 		containerId: "meter-health",
 		iconURL: "./img/hud/health.svg",
 		color: "#FF4040",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
