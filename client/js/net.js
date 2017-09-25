@@ -123,6 +123,17 @@ function sendWarp(position) {
 	socket.emit("warp", position);
 }
 
+function aimAtPosition(position) {
+	if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
+		ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - position.y,
+													 ENT.localPlayer.sprite.position.x - position.x);
+	}
+}
+
+function aimAtCursor() {
+	aimAtPosition(getMousePosition());
+}
+
 var boundControls = {};
 
 function bindKeyToFunction(key, downCallback, upCallback) {
@@ -184,6 +195,7 @@ function getBinds() {
 	}, function() {
 		eDown = false;
 		window.aboutToWarp = false;
+		aimAtCursor();
 	});
 
 	bindKeyToFunction(13, focusOnChat);			// Enter
@@ -201,11 +213,7 @@ function bindControls() {
 
 		if (window.shopOpen || window.aboutToWarp || window.warping) return;
 
-		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
-			var mousePos = getMousePosition();
-			ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - mousePos.y,
-														 ENT.localPlayer.sprite.position.x - mousePos.x);
-		}
+		aimAtCursor();
 	});
 	
 	$(window).resize(function() {

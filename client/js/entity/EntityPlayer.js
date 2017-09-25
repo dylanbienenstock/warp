@@ -116,6 +116,10 @@ class EntityPlayer extends EntityBase {
 		if (this.isLocalPlayer) {
 			centerOn(this.ship.bodySprite);
 			this.ship.container.zIndex = 100;
+
+			if (window.warping) {
+				aimAtPosition(window.warpPosition);
+			}
 		} else {
 			this.ship.bodySprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}

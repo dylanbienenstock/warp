@@ -1,6 +1,7 @@
 var backdropStars = [];
 var backdropStarTrailGraphics;
 var backdropStarTrailLength = 0;
+var backdropRenderingStarTrails = false;
 var backdropStarCount = 1024;
 var backdropSize = 1024;
 var backdropTilingSprites = [];
@@ -66,10 +67,15 @@ function renderBackdrop() {
 
 	if (backdropStarTrailLength > 1) {
 		renderStarTrails(ww, wh);
+	} else if (backdropRenderingStarTrails) {
+		backdropRenderingStarTrails = false;
+		aimAtCursor();
 	}
 }
 
 function renderStarTrails(ww, wh) {
+	backdropRenderingStarTrails = true;
+
 	var angle = Math.atan2(ENT.localPlayer.sprite.y - window.warpPosition.y, ENT.localPlayer.sprite.x - window.warpPosition.x);
 
 	for (var i = 0; i < backdropTilingSprites.length; i++) {
