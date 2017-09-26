@@ -32,13 +32,28 @@ var radarLerpFactor = 1;
 
 window.aboutToWarp = false;
 window.warping = false;
+window.equipmentSlots = 3;
+window.equipmentDirty = true;
+window.mouseOverEquipment = false;
+
+var equipmentContainer;
+var equipmentGraphics;
+var equipmentBoxTexture;
+var equipmentBoxSize = 104;
+var equipmentBoxes = [];
+var equipmentDragging = false;
+var equipmentDragStartX;
+var equipmentDragStartY;
 
 function setupHUD(HUDContainer) {
 	radar = new PIXI.Graphics();
 	radarMask = new PIXI.Graphics();
 	radar.mask = radarMask;
 
-	HUDContainer.addChild(radar, radarMask);
+	equipmentContainer = new PIXI.ParticleContainer();
+	equipmentGraphics = new PIXI.Graphics();
+
+	HUDContainer.addChild(radar, radarMask, equipmentContainer);
 }
 
 function setupHUDMeters() {
@@ -67,6 +82,10 @@ function setupHUDMeters() {
 		segmentCount: 12
 	});
 
+	meterWarp.onLoad = function() {
+		window.equipmentDirty = true;
+	};
+
 	meterShield = new HUDMeter({
 		type: "segmented",
 		containerId: "meter-shield",
@@ -91,6 +110,7 @@ function setupHUDMeters() {
 function drawHUD() {
 	drawRadar();
 	drawMeters();
+	drawEquipment();
 }
 
 function addRadarDot(x, y, color, radius, trueRadius, roundPosition) {
@@ -329,4 +349,95 @@ function drawMeters() {
 		meterShield.setValue(ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0, 0.2);
 		meterHealth.setValue(ENT.localPlayer.alive ? ENT.localPlayer.health : 0, 0.2);
 	}
+}
+
+function drawEquipment() {
+	if (window.equipmentDirty) {
+		window.equipmentDirty = false;
+		drawEquipmentBoxes();
+	}
+
+	if (window.aboutToWarp) {
+		equipmentContainer.visible = false;
+	} else {
+		window.mouseOverEquipment = false;
+		equipmentContainer.visible = true;
+
+		for (var i = 0; i < equipmentBoxes.length; i++) {
+			var equipmentBox = equipmentBoxes[i];
+			equipmentBox.alpha = 0.7;
+			equipmentBox.mouseIsOver = false;
+
+			if (window.mouseX > equipmentBox.x &&
+				window.mouseX < equipmentBox.x + equipmentBoxSize &&
+				window.mouseY > equipmentBox.y &&
+				window.mouseY < equipmentBox.y + equipmentBoxSize) {
+
+				document.body.style.cursor = "move";
+				equipmentBox.alpha = 1;
+				equipmentBox.mouseIsOver = true;
+				window.mouseOverEquipment = true;
+			}
+		}
+	}
+}
+
+function drawEquipmentBoxes() {
+	if (ENT.localPlayer == undefined) return;
+
+	equipmentBoxes.length = 0;
+
+	if (equipmentBoxTexture != null) {
+		equipmentBoxTexture.destroy();
+		equipmentBoxTexture = null;
+	}
+
+	equipmentGraphics.clear();
+	equipmentGraphics.beginFill(0x303030, 1);
+	equipmentGraphics.drawRoundedRect(0, 0, equipmentBoxSize, equipmentBoxSize, 4);
+	equipmentGraphics.endFill();
+	equipmentGraphics.bounds = new PIXI.Rectangle(0, 0, equipmentBoxSize, equipmentBoxSize);
+
+	equipmentBoxTexture = window.renderer.generateTexture(equipmentGraphics, PIXI.SCALE_MODES.NEAREST, 2);
+	equipmentContainer.removeChildren();
+
+	var $meterWarp = $("#meter-warp");
+	var x = $meterWarp.offset().left + $meterWarp.outerWidth() + 4;
+	var y = ENT.wh - equipmentBoxSize - windowPadding + 3;
+
+	for (var i = 0; i < window.equipmentSlots; i++) {
+		var equipmentBoxSprite = new PIXI.Sprite(equipmentBoxTexture);
+		equipmentBoxSprite.x = x;
+		equipmentBoxSprite.y = y;
+		equipmentContainer.addChild(equipmentBoxSprite);
+		equipmentBoxes.push(equipmentBoxSprite);
+
+		var equipmentListing = ENT.localPlayer.equipmentListings[i];
+
+		if (equipmentListing != undefined) {
+			var equipmentListingSprite = new PIXI.Sprite(PIXI.loader.resources[equipmentListing.texture].texture);
+			equipmentListingSprite.width = equipmentBoxSize - 16;
+			equipmentListingSprite.height = equipmentBoxSize - 16;
+			equipmentListingSprite.anchor.set(0.5, 0.5);
+			equipmentListingSprite.x = x + equipmentBoxSize / 2;
+			equipmentListingSprite.y = y + equipmentBoxSize / 2;
+			equipmentContainer.addChild(equipmentListingSprite);
+		}
+
+		x += equipmentBoxSize + 4;
+	}
+}
+
+function beginDragEquipment() {
+	equipmentDragging = true;
+	equipmentDragStartX = window.mouseX;
+	equipmentDragStartY = window.mouseY;
+}
+
+function dragEquipment() {
+
+}
+
+function dropEquipment() {
+	equipmentDragging = false;
 }

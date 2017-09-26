@@ -117,6 +117,7 @@ function setup() {
 
 function update() {
 	window.requestAnimationFrame(update);
+	document.body.style.cursor = "auto";
 
 	if (!window.inGame) {
 		updateTitleScreen(baseContainer, titleScreenContainer, gameContainer);

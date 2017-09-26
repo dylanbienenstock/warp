@@ -48,16 +48,19 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.__primaryWeapon = null;
 			this.__secondaryWeapon = null;
 			this.__specialWeapon = null;
+			this.equipment = { doNotNetwork: true };
 
 			this.shipListing = null;
 			this.primaryWeaponListing = null;
 			this.secondaryWeaponListing = null;
 			this.specialWeaponListing = null;
+			this.equipmentListings = [];
 
 			this.shouldNetworkShipListing = true;
 			this.shouldNetworkPrimaryWeaponListing = true;
 			this.shouldNetworkSecondaryWeaponListing = true;
 			this.shouldNetworkSpecialWeaponListing = true;
+			this.shouldNetworkEquipmentListings = true;
 
 			this.viewport = {
 				width: 1920,
@@ -119,6 +122,16 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		set specialWeapon(value) {
 			this.__specialWeapon = value;
 			this.specialWeaponListing = value.constructor.getListing();
+		}
+
+		get nextEquipmentSlot() {
+			for (var i = 0; i < this.ship.equipmentSlots; i++) {
+				if (!this.equipment.hasOwnProperty(i) || this.equipment[i] == null) {
+					return i;
+				}
+			}
+
+			return null;
 		}
 
 		create() {
@@ -399,6 +412,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			if (this.shouldNetworkSpecialWeaponListing) {
 				toSend.specialWeaponListing = this.specialWeaponListing;
 				this.shouldNetworkSpecialWeaponListing = false;
+			}
+
+			if (this.shouldNetworkEquipmentListings) {
+				toSend.equipmentListings = this.equipmentListings;
+				this.shouldNetworkEquipmentListings = false;
 			}
 
 			ENT.sendProperties(this, toSend);

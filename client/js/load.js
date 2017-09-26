@@ -3,7 +3,10 @@ function loadContent(setup) {
 		.add("lockon", "./img/lockon.svg")
 		.add("particle", "./img/particle.png")
 
+		.add("equipment:missilebattery", "./img/equipment/missilebattery.svg")
+
 		.add("projectile:orb", "./img/projectile/orb.svg")
+		.add("projectile:missile", "./img/projectile/missile.svg")
 
 		.add("ship:skiff", "./img/ships/skiff/body.svg")
 		.add("ship:skiff:outline", "./img/ships/skiff/outline.svg")

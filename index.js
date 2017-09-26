@@ -33,7 +33,8 @@ ENT.Entity = Entity;
 var Ship = require("./ship/Ship.js")(ENT, PHYS);
 var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
 var SpecialWeapon = require("./weapon/SpecialWeapon.js")(ENT, PHYS);
-var Shop = require("./Shop.js")(Ship, Weapon, SpecialWeapon);
+var Equipment = require("./equipment/Equipment.js")(ENT, PHYS);
+var Shop = require("./Shop.js")(Ship, Weapon, SpecialWeapon, Equipment);
 
 var NPCProfile = require("./entity/NPCProfile.js");
 
@@ -147,6 +148,10 @@ function acceptConnection(name, socket) {
 
 	socket.on("buy special", function(data) {
 		Shop.buySpecialWeapon(player, data);
+	});
+
+	socket.on("buy equipment", function(data) {
+		Shop.buyEquipment(player, data);
 	});
 
 	socket.on("chat out", function(message) {

@@ -41,12 +41,15 @@ class EntityPlayer extends EntityBase {
 		this.primaryWeaponListing = data.primaryWeaponListing;
 		this.secondaryWeaponListing = data.secondaryWeaponListing;
 		this.specialWeaponListing = data.specialWeaponListing;
+		this.equipmentListings = data.equipmentListings || [];
 
 		if (this.shipListing != undefined) {
 			this.ship = new Ship[this.shipListing.className](this.alive);
 		} else {
 			this.ship = new Ship.Skiff(this.alive);
 		}
+
+		this.equipmentListings.length = this.ship.equipmentSlots;
 
 		this.sprite = this.ship.bodySprite;
 		this.ship.controls = this.controls;
@@ -64,6 +67,9 @@ class EntityPlayer extends EntityBase {
 			this.ship = newShip;
 			this.sprite = this.ship.bodySprite;
 			this.ship.controls = this.controls;
+
+			window.equipmentSlots = this.ship.equipmentSlots;
+			window.equipmentDirty = true;
 		}
 	}
 
@@ -101,6 +107,17 @@ class EntityPlayer extends EntityBase {
 		window.warping = false;
 	}
 
+	set nextEquipmentListing(value) {
+		for (var i = 0; i < this.ship.equipmentSlots; i++) {
+			if (this.equipmentListings[i] == null) {
+				this.equipmentListings[i] = value;
+				window.equipmentDirty = true;
+				
+				break;
+			}
+		}
+	}
+
 	update() {
 		super.update();
 
@@ -135,6 +152,11 @@ class EntityPlayer extends EntityBase {
 	receiveProperties(data) {
 		if (this.isLocalPlayer) {
 			delete data.controls;
+
+			if (data.hasOwnProperty("equipmentListings")) {
+				this.equipmentDirty = true;
+				drawEquipment();
+			}
 
 			return data;
 		}

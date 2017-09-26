@@ -115,6 +115,12 @@ function sendBuySpecialWeapon(className) {
 	});
 }
 
+function sendBuyEquipment(className) {
+	socket.emit("buy equipment", {
+		className: className
+	});
+}
+
 function sendChatMessage(message) {
 	socket.emit("chat out", message);
 }
@@ -247,9 +253,13 @@ function bindControls() {
 		switch (event.which) {
 			case (1):
 				if (!ENT.localPlayer.controls.firePrimary) {
-					if (!window.aboutToWarp) {
-						sendControl("firePrimary", true);
-						ENT.localPlayer.controls.firePrimary = true;
+					if (window.mouseOverEquipment) {
+						beginDragEquipment();
+					} else {
+						if (!window.aboutToWarp) {
+							sendControl("firePrimary", true);
+							ENT.localPlayer.controls.firePrimary = true;
+						}
 					}
 				}
 
@@ -267,6 +277,8 @@ function bindControls() {
 	$(window).mouseup(function(event) {
 		switch (event.which) {
 			case (1):
+				dropEquipment();
+
 				if (window.aboutToWarp) {
 					window.warpPosition = getWarpPosition();
 

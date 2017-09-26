@@ -15,7 +15,7 @@ class HUDMeter {
 		this.icon.className = "meter-icon";
 		this.icon.src = this.iconURL;
 		this.icon.ondragstart = function() { return false; };
-		$(this.icon).load(this.layout.bind(this));
+		$(this.icon).load(this.load.bind(this));
 
 		this.container.appendChild(this.icon);
 
@@ -61,6 +61,15 @@ class HUDMeter {
 		}
 
 		this.setValue(this.value);
+	}
+
+	load() {
+		this.layout();
+
+		if (this.onLoad instanceof Function) {
+			this.onLoad();
+			this.onLoad = null;
+		}
 	}
 
 	layout() {

@@ -4,40 +4,29 @@
 	section: "ships" / "weapons" / "equipment",
 	displayName: <string>,
 	className: <string>,
-	price: <number>
+	price: <number>,
+	(if equipment) texture: <string>,
+	stats: <object>
 }
 
 */
 
-module.exports = function(Ship, Weapon, SpecialWeapon) {
+module.exports = function(Ship, Weapon, SpecialWeapon, Equipment) {
 	class Shop {
 		constructor() {
 			this.allListings = [];
 
-			for (var ship in Ship) {
-				if (Ship.hasOwnProperty(ship) && Ship[ship].getListing instanceof Function) {
-					var listing = Ship[ship].getListing();
-					listing.section = "ships";
-					listing.id = this.allListings.length;
+			this.createListings(Ship, "ships");
+			this.createListings(Weapon, "weapons");
+			this.createListings(SpecialWeapon, "specials");
+			this.createListings(Equipment, "equipment");
+		}
 
-					this.allListings.push(listing);
-				}
-			}
-
-			for (var weapon in Weapon) {
-				if (Weapon.hasOwnProperty(weapon) && Weapon[weapon].getListing instanceof Function) {
-					var listing = Weapon[weapon].getListing();
-					listing.section = "weapons";
-					listing.id = this.allListings.length;
-
-					this.allListings.push(listing);
-				}
-			}
-
-			for (var specialWeapon in SpecialWeapon) {
-				if (SpecialWeapon.hasOwnProperty(specialWeapon) && SpecialWeapon[specialWeapon].getListing instanceof Function) {
-					var listing = SpecialWeapon[specialWeapon].getListing();
-					listing.section = "specials";
+		createListings(section, sectionName) {
+			for (var listing in section) {
+				if (section.hasOwnProperty(listing) && section[listing].getListing instanceof Function) {
+					var listing = section[listing].getListing();
+					listing.section = sectionName;
 					listing.id = this.allListings.length;
 
 					this.allListings.push(listing);
@@ -112,6 +101,25 @@ module.exports = function(Ship, Weapon, SpecialWeapon) {
 
 					player.specialWeapon = new specialWeaponType(player);
 					player.shouldNetworkSpecialWeaponListing = true;
+				}
+			}
+		}
+
+		buyEquipment(player, data) {
+			if (Equipment.hasOwnProperty(data.className)) {
+				var slot = player.nextEquipmentSlot;
+
+				if (slot != null) {
+					var equipmentType = Equipment[data.className];
+					var listing = equipmentType.getListing();
+
+					if (player.credits >= listing.price) {
+						player.credits -= listing.price;
+
+						player.equipment[slot] = new equipmentType(player);
+						player.equipmentListings[slot] = listing;
+						player.shouldNetworkEquipmentListings = true;
+					}
 				}
 			}
 		}
