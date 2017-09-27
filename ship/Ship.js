@@ -3,6 +3,7 @@ module.exports = function(ENT, PHYS) {
 
 	return {
 		Skiff: require("../ship/ShipSkiff.js")(ShipBase, ENT, PHYS),
-		Cartel: require("../ship/ShipCartel.js")(ShipBase, ENT, PHYS)
+		Cartel: require("../ship/ShipCartel.js")(ShipBase, ENT, PHYS),
+		EscapePod: require("../ship/ShipEscapePod.js")(ShipBase, ENT, PHYS),
 	};
 }
