@@ -6,35 +6,34 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lifespan = data.lifespan || 3000;
 
 			this.angle = data.angle || 0;
-			this.speed = data.speed || 0;
+			this.speed = 0;
  
 			this.ownerId = data.ownerId;
-			this.trackFactor = data.trackFactor || 0.0625;
-			this.damage = data.damage || 10;
-			this.radius = data.radius || 6;
-			this.color = data.color || 0xFF0000;
+			this.trackFactor = 0;
+			this.damage = data.damage || 30;
 			this.x = data.x;
 			this.y = data.y;
-			this.initialSpeedMult = data.initialSpeedMult || 2;
 
 			var owner = ENT.getById(this.ownerId);
 			var velocityX = 0;
 			var velocityY = 0;
 
 			if (owner != undefined) {
-				velocityX = -Math.cos(data.angle) * data.speed * this.initialSpeedMult + owner.physicsObject.totalVelocityX / 2;
-				velocityY = -Math.sin(data.angle) * data.speed * this.initialSpeedMult + owner.physicsObject.totalVelocityY / 2;
+				velocityX = -Math.cos(data.angle) * 8 + owner.physicsObject.totalVelocityX / 2;
+				velocityY = -Math.sin(data.angle) * 8 + owner.physicsObject.totalVelocityY / 2;
 			}
 
-			this.physicsObject = PHYS.new("Circle", {
+			this.physicsObject = PHYS.new("Box", {
 				collisionGroup: "Projectile",
 				x: this.x,
 				y: this.y,
-				radius: this.radius,
+				localX: -56,
+				localY: -9,
+				width: 56,
+				height: 18,
 				velocityX: velocityX,
 				velocityY: velocityY,
-				thrustX: -Math.cos(this.angle) * this.speed,
-				thrustY: -Math.sin(this.angle) * this.speed
+				rotation: this.angle
 			});
 		}
 
@@ -50,18 +49,24 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		    return a0 + this.shortAngleDist(a0, a1) * t;
 		}
 
-		update() {
+		update(timeMult) {
+			this.speed = Math.min(this.speed + 1 * timeMult, 24);
+			this.trackFactor = Math.min(this.trackFactor + 0.0125 * timeMult, 0.1);
+
 			if (this.ownerId != undefined) {
 				var owner = ENT.getById(this.ownerId);
 
 				if (owner != undefined && owner.lockOnPosition != undefined) {
 					var destAngle = Math.atan2(this.physicsObject.y - owner.lockOnPosition.y, this.physicsObject.x - owner.lockOnPosition.x);
-	
 					this.angle = this.lerpAngle(this.angle, destAngle, this.trackFactor);
-					this.physicsObject.thrustX = -Math.cos(this.angle) * this.speed;
-					this.physicsObject.thrustY = -Math.sin(this.angle) * this.speed;
+					this.physicsObject.rotation = this.angle;
 				}
+	
+				this.physicsObject.thrustX = -Math.cos(this.angle) * this.speed;
+				this.physicsObject.thrustY = -Math.sin(this.angle) * this.speed;
 			}
+
+
 		}
 
 		create() {
@@ -71,27 +76,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		network() {
 			ENT.sendProperties(this, {
 				x: this.physicsObject.x,
-				y: this.physicsObject.y
+				y: this.physicsObject.y,
+				angle: this.angle
 			});
 		}
 
 		collideWith(entity, collision) {
-			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId) {
-				var damage = entity.takeDamage(this.damage, this, collision);
-
-				if (damage > 0) {
-					ENT.getById(entity.ownerId, function(player) {
-						player.takeDamage(damage, collision);
-					});
-				}
-
-				ENT.remove(this);
-			}
-
-			if (entity instanceof ENT.type("Asteroid")) {
-				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / 64;
-				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / 64;
-
+			if (!(entity instanceof ENT.type("Player")) && !(entity instanceof ENT.type("Shield"))) {
 				ENT.remove(this);
 			}
 		}

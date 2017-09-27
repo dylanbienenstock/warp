@@ -25,17 +25,15 @@ module.exports = function(EquipmentBase, ENT, PHYS) {
 			};
 		}
 
-		use(position, angle) {
-			ENT.create(ENT.new("Laser", {
+		beginUse(position, angle) {
+			ENT.create(ENT.new("Missile", {
 				ownerId: this.ownerId,
 				damage: this.damage,
-				thickness: 4,
-				color: 0xFF0000,
-				length: 32,
+				radius: 6,
+				color: 0xF541F5,
 				x: position.x,
 				y: position.y,
-				angle: angle,
-				speed: this.shotSpeed
+				angle: angle
 			}));
 		}
 	}
