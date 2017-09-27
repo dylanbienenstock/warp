@@ -37,9 +37,12 @@ window.equipmentDirty = true;
 window.mouseOverEquipment = false;
 
 var equipmentContainer;
+var equipmentTextContainer;
 var equipmentGraphics;
+//var equipmentTextGraphics;
 var equipmentBoxTexture;
 var equipmentBoxSize = 104;
+var equimentTextBoxSize = 20;
 var equipmentBoxes = [];
 var equipmentDragging = false;
 var equipmentDragStartX;
@@ -51,9 +54,12 @@ function setupHUD(HUDContainer) {
 	radar.mask = radarMask;
 
 	equipmentContainer = new PIXI.ParticleContainer();
+	equipmentTextContainer = new PIXI.Container();
 	equipmentGraphics = new PIXI.Graphics();
+	//equipmentTextGraphics = new PIXI.Graphics();
 
-	HUDContainer.addChild(radar, radarMask, equipmentContainer);
+	//equipmentTextContainer.addChild(equipmentTextGraphics);
+	HUDContainer.addChild(radar, radarMask, equipmentContainer, equipmentTextContainer);
 }
 
 function setupHUDMeters() {
@@ -386,6 +392,9 @@ function drawEquipmentBoxes() {
 	if (ENT.localPlayer == undefined) return;
 
 	equipmentBoxes.length = 0;
+	equipmentContainer.removeChildren();
+	equipmentTextContainer.removeChildren();
+	//equipmentTextContainer.addChild(equipmentTextGraphics);
 
 	if (equipmentBoxTexture != null) {
 		equipmentBoxTexture.destroy();
@@ -399,11 +408,18 @@ function drawEquipmentBoxes() {
 	equipmentGraphics.bounds = new PIXI.Rectangle(0, 0, equipmentBoxSize, equipmentBoxSize);
 
 	equipmentBoxTexture = window.renderer.generateTexture(equipmentGraphics, PIXI.SCALE_MODES.NEAREST, 2);
-	equipmentContainer.removeChildren();
 
 	var $meterWarp = $("#meter-warp");
 	var x = $meterWarp.offset().left + $meterWarp.outerWidth() + 4;
 	var y = ENT.wh - equipmentBoxSize - windowPadding + 3;
+
+	var keyStyle = new PIXI.TextStyle({
+		fontFamily: "Source Code Pro",
+		fontSize: 16,
+		fill: "#505050"
+	});
+
+	//equipmentTextGraphics.lineStyle(2, 0x505050, 0.7);
 
 	for (var i = 0; i < window.equipmentSlots; i++) {
 		var equipmentBoxSprite = new PIXI.Sprite(equipmentBoxTexture);
@@ -423,6 +439,20 @@ function drawEquipmentBoxes() {
 			equipmentListingSprite.y = y + equipmentBoxSize / 2;
 			equipmentContainer.addChild(equipmentListingSprite);
 		}
+
+		var roundedRectX = x + equipmentBoxSize - equimentTextBoxSize - 4;
+		var roundedRectY = y + equipmentBoxSize - equimentTextBoxSize - 4;
+
+		//equipmentTextGraphics.drawRoundedRect(roundedRectX, roundedRectY, equimentTextBoxSize, equimentTextBoxSize, 4);
+
+		var keyString = (i != 9 ? i + 1 : "O").toString();
+		var keyTextMetrics = PIXI.TextMetrics.measureText(keyString, keyStyle);
+		var keyText = new PIXI.Text(keyString, keyStyle);
+		keyText.cacheAsBitmap = true;
+		keyText.x = roundedRectX + equimentTextBoxSize / 2 - keyTextMetrics.width / 2;
+		keyText.y = roundedRectY + equimentTextBoxSize / 2 - keyTextMetrics.height / 2;
+
+		equipmentTextContainer.addChild(keyText);
 
 		x += equipmentBoxSize + 4;
 	}
