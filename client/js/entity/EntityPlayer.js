@@ -34,7 +34,17 @@ class EntityPlayer extends EntityBase {
 			boost: false,
 			firePrimary: false,
 			fireSecondary: false,
-			fireSpecial: false
+			fireSpecial: false,
+			useEquipment0: false,
+			useEquipment1: false,
+			useEquipment2: false,
+			useEquipment3: false,
+			useEquipment4: false,
+			useEquipment5: false,
+			useEquipment6: false,
+			useEquipment7: false,
+			useEquipment8: false,
+			useEquipment9: false
 		};
 
 		this.shipListing = data.shipListing;

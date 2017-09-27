@@ -174,6 +174,16 @@ function getBinds() {
 	bindPlayerControl(68, "thrustRight"); 		// D
 	bindPlayerControl(32, "fireSpecial");		// Space
 	bindPlayerControl(16, "boost");				// Shift
+	bindPlayerControl(48, "useEquipment9");		// 0
+	bindPlayerControl(49, "useEquipment0");		// 1
+	bindPlayerControl(50, "useEquipment1");		// 2
+	bindPlayerControl(51, "useEquipment2");		// 3
+	bindPlayerControl(52, "useEquipment3");		// 4
+	bindPlayerControl(53, "useEquipment4");		// 5
+	bindPlayerControl(54, "useEquipment5");		// 6
+	bindPlayerControl(55, "useEquipment6");		// 7
+	bindPlayerControl(56, "useEquipment7");		// 8
+	bindPlayerControl(57, "useEquipment8");		// 9
 
 	bindKeyToFunction(81, function() {			// Q
 		if (window.connected) {
@@ -224,6 +234,7 @@ function bindControls() {
 	
 	$(window).resize(function() {
 		sendViewportDimensions();
+		window.equipmentDirty = true;
 	});
 
 	$(window).keydown(function(event) {

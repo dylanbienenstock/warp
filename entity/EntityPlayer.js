@@ -78,7 +78,17 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				boost: false,
 				firePrimary: false,
 				fireSecondary: false,
-				fireSpecial: false
+				fireSpecial: false,
+				useEquipment0: false,
+				useEquipment1: false,
+				useEquipment2: false,
+				useEquipment3: false,
+				useEquipment4: false,
+				useEquipment5: false,
+				useEquipment6: false,
+				useEquipment7: false,
+				useEquipment8: false,
+				useEquipment9: false
 			};
 		}
 
@@ -190,6 +200,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.secondaryWeapon.beginFire(this.getFirePosition(), this.getFireAngle());
 			} else if (control == "fireSpecial" && this.specialWeapon != undefined) {
 				this.specialWeapon.beginFire(this.getFirePosition(), this.getFireAngle());
+			} else if (control.startsWith("useEquipment")) {
+				var slot = parseInt(control[control.length - 1]);
+
+				if (slot != NaN && this.equipment[slot] != undefined) {
+					this.equipment[slot].beginUse(this.getFirePosition(), this.getFireAngle());
+				}
 			}
 		}
 
