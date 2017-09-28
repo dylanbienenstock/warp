@@ -89,17 +89,50 @@ function acceptConnection(name, socket) {
 
 	var angle = 2 * Math.PI * Math.random();
 
+	var playerInstanceIds = [];
 	var player = ENT.new("Player", {
 		name: name,
-		socketId: socket.id,
+		socketId: socket.client.id,
+		defaultShip: "Skiff",
 		x: -Math.cos(angle) * 4094,
 		y: -Math.sin(angle) * 4096
 	});
 
-	ENT.create(player, socket);
+	ENT.create(player, socket.client.id);
+	playerInstanceIds.push(player.id);
 
 	player.ship = new Ship.Skiff(player);
 	player.primaryWeapon = new Weapon.Peashooter(player);
+
+	var onDeath = function() {
+		if (player.hasEquipment("EscapePod")) {
+			var player2 = ENT.new("Player", {
+				name: player.name,
+				socketId: socket.client.id,
+				defaultShip: "EscapePod",
+				x: player.ship.physicsObject.x,
+				y: player.ship.physicsObject.y,
+				rotation: player.ship.physicsObject.rotation,
+				velocityX: -Math.cos(player.ship.physicsObject.rotation) * 128,
+				velocityY: -Math.sin(player.ship.physicsObject.rotation) * 128
+			});
+
+			ENT.create(player2, socket.client.id);
+			playerInstanceIds.push(player2.id);
+
+			player2.ship = new Ship.EscapePod(player2);
+
+			player2.onDeath = function() {
+				onDeath();
+			}
+
+			player = player2;
+		}
+	}
+
+	player.onDeath = function() {
+		onDeath();
+	}
 
 	if (!physicsDebug) {
 		console.log("+ Player " + name + " has connected.");

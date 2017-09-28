@@ -27,8 +27,13 @@ function connect(name) {
 					var entity = ENT.create(ENT.new(data));
 
 					if (data.playerSocketId == socket.id) {
+						if (ENT.localPlayer != undefined) {
+							ENT.localPlayer.isLocalPlayer = false;
+						}
+
 						ENT.localPlayer = entity;
 						entity.isLocalPlayer = true;
+						window.equipmentDirty = true;
 					}
 				});
 

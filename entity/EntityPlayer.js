@@ -7,8 +7,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			this.networkGlobally = true;
 
+			this.socketId = data.socketId;
 			this.name = data.name || "Unnamed";
 			this.chatHue = Math.floor(Math.random() * 359);
+
+			this.velocityX = data.velocityX || 0;
+			this.velocityY = data.velocityY || 0;
 
 			this.credits = data.credits || 0;
 			this.shieldPower = 100;
@@ -17,7 +21,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastBoosting = false;
 			this.lastBoostTime = 0;
 			this.alive = true;
-
 
 			this.warping = false;
 			this.minWarpDistance = 3000;
@@ -50,6 +53,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.__specialWeapon = null;
 			this.equipment = { doNotNetwork: true };
 
+			this.defaultShip = data.defaultShip;
 			this.shipListing = null;
 			this.primaryWeaponListing = null;
 			this.secondaryWeaponListing = null;
@@ -181,20 +185,36 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			return 0;
 		}
 
+		hasEquipment(className) {
+			for (var i = 0; i < this.ship.equipmentSlots; i++) {
+				if (this.equipment.hasOwnProperty(i) && this.equipment[i] != null) {
+					if (this.equipment[i].constructor.getListing().className == className) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
 		kill() {
 			if (this.alive) {
 				ENT.trigger(this, "death");
 				console.log("! Player " + this.name + " was destroyed!");
 
+				if (this.onDeath instanceof Function) {
+					this.onDeath();
+					this.onDeath = null;
+				}
+
 				this.ship.physicsObject.active = false;
 				this.ship.shield.physicsObject.active = false;
 				this.alive = false;
-				this.doNotNetwork = true;
 			}
 		}
 
 		controlDown(control) {
-			if (control == "firePrimary") {
+			if (control == "firePrimary" && this.primaryWeapon != undefined) {
 				this.primaryWeapon.beginFire(this.getFirePosition(), this.getFireAngle());
 			} else if (control == "fireSecondary" && this.secondaryWeapon != undefined) {
 				this.secondaryWeapon.beginFire(this.getFirePosition(), this.getFireAngle());
@@ -210,7 +230,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		controlUp(control) {
-			if (control == "firePrimary") {
+			if (control == "firePrimary" && this.primaryWeapon != undefined) {
 				this.primaryWeapon.endFire(this.getFirePosition(), this.getFireAngle());
 			} else if (control == "fireSecondary" && this.secondaryWeapon != undefined) {
 				this.secondaryWeapon.endFire(this.getFirePosition(), this.getFireAngle());
@@ -243,7 +263,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				var firePosition = this.getFirePosition();
 				var fireAngle = this.getFireAngle();
 
-				this.primaryWeapon.update(firePosition, fireAngle, timeMult);
+				if (this.primaryWeapon != undefined) {
+					this.primaryWeapon.update(firePosition, fireAngle, timeMult);
+				}
 
 				if (this.secondaryWeapon != undefined) {
 					this.secondaryWeapon.update(firePosition, fireAngle, timeMult);
@@ -440,7 +462,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 		remove() {
 			this.ship.remove();
-			this.primaryWeapon.remove();
+
+			if (this.secondaryWeapon != undefined) {
+				this.primaryWeapon.remove();
+			}
 
 			if (this.secondaryWeapon != undefined) {
 				this.secondaryWeapon.remove();

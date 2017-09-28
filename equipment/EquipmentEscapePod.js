@@ -15,7 +15,9 @@ module.exports = function(EquipmentBase, ENT, PHYS) {
 				description: "Automatically deploys when your ship is destroyed.",
 				texture: "equipment:escapepod",
 				stats: {
-					"Type": "blahhh"
+					"Type": "Emergency escape pod",
+					"Deploys when": "Ship destroyed",
+					"Uses": 1
 				}
 			};
 		}

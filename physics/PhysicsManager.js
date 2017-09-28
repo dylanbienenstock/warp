@@ -39,6 +39,8 @@ class PhysicsManager {
 
 		this.physicsObjects.push(physicsObject);
 		this.physicsObjectOwners[physicsObject.id] = entity;
+
+		this.getPhysicsInfo(physicsObject);
 	}
 
 	remove(physicsObject) {

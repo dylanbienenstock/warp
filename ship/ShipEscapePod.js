@@ -17,9 +17,9 @@ module.exports = function(ShipBase, ENT, PHYS) {
 			this.speed = 8;
 			this.shieldRadius = 32;
 			this.shieldDamageFactor = 0.3;
-			this.boostFactor = 1.8;
-			this.boostDeplete = 0.5;
-			this.boostRegen = 0.3;
+			this.boostFactor = 2.2;
+			this.boostDeplete = 0.25;
+			this.boostRegen = 0.8;
 			this.equipmentSlots = 1;
 		}
 
@@ -27,15 +27,7 @@ module.exports = function(ShipBase, ENT, PHYS) {
 			return {
 				displayName: "Escape Pod",
 				className: "EscapePod",
-				price: 0,
-				description: "This is the default ship.",
-				stats: {
-					"Type": "Standard fighter",
-					"Health": "100",
-					"Shield factor": "2",
-					"Speed": "6",
-					"Boost factor": "1.8"
-				}
+				hidden: true
 			};
 		}
 	}

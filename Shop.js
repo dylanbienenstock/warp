@@ -29,7 +29,9 @@ module.exports = function(Ship, Weapon, SpecialWeapon, Equipment) {
 					listing.section = sectionName;
 					listing.id = this.allListings.length;
 
-					this.allListings.push(listing);
+					if (!listing.hidden) {
+						this.allListings.push(listing);
+					}
 				}
 			}
 		}

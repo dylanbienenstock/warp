@@ -70,7 +70,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			if (this.ownerId != undefined) {
 				var owner = ENT.getById(this.ownerId);
 
-				if (owner != undefined) {
+				if (owner != undefined && owner.physicsObject.info != undefined) {
 					this.physicsObject.x = owner.physicsObject.info.bounds.center.x + this.physicsObject.totalVelocityX;
 					this.physicsObject.y = owner.physicsObject.info.bounds.center.y + this.physicsObject.totalVelocityY;
 				}

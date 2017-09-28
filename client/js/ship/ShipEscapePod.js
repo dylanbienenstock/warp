@@ -29,6 +29,6 @@ class ShipEscapePod extends ShipBase {
 
 		this.boostLocalX = 10;
 		this.boostLocalY = 0;
-		this.equipmentSlots = 1;
+		this.equipmentSlots = 0;
 	}
 }
