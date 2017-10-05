@@ -197,6 +197,18 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			return false;
 		}
 
+		swapEquipment(a, b) {
+			var storedEquipment = this.equipment[a];
+			this.equipment[a] = this.equipment[b];
+			this.equipment[b] = storedEquipment;
+
+			var storedListing = this.equipmentListings[a];
+			this.equipmentListings[a] = this.equipmentListings[b];
+			this.equipmentListings[b] = storedListing;
+
+			this.shouldNetworkEquipmentListings = true;
+		}
+
 		kill() {
 			if (this.alive) {
 				ENT.trigger(this, "death");

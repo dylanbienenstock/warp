@@ -198,6 +198,10 @@ function acceptConnection(name, socket) {
 	socket.on("warp", function(data) {
 		player.warp(data);
 	});
+
+	socket.on("swap equipment", function(data) {
+		player.swapEquipment(data.a, data.b);
+	});
 }
 
 var nameValidator = /^([A-Za-z0-9\-]+)$/g;

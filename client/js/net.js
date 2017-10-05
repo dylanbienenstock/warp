@@ -134,6 +134,13 @@ function sendWarp(position) {
 	socket.emit("warp", position);
 }
 
+function sendSwapEquipment(a, b) {
+	socket.emit("swap equipment", {
+		a: a,
+		b: b
+	});
+}
+
 function aimAtPosition(position) {
 	if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
 		ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - position.y,
@@ -190,7 +197,7 @@ function getBinds() {
 	bindPlayerControl(56, "useEquipment7");		// 8
 	bindPlayerControl(57, "useEquipment8");		// 9
 
-	bindKeyToFunction(81, function() {			// Q
+	bindKeyToFunction(81, function() {}, function() {			// Q
 		if (window.connected) {
 			toggleShop();
 		}
@@ -232,6 +239,8 @@ function bindControls() {
 		window.mouseX = event.pageX;
 		window.mouseY = event.pageY;
 
+		dragEquipment();
+
 		if (window.shopOpen || window.aboutToWarp || window.warping) return;
 
 		aimAtCursor();
@@ -264,6 +273,8 @@ function bindControls() {
 	});
 
 	$(window).mousedown(function(event) {
+		beginDragEquipment();
+
 		if (window.shopOpen || window.chatting) return;
 
 		switch (event.which) {
@@ -291,6 +302,8 @@ function bindControls() {
 	});
 
 	$(window).mouseup(function(event) {
+		dropEquipment();
+
 		switch (event.which) {
 			case (1):
 				dropEquipment();
