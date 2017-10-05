@@ -21,17 +21,5 @@ module.exports = function(EquipmentBase, ENT, PHYS) {
 				}
 			};
 		}
-
-		beginUse(position, angle) {
-			ENT.create(ENT.new("Missile", {
-				ownerId: this.ownerId,
-				damage: this.damage,
-				radius: 6,
-				color: 0xF541F5,
-				x: position.x,
-				y: position.y,
-				angle: angle
-			}));
-		}
 	}
 }
