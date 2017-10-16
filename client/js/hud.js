@@ -235,8 +235,6 @@ function drawRadar() {
 
 	if (window.aboutToWarp && radarFullSize) {
 		drawWarpPath();
-	} else {
-		document.body.style.cursor = "auto";
 	}
 
 	radar.lineStyle(2, 0xFFFFFF);
@@ -263,8 +261,6 @@ function drawWarpPath() {
 
 		cursorColor = 0x42E8F8;
 		document.body.style.cursor = "pointer";
-	} else {
-		document.body.style.cursor = "auto";
 	}
 
 	radar.lineStyle(2, cursorColor, (radarAlpha - radarInitialAlpha) * (1 / radarInitialAlpha));
@@ -357,7 +353,7 @@ function drawMeters() {
 	var windowHeight = $(window).innerHeight();
 
 	if (ENT.localPlayer != undefined && metersVisible) {
-		meterCredits.setValue(ENT.localPlayer.credits, 0.5);
+		meterCredits.setValue(ENT.localPlayer.credits, 1);
 		meterBoost.setValue(ENT.localPlayer.alive ? ENT.localPlayer.boost : 0, 0.2);
 		meterWarp.maxValue = ENT.localPlayer.maxWarpDistance - ENT.localPlayer.minWarpDistance;
 		meterWarp.setValue(ENT.localPlayer.alive ? ENT.localPlayer.warpPower : 0, 0.2);
