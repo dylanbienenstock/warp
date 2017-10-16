@@ -236,8 +236,12 @@ function bindControls() {
 	window.mouseY = 0;
 
 	$(window).mousemove(function(event) {
+		var mouseWorldPosition = getMousePosition();
+
 		window.mouseX = event.pageX;
 		window.mouseY = event.pageY;
+		window.mouseWorldX = mouseWorldPosition.x;
+		window.mouseWorldY = mouseWorldPosition.y;
 
 		dragEquipment();
 
