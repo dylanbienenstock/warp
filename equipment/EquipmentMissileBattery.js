@@ -13,14 +13,13 @@ module.exports = function(EquipmentBase, ENT, PHYS) {
 				displayName: "Missile Battery",
 				className: "MissileBattery",
 				price: 0,
-				description: "Contains 9 high-power homing missiles.",
+				description: "Contains 9 high-power homing missiles.\nNOTE: Not fully implemented.",
 				texture: "equipment:missilebattery",
 				stats: {
 					"Type": "Homing missile weapon",
-					"Damage": 30,
-					"Shots/min": 150,
-					"Proj./shot": 1,
-					"Shot speed": 32
+					"Damage": "30",
+					"Quantity": "9",
+					"Max allowed": "N/A"
 				}
 			};
 		}
