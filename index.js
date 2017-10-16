@@ -241,6 +241,33 @@ function processName(name) {
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
+function createNPC() {
+	var angle = 2 * Math.PI * Math.random();
+
+	var npc = ENT.new("Player", {
+		name: "NPC",
+		x: -Math.cos(angle) * PHYS.boundaryRadius,
+		y: -Math.sin(angle) * PHYS.boundaryRadius,
+		NPC: true,
+		NPCProfile: NPCProfile.DEFAULT
+	});
+
+	ENT.create(npc);
+
+	var shipKeys = Object.keys(Ship)
+	var weaponKeys = Object.keys(Weapon);
+	var primaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+	var secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+
+	while (secondaryWeaponChoice == primaryWeaponChoice) {
+		secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+	}
+
+	npc.ship = new Ship[shipKeys[shipKeys.length * Math.random() << 0]](npc);
+	npc.primaryWeapon = new Weapon[weaponKeys[primaryWeaponChoice]](npc);
+	npc.secondaryWeapon = new Weapon[weaponKeys[secondaryWeaponChoice]](npc);
+}
+
 function setupGame() {
 	var blackHole = ENT.create(ENT.new("Sun", {
 		x: 0,
@@ -250,38 +277,9 @@ function setupGame() {
 	}));
 
 	blackHole.createUniverse();
-	
-	for (var i = 0; i < (process.env.ASTEROIDS || 0); i++) {
-		var angle = 2 * Math.PI * Math.random();
-
-		ENT.create(ENT.new("Asteroid"));
-	}
 
 	for (var i = 0; i < (process.env.NPCS || 0); i++) {
-		var angle = 2 * Math.PI * Math.random();
-
-		var npc = ENT.new("Player", {
-			name: "NPC",
-			x: -Math.cos(angle) * PHYS.boundaryRadius,
-			y: -Math.sin(angle) * PHYS.boundaryRadius,
-			NPC: true,
-			NPCProfile: NPCProfile.DEFAULT
-		});
-
-		ENT.create(npc);
-
-		var shipKeys = Object.keys(Ship)
-		var weaponKeys = Object.keys(Weapon);
-		var primaryWeaponChoice = weaponKeys.length * Math.random() << 0;
-		var secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
-
-		while (secondaryWeaponChoice == primaryWeaponChoice) {
-			secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
-		}
-
-		npc.ship = new Ship[shipKeys[shipKeys.length * Math.random() << 0]](npc);
-		npc.primaryWeapon = new Weapon[weaponKeys[primaryWeaponChoice]](npc);
-		npc.secondaryWeapon = new Weapon[weaponKeys[secondaryWeaponChoice]](npc);
+		createNPC();
 	}
 }
 
