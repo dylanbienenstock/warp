@@ -12,12 +12,13 @@ module.exports = function(EquipmentBase, ENT, PHYS) {
 				displayName: "Escape Pod",
 				className: "EscapePod",
 				price: 0,
-				description: "Automatically deploys when your ship is destroyed.",
+				description: "Automatically deploys when your ship is destroyed.\nEjects in the direction you're facing.",
 				texture: "equipment:escapepod",
 				stats: {
 					"Type": "Emergency escape pod",
-					"Deploys when": "Ship destroyed",
-					"Uses": 1
+					"Deploys when": "Destroyed",
+					"Uses": "1",
+					"Max allowed": "1"
 				}
 			};
 		}
