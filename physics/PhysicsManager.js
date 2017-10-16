@@ -285,8 +285,6 @@ class PhysicsManager {
 								 (collision.with.info.bounds.center.x + collision.with.totalVelocityX) - (collision.physicsObject.info.bounds.center.x - collision.physicsObject.totalVelocityX));
 
 				this.collisions.push(collision);
-
-				break;
 			}
 		}
 	}
