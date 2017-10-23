@@ -50,8 +50,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		update(timeMult) {
-			this.speed = Math.min(this.speed + 1 * timeMult, 24);
-			this.trackFactor = Math.min(this.trackFactor + 0.0125 * timeMult, 0.1);
+			this.speed = Math.min(this.speed + 1 * timeMult, 20);
+			this.trackFactor = this.speed * 0.005;
 
 			if (this.ownerId != undefined) {
 				var owner = ENT.getById(this.ownerId);
@@ -65,8 +65,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.physicsObject.thrustX = -Math.cos(this.angle) * this.speed;
 				this.physicsObject.thrustY = -Math.sin(this.angle) * this.speed;
 			}
-
-
 		}
 
 		create() {
@@ -82,7 +80,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		collideWith(entity, collision) {
-			if (!(entity instanceof ENT.type("Player")) && !(entity instanceof ENT.type("Shield"))) {
+			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId) {
+				var damage = entity.takeDamage(this.damage, this, collision);
+
+				if (damage > 0) {
+					ENT.getById(entity.ownerId, function(player) {
+						player.takeDamage(damage, collision);
+					});
+				}
+
 				ENT.remove(this);
 			}
 		}
