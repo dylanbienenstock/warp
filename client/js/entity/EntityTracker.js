@@ -39,10 +39,9 @@ class EntityTracker extends EntityBase {
 
 	update() {
 		super.update();
+		
 		this.emitter.x = this.sprite.x;
 		this.emitter.y = this.sprite.y;
-
-		addRadarDot(this.sprite.x, this.sprite.y, 0xFFFFFF, 0);
 	}
 
 	cull(visible) {

@@ -26,10 +26,10 @@ class ShipBase {
 		this.height = 32;
 		this.x = 0;
 		this.y = 0;
+		this.rotation = 0;
 		this.boostLocalX = 0;
 		this.boostLocalY = 0;
 		this.boosting = false;
-		this.rotation = 0;
 
 		this.container = new PIXI.Container();
 		this.container.zIndex = 99;
@@ -65,11 +65,6 @@ class ShipBase {
 		this.forwardSprite.width = data.forwardSprite.dimensions.width;
 		this.forwardSprite.height = data.forwardSprite.dimensions.height;
 
-		// this.backwardSprite = new PIXI.Sprite(PIXI.loader.resources[data.backwardSprite.texture].texture);
-		// this.backwardSprite.anchor.set(data.backwardSprite.anchor.x, data.backwardSprite.anchor.y);
-		// this.backwardSprite.width = data.backwardSprite.dimensions.width;
-		// this.backwardSprite.height = data.backwardSprite.dimensions.height;
-
 		if (this.scale != undefined) {
 			this.shadowSprite.scale.x = this.scale;
 			this.shadowSprite.scale.y = this.scale;
@@ -81,8 +76,6 @@ class ShipBase {
 			this.overlaySprite.scale.y = this.scale;
 			this.forwardSprite.scale.x = this.scale;
 			this.forwardSprite.scale.y = this.scale;
-			// this.backwardSprite.scale.x = this.scale;
-			// this.backwardSprite.scale.y = this.scale;
 		}
 
 		this.container.addChild(this.shadowSprite,
@@ -145,18 +138,16 @@ class ShipBase {
 		if (!this.alive) {
 			this.bodySprite.alpha = lerp(this.bodySprite.alpha, 0, 0.05);
 			this.outlineSprite.renderable = true;
-			this.bodySprite.attach(this.outlineSprite);
+			attachSprite(this.bodySprite, this.outlineSprite);
 		}
 
 		if (this.bodySprite.visible) {
-			this.bodySprite.attach(this.shadowSprite, 2, 2);
-			this.bodySprite.attach(this.overlaySprite);
-			this.bodySprite.attach(this.forwardSprite);
-			//this.bodySprite.attach(this.backwardSprite);
+			attachSprite(this.bodySprite, this.shadowSprite, 2, 2);
+			attachSprite(this.bodySprite, this.overlaySprite);
+			attachSprite(this.bodySprite, this.forwardSprite);
 		}
 
 		this.forwardSprite.renderable = this.alive && this.controls.thrustForward && !this.boosting;
-		//this.backwardSprite.renderable = this.alive && this.controls.thrustBackward;
 		this.overlaySprite.alpha = lerp(this.overlaySprite.alpha, 0, 0.05);
 	}
 

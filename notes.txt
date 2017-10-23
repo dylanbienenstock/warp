@@ -9,6 +9,8 @@ NPCS
 
 zIndex reference
 ----------------
+-1: Suns
+
 0: Default
 1: Credits glow
 2: Credits

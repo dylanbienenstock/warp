@@ -4,12 +4,12 @@
 	<head>
 		<title>WARP</title>
 
-		<!-- <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet"> -->
 		<link rel="stylesheet" href="./css/styles.css" />
 		<link rel="stylesheet" href="./css/shop.css" />
 		<link rel="stylesheet" href="./css/hud.css" />
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<script src="./js/lib/velocity.min.js"></script>
 
 		<script src="/socket.io/socket.io.js"></script>
 
@@ -39,23 +39,31 @@
 		<script src="./js/ship/ShipBase.js"></script>
 		<script src="./js/ship/ShipSkiff.js"></script>
 		<script src="./js/ship/ShipCartel.js"></script>
+		<script src="./js/ship/ShipEscapePod.js"></script>
 		<script src="./js/ship/Ship.js"></script>
 
 		<script src="./js/entity/EntityBase.js"></script>
 		<script src="./js/entity/EntityPhysicsDebug.js"></script>
 		<script src="./js/entity/EntityStation.js"></script>
+		<script src="./js/entity/EntitySun.js"></script>
 		<script src="./js/entity/EntityPlanet.js"></script>
 		<script src="./js/entity/EntityAsteroid.js"></script>
 		<script src="./js/entity/EntityCredits.js"></script>
 		<script src="./js/entity/EntityPlayer.js"></script>
-		<script src="./js/entity/EffectBoostTrail.js"></script>
 		<script src="./js/entity/EntityShield.js"></script>
 		<script src="./js/entity/EntityLaser.js"></script>
-		<script src="./js/entity/EffectLaserTrail.js"></script>
 		<script src="./js/entity/EntityTracker.js"></script>
 		<script src="./js/entity/EntityBouncerOrb.js"></script>
 		<script src="./js/entity/EntityBouncerAura.js"></script>
+<<<<<<< HEAD
 		<script src="./js/entity/EntityBeam.js"></script>
+=======
+		<script src="./js/entity/EntityMissile.js"></script>
+
+		<script src="./js/entity/EffectLaserTrail.js"></script>
+		<script src="./js/entity/EffectBoostTrail.js"></script>
+		<script src="./js/entity/EffectPlanetMenu.js"></script>
+>>>>>>> e2c2ba6a68ee3c876eb8de163075812adb8c9c3d
 
 		<script src="./js/entity/Entity.js"></script>
 		<script src="./js/entity/Effect.js"></script>
@@ -101,6 +109,7 @@
 			<div id="hud-container">
 				<div class="meter-container"><div id="meter-credits"></div></div>
 				<div class="meter-container"><div id="meter-boost"></div></div>
+				<div class="meter-container"><div id="meter-warp"></div></div>
 				<div class="meter-container"><div id="meter-shield"></div></div>
 				<div class="meter-container"><div id="meter-health"></div></div>
 			</div>

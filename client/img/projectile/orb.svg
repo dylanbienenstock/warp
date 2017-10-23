@@ -72,7 +72,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -82,18 +82,17 @@
      id="layer1"
      transform="translate(0,-292.76665)">
     <ellipse
-       style="fill:#ffffff;fill-opacity:0.64179105;fill-rule:nonzero;stroke:none;stroke-width:0.04676504;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke;filter:url(#filter1468)"
-       id="path1449"
-       cx="2.1166666"
-       cy="294.8833"
-       rx="1.8520833"
-       ry="1.8520793" />
-    <ellipse
        style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.03340367;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="path1449-7"
        cx="2.1166666"
        cy="294.88333"
        rx="1.3229166"
        ry="1.3229201" />
+    <circle
+       style="opacity:1;fill:#ffffff;fill-opacity:0.64480877;fill-rule:nonzero;stroke:none;stroke-width:0.80000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       id="path940"
+       cx="2.1166666"
+       cy="294.88333"
+       r="2.1166666" />
   </g>
 </svg>

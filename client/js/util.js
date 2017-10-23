@@ -20,13 +20,27 @@ function lerpAngle(a0,a1,t) {
     return a0 + shortAngleDist(a0, a1) * t;
 }
 
+function attachSprite(spriteParent, spriteChild, offsetX, offsetY, offsetRotation) {
+	spriteChild.x = spriteParent.x + (offsetX || 0);
+	spriteChild.y = spriteParent.y + (offsetY || 0);
+	spriteChild.rotation = spriteParent.rotation + (offsetRotation || 0);
+}
+
 PIXI.Sprite.prototype.attach = function(sprite, offsetX, offsetY, offsetRotation) {
+	if (ENT.physicsDebug) {
+		console.log("PIXI.Sprite.prototype.attach is deprecated.");
+	}
+
 	sprite.x = this.x + (offsetX || 0);
 	sprite.y = this.y + (offsetY || 0);
 	sprite.rotation = this.rotation + (offsetRotation || 0);
 }
 
 PIXI.Sprite.prototype.getCenter = function() {
+	if (ENT.physicsDebug) {
+		console.log("PIXI.Sprite.prototype.getCenter is deprecated.");
+	}
+
 	return {
 		x: -Math.cos(this.rotation) * (this.width / 2) * (1 - this.anchor.x) + this.position.x,
 		y: -Math.sin(this.rotation) * (this.height / 2) * (1 - this.anchor.y) + this.position.y
@@ -93,4 +107,23 @@ function pointIsOnScreen(position) {
 			screenPosition.x <= ENT.ww &&
 			screenPosition.y >= 0 &&
 			screenPosition.y <= ENT.wh);
+}
+
+function createCreditsCollectText(amount, position) {
+	var collectText = document.createElement("span");
+	collectText.className = "collect-credits";
+	collectText.innerHTML = (amount > 0 ? "+" : "") + formatCredits(amount) + " credits";
+
+	document.body.appendChild(collectText);
+
+	$(collectText).offset({
+		left: position.x - $(collectText).outerWidth() / 2,
+		top: position.y - $(collectText).outerHeight() / 2
+	});
+
+	collectText.className = "collect-credits collect-credits-transition";
+
+	setTimeout(function() {
+		$(collectText).remove();
+	}, 750);
 }

@@ -4,6 +4,7 @@ module.exports = function(io, ENT, PHYS) {
 	return {
 		PhysicsDebug: require("../entity/EntityPhysicsDebug.js")(EntityBase, ENT, PHYS),
 		Station: require("../entity/EntityStation.js")(EntityBase, ENT, PHYS),
+		Sun: require("../entity/EntitySun.js")(EntityBase, ENT, PHYS),
 		Planet: require("../entity/EntityPlanet.js")(EntityBase, ENT, PHYS),
 		Asteroid: require("../entity/EntityAsteroid.js")(EntityBase, ENT, PHYS),
 		Credits: require("../entity/EntityCredits.js")(EntityBase, ENT, PHYS),
@@ -13,6 +14,10 @@ module.exports = function(io, ENT, PHYS) {
 		Tracker: require("../entity/EntityTracker.js")(EntityBase, ENT, PHYS),
 		BouncerOrb: require("../entity/EntityBouncerOrb.js")(EntityBase, ENT, PHYS),
 		BouncerAura: require("../entity/EntityBouncerAura.js")(EntityBase, ENT, PHYS),
+<<<<<<< HEAD
 		Beam: require("../entity/EntityBeam.js")(EntityBase, ENT, PHYS)
+=======
+		Missile: require("../entity/EntityMissile.js")(EntityBase, ENT, PHYS),
+>>>>>>> e2c2ba6a68ee3c876eb8de163075812adb8c9c3d
 	};
 }

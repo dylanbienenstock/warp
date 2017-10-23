@@ -7,6 +7,7 @@ class EntityPlayer extends EntityBase {
 		this.triggers.death = this.onDeath.bind(this);
 		this.triggers.boost = this.onBoost.bind(this);
 		this.triggers.lockBroken = this.onLockBroken.bind(this);
+		this.triggers.endWarp = this.onEndWarp.bind(this);
 
 		this.name = data.name;
 		this.credits = data.credits || 0;
@@ -16,9 +17,11 @@ class EntityPlayer extends EntityBase {
 		this.boosting = false;
 		this.alive = data.alive;
 		this.isLocalPlayer = false;
-		this.x = data.x || 0;
-		this.y = data.y || 0;
-		this.rotation = data.rotation || 0;
+
+		this.warping = data.warping;
+		this.minWarpDistance = data.minWarpDistance;
+		this.maxWarpDistance = data.maxWarpDistance;
+		this.warpPower = data.warpPower;
 
 		this.controls = {
 			thrustForward: false,
@@ -28,19 +31,37 @@ class EntityPlayer extends EntityBase {
 			boost: false,
 			firePrimary: false,
 			fireSecondary: false,
-			fireSpecial: false
+			fireSpecial: false,
+			useEquipment0: false,
+			useEquipment1: false,
+			useEquipment2: false,
+			useEquipment3: false,
+			useEquipment4: false,
+			useEquipment5: false,
+			useEquipment6: false,
+			useEquipment7: false,
+			useEquipment8: false,
+			useEquipment9: false
 		};
 
+		this.defaultShip = data.defaultShip;
 		this.shipListing = data.shipListing;
 		this.primaryWeaponListing = data.primaryWeaponListing;
 		this.secondaryWeaponListing = data.secondaryWeaponListing;
 		this.specialWeaponListing = data.specialWeaponListing;
+		this.equipmentListings = data.equipmentListings || [];
 
-		if (this.shipListing != undefined) {
-			this.ship = new Ship[this.shipListing.className](this.alive);
+		if (this.defaultShip != undefined) {
+			this.ship = new Ship[this.defaultShip](this.alive);
 		} else {
 			this.ship = new Ship.Skiff(this.alive);
 		}
+
+		this.ship.bodySprite.x = this.x;
+		this.ship.bodySprite.y = this.y;
+		this.ship.bodySprite.rotation = this.rotation;
+
+		this.equipmentListings.length = this.ship.equipmentSlots;
 
 		this.sprite = this.ship.bodySprite;
 		this.ship.controls = this.controls;
@@ -58,6 +79,9 @@ class EntityPlayer extends EntityBase {
 			this.ship = newShip;
 			this.sprite = this.ship.bodySprite;
 			this.ship.controls = this.controls;
+
+			window.equipmentSlots = this.ship.equipmentSlots;
+			window.equipmentDirty = true;
 		}
 	}
 
@@ -69,6 +93,10 @@ class EntityPlayer extends EntityBase {
 		this.health = 0;
 		this.alive = false;
 		this.ship.onDeath();
+
+		if (this.isLocalPlayer) {
+			window.warping = false;
+		}
 	}
 
 	onBoost() {
@@ -87,8 +115,24 @@ class EntityPlayer extends EntityBase {
 		window.lockedPlayerId = null;
 	}
 
+	onEndWarp() {
+		window.warping = false;
+	}
+
+	set nextEquipmentListing(value) {
+		for (var i = 0; i < this.ship.equipmentSlots; i++) {
+			if (this.equipmentListings[i] == null) {
+				this.equipmentListings[i] = value;
+				window.equipmentDirty = true;
+				
+				break;
+			}
+		}
+	}
+
 	update() {
 		super.update();
+		this.updateNameTag();
 
 		if (this.alive) {
 			addRadarDot(this.ship.bodySprite.x, this.ship.bodySprite.y, (this.isLocalPlayer ? 0x00FF00 : 0xFF0000), 2);
@@ -102,28 +146,35 @@ class EntityPlayer extends EntityBase {
 		if (this.isLocalPlayer) {
 			centerOn(this.ship.bodySprite);
 			this.ship.container.zIndex = 100;
+
+			if (window.warping) {
+				aimAtPosition(window.warpPosition);
+			}
 		} else {
-			this.ship.bodySprite.rotation = lerpAngle(this.sprite.rotation, this.rotation, ENT.lerpFactorAngle);
+			this.ship.bodySprite.rotation = lerpAngle(this.ship.bodySprite.rotation, this.rotation, ENT.lerpFactorAngle);
 		}
 
 		this.ship.controls = this.controls;
 		this.ship.alive = this.alive;
 		this.ship.boosting = this.boosting;
 		this.ship.update();
-
-		this.updateNameTag();
 	}
 
 	receiveProperties(data) {
 		if (this.isLocalPlayer) {
 			delete data.controls;
 
+			if (data.hasOwnProperty("equipmentListings")) {
+				this.equipmentDirty = true;
+				drawEquipment();
+			}
+
 			return data;
 		}
 	}
 
 	cull(visible) {
-		this.ship.container.visible = visible;
+		this.ship.container.visible = visible || this.isLocalPlayer;
 	}
 
 	createNameTag() {
@@ -146,7 +197,7 @@ class EntityPlayer extends EntityBase {
 	}
 
 	updateNameTag() {
-		if (!this.isLocalPlayer) {
+		if (this.name != ENT.localPlayer.name) {
 			var nameTagPosition = ENT.stageContainer.toGlobal(this.ship.bodySprite.position);
 			var nameTagWidth = Math.floor(this.nameTagMetrics.width);
 			var nameTagHeight = this.nameTagMetrics.height;

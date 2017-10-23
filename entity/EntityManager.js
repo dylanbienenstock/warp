@@ -20,9 +20,6 @@ class EntityManager {
 		this.networkNow = 0;
 		this.toNetwork = null;
 		this.physicsDebug = physicsDebug;
-		
-		this.protectedSpaceRadius = 600;
-		this.DMZRadius = 200;
 	}
 
 	getNetworkableProperties(entity) {
@@ -48,7 +45,7 @@ class EntityManager {
 		return this.Entity[className];
 	}
 
-	create(entity, playerSocket, creatingEntityPhysicsDebug) {
+	create(entity, playerSocketId, creatingEntityPhysicsDebug) {
 		if (entity.className != undefined) {
 			if (entity.lifespan != undefined) {
 				entity.createdTime = Date.now();
@@ -62,8 +59,8 @@ class EntityManager {
 			var data = this.getNetworkableProperties(entity);
 
 			if (entity.className == "Player") {
-				if (playerSocket != undefined) {
-					data.playerSocketId = playerSocket.client.id;
+				if (playerSocketId != undefined) {
+					data.playerSocketId = playerSocketId;
 				}
 				
 				this.players.push(entity);

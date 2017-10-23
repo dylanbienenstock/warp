@@ -51,12 +51,6 @@ class EntityLaser extends EntityBase {
 		}
 	}
 
-	update() {
-		super.update();
-
-		addRadarDot(this.graphics.x, this.graphics.y, 0xFFFFFF, 0);
-	}
-
 	cull(visible) {
 		this.graphics.visible = visible;
 	}

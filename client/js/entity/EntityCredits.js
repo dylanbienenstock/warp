@@ -29,25 +29,9 @@ class EntityCredits extends EntityBase {
 
 	onCollect(playerId) {
 		if (playerId == ENT.localPlayer.id) {
-			var ww = $(window).innerWidth();
-			var wh = $(window).innerHeight();
-
-			var collectText = document.createElement("span");
-			collectText.className = "collect-credits";
-			collectText.innerHTML = "+" + formatCredits(this.amount) + " credits";
-
-			document.body.appendChild(collectText);
-
-			$(collectText).offset({
-				top: wh / 2 - $(collectText).outerHeight() / 2 - 16,
-				left: ww / 2 - $(collectText).outerWidth() / 2
-			});
-
-			$(collectText).animate({
-				top: "-=64",
-				opacity: 0
-			}, 750, function() {
-				document.body.removeChild(collectText);
+			createCreditsCollectText(this.amount, {
+				x: ENT.ww / 2,
+				y: ENT.wh / 2
 			});
 		}
 	}
@@ -55,7 +39,7 @@ class EntityCredits extends EntityBase {
 	update() {
 		super.update();
 
-		this.sprite.attach(this.glowSprite);
+		attachSprite(this.sprite, this.glowSprite);
 	}
 
 	cull(visible) {

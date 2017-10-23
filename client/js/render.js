@@ -14,9 +14,7 @@ var stationInnerShadow;
 var stationInner;
 
 window.renderer;
-window.boundaryRadius = 4096;
-window.protectedSpaceRadius = 600;
-window.DMZRadius = 200;
+window.boundaryRadius = Math.pow(2, 14);
 
 window.inGame = false;
 
@@ -48,12 +46,16 @@ function createPIXIRenderer() {
 	var ww = $(window).innerWidth();
 	var wh = $(window).innerHeight();
 
-	window.renderer = new PIXI.CanvasRenderer(ww, wh);
-	window.renderer.backgroundColor = 0x000000;
+	window.renderer = new PIXI.CanvasRenderer({
+		width: ww,
+		height: wh,
+		backgroundColor: 0x000000
+	});
 
 	document.body.appendChild(renderer.view);
 
 	baseContainer = new PIXI.Container();
+	baseContainer.interactiveChildren = false;
 	titleScreenContainer = new PIXI.Container();
 	gameContainer = new PIXI.Container();
 
@@ -95,23 +97,11 @@ function createPIXIRenderer() {
 
 function drawBoundary() {
 	boundary = new PIXI.Graphics();
-	boundaryContainer.addChild(boundary)
 
-	// Map boundary
-	boundary.lineStyle(1, 0xFFFFFF, 1);
+	boundary.lineStyle(3, 0xFFFFFF, 1);
 	boundary.drawCircle(0, 0, window.boundaryRadius);
 
-	// DMZ
-	boundary.beginFill(0x00FF00, 0.11);
-	boundary.lineStyle();
-	boundary.drawCircle(0, 0, window.protectedSpaceRadius + window.DMZRadius);
-	boundary.endFill();
-
-	// Protected space
-	boundary.beginFill(0x00FF00, 0.04);
-	boundary.lineStyle(1, 0x00FF00, 0.5);
-	boundary.drawCircle(0, 0, window.protectedSpaceRadius);
-	boundary.endFill();
+	boundaryContainer.addChild(boundary)
 }
 
 function resizeRenderer() {
@@ -127,6 +117,7 @@ function setup() {
 
 function update() {
 	window.requestAnimationFrame(update);
+	document.body.style.cursor = "auto";
 
 	if (!window.inGame) {
 		updateTitleScreen(baseContainer, titleScreenContainer, gameContainer);

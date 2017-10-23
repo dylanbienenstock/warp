@@ -200,40 +200,43 @@ function addShopListing(data) {
 	}
 }
 
-function alreadyOwned(data) {
+function canBuy(data) {
+	var result = { 
+		canBuy: false,
+		message: "ALREADY OWNED"
+	};
+
 	switch (data.section) {
 		case "ships":
-			return (ENT.localPlayer.shipListing != undefined && ENT.localPlayer.shipListing.className == data.className);
+			result.canBuy = !(ENT.localPlayer.shipListing != undefined && ENT.localPlayer.shipListing.className == data.className);
+
+			break;
 		case "weapons":
-			return (ENT.localPlayer.primaryWeaponListing != undefined && ENT.localPlayer.primaryWeaponListing.className == data.className) || 
+			result.canBuy = !(ENT.localPlayer.primaryWeaponListing != undefined && ENT.localPlayer.primaryWeaponListing.className == data.className) || 
 				   (ENT.localPlayer.secondaryWeaponListing != undefined && ENT.localPlayer.secondaryWeaponListing.className == data.className);
+
+			break;
 		case "specials":
-			return (ENT.localPlayer.specialWeaponListing != undefined && ENT.localPlayer.specialWeaponListing.className == data.className);
+			result.canBuy = !(ENT.localPlayer.specialWeaponListing != undefined && ENT.localPlayer.specialWeaponListing.className == data.className);
+
+			break;
 		case "equipment":
+			var slotAvailable = false;
+
+			for (var i = 0; i < ENT.localPlayer.ship.equipmentSlots; i++) {
+				if (ENT.localPlayer.equipmentListings[i] == null) {
+					slotAvailable = true;
+					break;
+				}
+			}
+
+			result.canBuy = slotAvailable;
+			result.message = "NO ROOM";
+
 			break;
 	}
 
-	return false;
-}
-
-function createCreditsText(price, event) {
-	var creditsText = document.createElement("span");
-	creditsText.className = "collect-credits";
-	creditsText.innerHTML = "-" + formatCredits(price) + " credits";
-
-	document.body.appendChild(creditsText);
-
-	$(creditsText).offset({
-		top: event.clientY - $(creditsText).outerHeight() / 2 - 8,
-		left: event.clientX - $(creditsText).outerWidth() / 2
-	});
-
-	$(creditsText).animate({
-		top: "-=64",
-		opacity: 0
-	}, 750, function() {
-		document.body.removeChild(creditsText);
-	});
+	return result;
 }
 
 function selectListing(listing, data) {
@@ -249,9 +252,9 @@ function selectListing(listing, data) {
 
 	listing.className = "shop-listing-active";
 
-	var owned = alreadyOwned(data);
+	var canBuyResult = canBuy(data);
 
-	if (!owned && getLocalPlayerCredits() >= data.price) {
+	if (canBuyResult.canBuy && getLocalPlayerCredits() >= data.price) {
 		listingBuyButton.className = "shop-listing-buy";
 
 		switch (data.section) {
@@ -259,8 +262,12 @@ function selectListing(listing, data) {
 				listingBuyButton.onclick = function(event) {
 					sendBuyShip(data.className);
 					ENT.localPlayer.shipListing = data;
-					createCreditsText(data.price, event);
 					selectListing(listing, data);
+
+					createCreditsCollectText(data.price, {
+						x: event.clientX,
+						y: event.clientY
+					});
 				}
 
 				break;
@@ -274,21 +281,33 @@ function selectListing(listing, data) {
 				listingBuyButton.onclick = function(event) {
 					sendBuySpecialWeapon(data.className);
 					ENT.localPlayer.specialWeaponListing = data;
-					createCreditsText(data.price, event);
 					selectListing(listing, data);
+
+					createCreditsCollectText(data.price, {
+						x: event.clientX,
+						y: event.clientY
+					});
 				}
 
 				break;
 			case "equipment":
+				listingBuyButton.onclick = function(event) {
+					sendBuyEquipment(data.className);
+					ENT.localPlayer.nextEquipmentListing = data;
+					selectListing(listing, data);
+
+					createCreditsCollectText(data.price, {
+						x: event.clientX,
+						y: event.clientY
+					});
+				}
+
 				break;
 		}
 	} else {
 		listingBuyButton.className = "shop-listing-buy-disabled";
-
-		if (owned) {
-			listingBuyButton.innerHTML = "ALREADY OWNED";
-			listingBuyButton.onclick = null;
-		}
+		listingBuyButton.innerHTML = canBuyResult.message;
+		listingBuyButton.onclick = null;
 	}
 
 	createListingStats(data);
@@ -378,12 +397,20 @@ function openBuyWeaponModal(listing, data) {
 	}
 
 	replacePrimaryButton.onclick = function(event) {
-		createCreditsText(data.price, event);
+		createCreditsCollectText(data.price, {
+			x: event.clientX,
+			y: event.clientY
+		});
+
 		completePurchase(true);
 	}
 
 	replaceSecondaryButton.onclick = function(event) {
-		createCreditsText(data.price, event);
+		createCreditsCollectText(data.price, {
+			x: event.clientX,
+			y: event.clientY
+		});
+
 		completePurchase(false);
 	}
 
