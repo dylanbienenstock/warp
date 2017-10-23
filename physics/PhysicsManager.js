@@ -39,6 +39,8 @@ class PhysicsManager {
 
 		this.physicsObjects.push(physicsObject);
 		this.physicsObjectOwners[physicsObject.id] = entity;
+
+		this.getPhysicsInfo(physicsObject);
 	}
 
 	remove(physicsObject) {
@@ -283,8 +285,6 @@ class PhysicsManager {
 								 (collision.with.info.bounds.center.x + collision.with.totalVelocityX) - (collision.physicsObject.info.bounds.center.x - collision.physicsObject.totalVelocityX));
 
 				this.collisions.push(collision);
-
-				break;
 			}
 		}
 	}

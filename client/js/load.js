@@ -1,21 +1,29 @@
 function loadContent(setup) {
 	PIXI.loader
+		.add("none", "./img/none.png")
 		.add("lockon", "./img/lockon.svg")
 		.add("particle", "./img/particle.png")
 
+		.add("equipment:missilebattery", "./img/equipment/missilebattery.svg")
+		.add("equipment:escapepod", "./img/equipment/escapepod.svg")
+
 		.add("projectile:orb", "./img/projectile/orb.svg")
+		.add("projectile:missile", "./img/projectile/missile.svg")
 
 		.add("ship:skiff", "./img/ships/skiff/body.svg")
 		.add("ship:skiff:outline", "./img/ships/skiff/outline.svg")
 		.add("ship:skiff:shadow", "./img/ships/skiff/shadow.svg")
 		.add("ship:skiff:forward", "./img/ships/skiff/forward.svg")
-		.add("ship:skiff:backward","./img/ships/skiff/backward.svg")
 
 		.add("ship:cartel", "./img/ships/cartel/body.svg")
 		.add("ship:cartel:outline", "./img/ships/cartel/outline.svg")
 		.add("ship:cartel:shadow", "./img/ships/cartel/shadow.svg")
 		.add("ship:cartel:forward", "./img/ships/cartel/forward.svg")
-		.add("ship:cartel:backward","./img/ships/cartel/backward.svg")
+
+		.add("ship:escapepod", "./img/ships/escapepod/body.svg")
+		.add("ship:escapepod:outline", "./img/ships/escapepod/outline.svg")
+		.add("ship:escapepod:shadow", "./img/ships/escapepod/shadow.svg")
+		.add("ship:escapepod:forward", "./img/ships/escapepod/forward.svg")
 
 		.add("shield", "./img/shield.svg")
 

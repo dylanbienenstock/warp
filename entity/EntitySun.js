@@ -108,6 +108,18 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 				sun.createSolarSystem(asteroidBeltIndices.includes(i));
 			}
+
+			for (var i = 0; i < 3; i++) {
+				var station = ENT.create(ENT.new("Station", {
+					x: 0,
+					y: 0,
+					alignment: "good",
+					orbitEntityId: this.id,
+					orbitRadius: Math.pow(2, 12),
+					orbitOffset: Math.PI * 2 / 3 * i,
+					orbitSpeedDivisor: 12 * 60000
+				}));
+			}
 		}
 
 		createSolarSystem(hasAsteroidBelt) {

@@ -32,13 +32,43 @@ var radarLerpFactor = 1;
 
 window.aboutToWarp = false;
 window.warping = false;
+window.equipmentSlots = 3;
+window.equipmentDirty = true;
+window.mouseOverEquipment = false;
+
+var equipmentContainer;
+var equipmentTextContainer;
+var equipmentGraphics;
+//var equipmentTextGraphics;
+var equipmentBoxTexture;
+var equipmentBoxSize = 104;
+var equimentTextBoxSize = 20;
+var equipmentBoxes = [];
+var equipmentListingSprites = [];
+var equipmentLastHoveringIndex;
+var equipmentHoveringIndex;
+var equipmentDraggingIndex;
+var equipmentDragging = false;
+var equipmentDragOffsetX;
+var equipmentDragOffsetY;
+var equipmentDragGraphics;
+var equipmentDraggedToDifferentSlot;
+var equipmentCirclePadding = 4;
+var equipmentCircleRadius = 5;
 
 function setupHUD(HUDContainer) {
 	radar = new PIXI.Graphics();
 	radarMask = new PIXI.Graphics();
 	radar.mask = radarMask;
 
-	HUDContainer.addChild(radar, radarMask);
+	equipmentContainer = new PIXI.ParticleContainer();
+	equipmentTextContainer = new PIXI.Container();
+	equipmentGraphics = new PIXI.Graphics();
+	equipmentDragGraphics = new PIXI.Graphics();
+	//equipmentTextGraphics = new PIXI.Graphics();
+
+	//equipmentTextContainer.addChild(equipmentTextGraphics);
+	HUDContainer.addChild(radar, radarMask, equipmentContainer, equipmentTextContainer, equipmentDragGraphics);
 }
 
 function setupHUDMeters() {
@@ -46,8 +76,7 @@ function setupHUDMeters() {
 		type: "text",
 		containerId: "meter-credits",
 		iconURL: "./img/hud/credits.svg",
-		color: "#FFD200",
-		value: 0
+		color: "#FFD200"
 	});
 
 	meterBoost = new HUDMeter({
@@ -55,7 +84,6 @@ function setupHUDMeters() {
 		containerId: "meter-boost",
 		iconURL: "./img/hud/boost.svg",
 		color: "#40FF40",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
@@ -65,17 +93,19 @@ function setupHUDMeters() {
 		containerId: "meter-warp",
 		iconURL: "./img/hud/warp.svg",
 		color: "#42E8F8",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
+
+	meterWarp.onLoad = function() {
+		window.equipmentDirty = true;
+	};
 
 	meterShield = new HUDMeter({
 		type: "segmented",
 		containerId: "meter-shield",
 		iconURL: "./img/hud/shield.svg",
 		color: "#b400ff",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
@@ -85,7 +115,6 @@ function setupHUDMeters() {
 		containerId: "meter-health",
 		iconURL: "./img/hud/health.svg",
 		color: "#FF4040",
-		value: 100,
 		maxValue: 100,
 		segmentCount: 12
 	});
@@ -96,6 +125,7 @@ function setupHUDMeters() {
 function drawHUD() {
 	drawRadar();
 	drawMeters();
+	drawEquipment();
 }
 
 function addRadarDot(x, y, color, radius, trueRadius, roundPosition) {
@@ -205,8 +235,6 @@ function drawRadar() {
 
 	if (window.aboutToWarp && radarFullSize) {
 		drawWarpPath();
-	} else {
-		document.body.style.cursor = "auto";
 	}
 
 	radar.lineStyle(2, 0xFFFFFF);
@@ -233,8 +261,6 @@ function drawWarpPath() {
 
 		cursorColor = 0x42E8F8;
 		document.body.style.cursor = "pointer";
-	} else {
-		document.body.style.cursor = "auto";
 	}
 
 	radar.lineStyle(2, cursorColor, (radarAlpha - radarInitialAlpha) * (1 / radarInitialAlpha));
@@ -277,7 +303,7 @@ function getWarpPosition() {
 	var distanceFromCenter = Math.sqrt(Math.pow(ENT.ww / 2 - window.mouseX, 2) + Math.pow(ENT.wh / 2 - window.mouseY, 2));
 	var distanceFromPlayer = Math.sqrt(Math.pow(localPlayerX - window.mouseX, 2) + Math.pow(localPlayerY - window.mouseY, 2));
 	var minWarpDistance = ENT.localPlayer.minWarpDistance * radarProportion;
-	var maxWarpDistance = ENT.localPlayer.maxWarpDistance * radarProportion;
+	var maxWarpDistance = (ENT.localPlayer.minWarpDistance + ENT.localPlayer.warpPower) * radarProportion;
 
 	if (distanceFromPlayer > minWarpDistance && 
 		distanceFromPlayer < maxWarpDistance && 
@@ -327,11 +353,241 @@ function drawMeters() {
 	var windowHeight = $(window).innerHeight();
 
 	if (ENT.localPlayer != undefined && metersVisible) {
-		meterCredits.setValue(ENT.localPlayer.credits, 0.2);
+		meterCredits.setValue(ENT.localPlayer.credits, 1);
 		meterBoost.setValue(ENT.localPlayer.alive ? ENT.localPlayer.boost : 0, 0.2);
 		meterWarp.maxValue = ENT.localPlayer.maxWarpDistance - ENT.localPlayer.minWarpDistance;
 		meterWarp.setValue(ENT.localPlayer.alive ? ENT.localPlayer.warpPower : 0, 0.2);
 		meterShield.setValue(ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0, 0.2);
 		meterHealth.setValue(ENT.localPlayer.alive ? ENT.localPlayer.health : 0, 0.2);
+	}
+}
+
+function drawEquipment() {
+	equipmentLastHoveringIndex = equipmentHoveringIndex;
+
+	if (window.equipmentDirty) {
+		window.equipmentDirty = false;
+		drawEquipmentBoxes();
+	}
+
+	if (window.aboutToWarp) {
+		equipmentContainer.visible = false;
+	} else {
+		window.mouseOverEquipment = false;
+		equipmentContainer.visible = true;
+		equipmentHoveringIndex = null;
+
+		for (var i = 0; i < equipmentBoxes.length; i++) {
+			var equipmentBox = equipmentBoxes[i];
+			equipmentBox.alpha = 0.7;
+			equipmentBox.mouseIsOver = false;
+
+			if (!window.mouseOverEquipment &&
+				window.mouseX >= equipmentBox.x &&
+				window.mouseX < equipmentBox.x + equipmentBoxSize + 4 &&
+				window.mouseY >= equipmentBox.y &&
+				window.mouseY < equipmentBox.y + equipmentBoxSize) {
+
+				document.body.style.cursor = "move";
+				equipmentBox.alpha = 1;
+				equipmentBox.mouseIsOver = true;
+				window.mouseOverEquipment = true;
+
+				equipmentHoveringIndex = i;
+			}
+		}
+
+		if (equipmentHoveringIndex != equipmentLastHoveringIndex) {
+			equipmentDraggedToDifferentSlot = true;
+			dragEquipment();
+		}
+	}
+
+	equipmentContainer.children.sort(function(a, b) {
+		if (b.isBox) return 1;
+		if (a.isBox) return -1;
+
+		return 0;
+	}); 
+}
+
+function beginDragEquipment() { // Called on mousedown
+	if (equipmentHoveringIndex != null) {
+		var draggingSprite = equipmentListingSprites[equipmentHoveringIndex];
+
+		if (draggingSprite != null) {
+			draggingSprite.alpha = 0.5;
+
+			equipmentDraggingIndex = equipmentHoveringIndex;
+			equipmentDragging = true;
+			equipmentDragOffsetX = window.mouseX - draggingSprite.x;
+			equipmentDragOffsetY = window.mouseY - draggingSprite.y;
+		}
+	}
+}
+
+function resetLastHoveringSprite() {
+	if (equipmentLastHoveringIndex != equipmentDraggingIndex) {
+		var lastHoveringSprite = equipmentListingSprites[equipmentLastHoveringIndex];
+
+		if (lastHoveringSprite != null) {
+			lastHoveringSprite.alpha = 1;
+			lastHoveringSprite.position = equipmentBoxes[equipmentLastHoveringIndex].position;
+			lastHoveringSprite.x += equipmentBoxSize / 2;
+			lastHoveringSprite.y += equipmentBoxSize / 2;
+		}
+	}
+}
+
+function dragEquipment() { // Called on mousemove
+	if (equipmentDraggingIndex != null) {
+		var draggingSprite = equipmentListingSprites[equipmentDraggingIndex];
+
+		if (draggingSprite != null) {
+			if (equipmentHoveringIndex == null) { // Dragged out of equipment bar
+				equipmentDragGraphics.clear();
+				resetLastHoveringSprite();
+
+				draggingSprite.x = window.mouseX;
+				draggingSprite.y = window.mouseY;
+			}
+			else if (equipmentDraggedToDifferentSlot) { // Dragged into another slot
+				equipmentDraggedToDifferentSlot = false;
+				drawEquipmentDrag();
+				resetLastHoveringSprite();
+
+				var hoveringSprite = equipmentListingSprites[equipmentHoveringIndex];
+
+				if (hoveringSprite != null) {
+					hoveringSprite.alpha = 0.5;
+					hoveringSprite.position = equipmentBoxes[equipmentDraggingIndex].position;
+					hoveringSprite.x += equipmentBoxSize / 2;
+					hoveringSprite.y += equipmentBoxSize / 2;
+				}
+
+				draggingSprite.position = equipmentBoxes[equipmentHoveringIndex].position;
+				draggingSprite.x += equipmentBoxSize / 2;
+				draggingSprite.y += equipmentBoxSize / 2;
+			}
+		}
+	}
+}
+
+function drawEquipmentDrag() {
+	equipmentDragGraphics.clear();
+
+	if (equipmentHoveringIndex != equipmentDraggingIndex) {
+		var hoveringBox = equipmentBoxes[equipmentHoveringIndex];
+		var draggingBox = equipmentBoxes[equipmentDraggingIndex];
+
+		var controlPointOffsetY = 32 + (Math.abs(equipmentHoveringIndex - equipmentDraggingIndex) - 1) * 8;
+		var startX = hoveringBox.x + equipmentBoxSize / 2;
+		var startY = hoveringBox.y - equipmentCirclePadding - equipmentCircleRadius * 2;
+		var endX = draggingBox.x + equipmentBoxSize / 2;
+		var endY = draggingBox.y - equipmentCirclePadding - equipmentCircleRadius * 2;
+
+		equipmentDragGraphics.lineStyle(3, 0x353535);
+		equipmentDragGraphics.moveTo(startX, startY + 1);
+		equipmentDragGraphics.bezierCurveTo(startX, startY - controlPointOffsetY, endX, endY - controlPointOffsetY, endX, endY + 1);
+		equipmentDragGraphics.lineStyle();
+
+		equipmentDragGraphics.beginFill(0x353535);
+		equipmentDragGraphics.drawCircle(startX, startY + equipmentCircleRadius, equipmentCircleRadius);
+		equipmentDragGraphics.drawCircle(endX, endY + equipmentCircleRadius, equipmentCircleRadius);
+		equipmentDragGraphics.endFill();
+	}
+}
+
+function dropEquipment() { // Called on mouseup
+	if (!equipmentDragging) return;
+	equipmentDragGraphics.clear();
+
+	if (equipmentHoveringIndex != null && equipmentHoveringIndex != equipmentDraggingIndex) {
+		swapEquipment(equipmentDraggingIndex, equipmentHoveringIndex);
+	}
+
+	equipmentDraggingIndex = null;
+	equipmentDragging = false;
+	window.equipmentDirty = true;
+}
+
+function swapEquipment(a, b) {
+	var storedListing = ENT.localPlayer.equipmentListings[a];
+	ENT.localPlayer.equipmentListings[a] = ENT.localPlayer.equipmentListings[b];
+	ENT.localPlayer.equipmentListings[b] = storedListing;
+
+	sendSwapEquipment(a, b);
+}
+
+function drawEquipmentBoxes() {
+	if (ENT.localPlayer == undefined) return;
+
+	equipmentBoxes.length = 0;
+	equipmentListingSprites.length = 0;
+	equipmentContainer.removeChildren();
+	equipmentTextContainer.removeChildren();
+	//equipmentTextContainer.addChild(equipmentTextGraphics);
+
+	if (equipmentBoxTexture != null) {
+		equipmentBoxTexture.destroy();
+		equipmentBoxTexture = null;
+	}
+
+	equipmentGraphics.clear();
+	equipmentGraphics.beginFill(0x303030, 1);
+	equipmentGraphics.drawRoundedRect(0, 0, equipmentBoxSize, equipmentBoxSize, 4);
+	equipmentGraphics.endFill();
+	equipmentGraphics.bounds = new PIXI.Rectangle(0, 0, equipmentBoxSize, equipmentBoxSize);
+
+	equipmentBoxTexture = window.renderer.generateTexture(equipmentGraphics, PIXI.SCALE_MODES.NEAREST, 2);
+
+	var $meterWarp = $("#meter-warp");
+	var x = $meterWarp.offset().left + $meterWarp.outerWidth() + 4;
+	var y = ENT.wh - equipmentBoxSize - windowPadding + 3;
+
+	var keyStyle = new PIXI.TextStyle({
+		fontFamily: "Source Code Pro",
+		fontSize: 16,
+		fill: "#505050"
+	});
+
+	//equipmentTextGraphics.lineStyle(2, 0x505050, 0.7);
+
+	for (var i = 0; i < window.equipmentSlots; i++) {
+		var equipmentBoxSprite = new PIXI.Sprite(equipmentBoxTexture);
+		equipmentBoxSprite.x = x;
+		equipmentBoxSprite.y = y;
+		equipmentBoxSprite.isBox = true;
+		equipmentContainer.addChild(equipmentBoxSprite);
+		equipmentBoxes.push(equipmentBoxSprite);
+
+		var equipmentListing = ENT.localPlayer.equipmentListings[i];
+
+		if (equipmentListing != undefined) {
+			var equipmentListingSprite = new PIXI.Sprite(PIXI.loader.resources[equipmentListing.texture].texture);
+			equipmentListingSprite.width = equipmentBoxSize - 16;
+			equipmentListingSprite.height = equipmentBoxSize - 16;
+			equipmentListingSprite.anchor.set(0.5, 0.5);
+			equipmentListingSprite.x = x + equipmentBoxSize / 2;
+			equipmentListingSprite.y = y + equipmentBoxSize / 2;
+			equipmentContainer.addChild(equipmentListingSprite);
+			equipmentListingSprites[i] = equipmentListingSprite;
+		}
+
+		var roundedRectX = x + equipmentBoxSize - equimentTextBoxSize - 4;
+		var roundedRectY = y + equipmentBoxSize - equimentTextBoxSize - 4;
+
+		//equipmentTextGraphics.drawRoundedRect(roundedRectX, roundedRectY, equimentTextBoxSize, equimentTextBoxSize, 4);
+
+		var keyString = (i != 9 ? i + 1 : "O").toString();
+		var keyTextMetrics = PIXI.TextMetrics.measureText(keyString, keyStyle);
+		var keyText = new PIXI.Text(keyString, keyStyle);
+		keyText.cacheAsBitmap = true;
+		keyText.x = roundedRectX + equimentTextBoxSize / 2 - keyTextMetrics.width / 2;
+		keyText.y = roundedRectY + equimentTextBoxSize / 2 - keyTextMetrics.height / 2;
+
+		equipmentTextContainer.addChild(keyText);
+
+		x += equipmentBoxSize + 4;
 	}
 }

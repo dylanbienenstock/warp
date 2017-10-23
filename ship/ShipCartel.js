@@ -27,6 +27,7 @@ module.exports = function(ShipBase, ENT, PHYS) {
 			this.boostFactor = 2;
 			this.boostDeplete = 0.3;
 			this.boostRegen = 0.18;
+			this.equipmentSlots = 4;
 		}
 
 		static getListing() {

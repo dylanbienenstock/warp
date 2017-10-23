@@ -27,8 +27,13 @@ function connect(name) {
 					var entity = ENT.create(ENT.new(data));
 
 					if (data.playerSocketId == socket.id) {
+						if (ENT.localPlayer != undefined) {
+							ENT.localPlayer.isLocalPlayer = false;
+						}
+
 						ENT.localPlayer = entity;
 						entity.isLocalPlayer = true;
+						window.equipmentDirty = true;
 					}
 				});
 
@@ -115,12 +120,36 @@ function sendBuySpecialWeapon(className) {
 	});
 }
 
+function sendBuyEquipment(className) {
+	socket.emit("buy equipment", {
+		className: className
+	});
+}
+
 function sendChatMessage(message) {
 	socket.emit("chat out", message);
 }
 
 function sendWarp(position) {
 	socket.emit("warp", position);
+}
+
+function sendSwapEquipment(a, b) {
+	socket.emit("swap equipment", {
+		a: a,
+		b: b
+	});
+}
+
+function aimAtPosition(position) {
+	if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
+		ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - position.y,
+													 ENT.localPlayer.sprite.position.x - position.x);
+	}
+}
+
+function aimAtCursor() {
+	aimAtPosition(getMousePosition());
 }
 
 var boundControls = {};
@@ -157,8 +186,18 @@ function getBinds() {
 	bindPlayerControl(68, "thrustRight"); 		// D
 	bindPlayerControl(32, "fireSpecial");		// Space
 	bindPlayerControl(16, "boost");				// Shift
+	bindPlayerControl(48, "useEquipment9");		// 0
+	bindPlayerControl(49, "useEquipment0");		// 1
+	bindPlayerControl(50, "useEquipment1");		// 2
+	bindPlayerControl(51, "useEquipment2");		// 3
+	bindPlayerControl(52, "useEquipment3");		// 4
+	bindPlayerControl(53, "useEquipment4");		// 5
+	bindPlayerControl(54, "useEquipment5");		// 6
+	bindPlayerControl(55, "useEquipment6");		// 7
+	bindPlayerControl(56, "useEquipment7");		// 8
+	bindPlayerControl(57, "useEquipment8");		// 9
 
-	bindKeyToFunction(81, function() {			// Q
+	bindKeyToFunction(81, function() {}, function() {			// Q
 		if (window.connected) {
 			toggleShop();
 		}
@@ -184,6 +223,7 @@ function getBinds() {
 	}, function() {
 		eDown = false;
 		window.aboutToWarp = false;
+		aimAtCursor();
 	});
 
 	bindKeyToFunction(13, focusOnChat);			// Enter
@@ -196,20 +236,23 @@ function bindControls() {
 	window.mouseY = 0;
 
 	$(window).mousemove(function(event) {
+		var mouseWorldPosition = getMousePosition();
+
 		window.mouseX = event.pageX;
 		window.mouseY = event.pageY;
+		window.mouseWorldX = mouseWorldPosition.x;
+		window.mouseWorldY = mouseWorldPosition.y;
+
+		dragEquipment();
 
 		if (window.shopOpen || window.aboutToWarp || window.warping) return;
 
-		if (ENT.localPlayer != undefined && ENT.localPlayer.alive) {
-			var mousePos = getMousePosition();
-			ENT.localPlayer.sprite.rotation = Math.atan2(ENT.localPlayer.sprite.position.y - mousePos.y,
-														 ENT.localPlayer.sprite.position.x - mousePos.x);
-		}
+		aimAtCursor();
 	});
 	
 	$(window).resize(function() {
 		sendViewportDimensions();
+		window.equipmentDirty = true;
 	});
 
 	$(window).keydown(function(event) {
@@ -234,14 +277,20 @@ function bindControls() {
 	});
 
 	$(window).mousedown(function(event) {
+		beginDragEquipment();
+
 		if (window.shopOpen || window.chatting) return;
 
 		switch (event.which) {
 			case (1):
 				if (!ENT.localPlayer.controls.firePrimary) {
-					if (!window.aboutToWarp) {
-						sendControl("firePrimary", true);
-						ENT.localPlayer.controls.firePrimary = true;
+					if (window.mouseOverEquipment) {
+						beginDragEquipment();
+					} else {
+						if (!window.aboutToWarp) {
+							sendControl("firePrimary", true);
+							ENT.localPlayer.controls.firePrimary = true;
+						}
 					}
 				}
 
@@ -257,8 +306,12 @@ function bindControls() {
 	});
 
 	$(window).mouseup(function(event) {
+		dropEquipment();
+
 		switch (event.which) {
 			case (1):
+				dropEquipment();
+
 				if (window.aboutToWarp) {
 					window.warpPosition = getWarpPosition();
 

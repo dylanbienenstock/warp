@@ -37,5 +37,6 @@ class ShipSkiff extends ShipBase {
 
 		this.boostLocalX = 8;
 		this.boostLocalY = 0;
+		this.equipmentSlots = 3;
 	}
 }

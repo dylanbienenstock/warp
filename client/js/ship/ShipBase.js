@@ -26,10 +26,10 @@ class ShipBase {
 		this.height = 32;
 		this.x = 0;
 		this.y = 0;
+		this.rotation = 0;
 		this.boostLocalX = 0;
 		this.boostLocalY = 0;
 		this.boosting = false;
-		this.rotation = 0;
 
 		this.container = new PIXI.Container();
 		this.container.zIndex = 99;

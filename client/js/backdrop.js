@@ -1,6 +1,7 @@
 var backdropStars = [];
 var backdropStarTrailGraphics;
 var backdropStarTrailLength = 0;
+var backdropRenderingStarTrails = false;
 var backdropStarCount = 1024;
 var backdropSize = 1024;
 var backdropTilingSprites = [];
@@ -33,7 +34,7 @@ function setupBackdrop(backdropContainer) {
 		}
 
 		var texture = window.renderer.generateTexture(graphics);
-		var backdropTilingSprite = new PIXI.extras.TilingSprite(texture, 512, 512)
+		var backdropTilingSprite = new PIXI.extras.TilingSprite(texture, 1024, 1024)
 
 		backdropContainer.addChild(backdropTilingSprite);
 		backdropTilingSprites.push(backdropTilingSprite);
@@ -57,19 +58,29 @@ function renderBackdrop() {
 		backdropTilingSprites[i].width = ww;
 		backdropTilingSprites[i].height = wh;
 
+<<<<<<< HEAD
 		backdropTilingSprites[i].tilePosition.x = -ENT.stageContainer.pivot.x / backdropRatios[i];
 		backdropTilingSprites[i].tilePosition.y = -ENT.stageContainer.pivot.y / backdropRatios[i];
+=======
+		backdropTilingSprites[i].tilePosition.x = (-ENT.stageContainer.pivot.x) / backdropRatios[i];
+		backdropTilingSprites[i].tilePosition.y = (-ENT.stageContainer.pivot.y) / backdropRatios[i];
+>>>>>>> equipment
 	}
 
 	backdropStarTrailGraphics.clear();
 	backdropStarTrailLength = lerp(backdropStarTrailLength, (window.warping ? 100 : 0), (window.warping ? 0.02 : 0.2));
 
-	if (backdropStarTrailLength > 0.1) {
+	if (backdropStarTrailLength > 1) {
 		renderStarTrails(ww, wh);
+	} else if (backdropRenderingStarTrails) {
+		backdropRenderingStarTrails = false;
+		aimAtCursor();
 	}
 }
 
 function renderStarTrails(ww, wh) {
+	backdropRenderingStarTrails = true;
+
 	var angle = Math.atan2(ENT.localPlayer.sprite.y - window.warpPosition.y, ENT.localPlayer.sprite.x - window.warpPosition.x);
 
 	for (var i = 0; i < backdropTilingSprites.length; i++) {

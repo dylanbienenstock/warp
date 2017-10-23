@@ -104,3 +104,22 @@ function pointIsOnScreen(position) {
 			screenPosition.y >= 0 &&
 			screenPosition.y <= ENT.wh);
 }
+
+function createCreditsCollectText(amount, position) {
+	var collectText = document.createElement("span");
+	collectText.className = "collect-credits";
+	collectText.innerHTML = (amount > 0 ? "+" : "") + formatCredits(amount) + " credits";
+
+	document.body.appendChild(collectText);
+
+	$(collectText).offset({
+		left: position.x - $(collectText).outerWidth() / 2,
+		top: position.y - $(collectText).outerHeight() / 2
+	});
+
+	collectText.className = "collect-credits collect-credits-transition";
+
+	setTimeout(function() {
+		$(collectText).remove();
+	}, 750);
+}

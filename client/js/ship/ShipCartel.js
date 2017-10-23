@@ -38,5 +38,6 @@ class ShipCartel extends ShipBase {
 
 		this.boostLocalX = 12;
 		this.boostLocalY = 0;
+		this.equipmentSlots = 4;
 	}
 }

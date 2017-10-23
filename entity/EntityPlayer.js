@@ -7,8 +7,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 
 			this.networkGlobally = true;
 
+			this.socketId = data.socketId;
 			this.name = data.name || "Unnamed";
 			this.chatHue = Math.floor(Math.random() * 359);
+
+			this.velocityX = data.velocityX || 0;
+			this.velocityY = data.velocityY || 0;
 
 			this.credits = data.credits || 0;
 			this.shieldPower = 100;
@@ -17,7 +21,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.lastBoosting = false;
 			this.lastBoostTime = 0;
 			this.alive = true;
-
 
 			this.warping = false;
 			this.minWarpDistance = 3000;
@@ -48,16 +51,20 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.__primaryWeapon = null;
 			this.__secondaryWeapon = null;
 			this.__specialWeapon = null;
+			this.equipment = { doNotNetwork: true };
 
+			this.defaultShip = data.defaultShip;
 			this.shipListing = null;
 			this.primaryWeaponListing = null;
 			this.secondaryWeaponListing = null;
 			this.specialWeaponListing = null;
+			this.equipmentListings = [];
 
 			this.shouldNetworkShipListing = true;
 			this.shouldNetworkPrimaryWeaponListing = true;
 			this.shouldNetworkSecondaryWeaponListing = true;
 			this.shouldNetworkSpecialWeaponListing = true;
+			this.shouldNetworkEquipmentListings = true;
 
 			this.viewport = {
 				width: 1920,
@@ -75,7 +82,17 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				boost: false,
 				firePrimary: false,
 				fireSecondary: false,
-				fireSpecial: false
+				fireSpecial: false,
+				useEquipment0: false,
+				useEquipment1: false,
+				useEquipment2: false,
+				useEquipment3: false,
+				useEquipment4: false,
+				useEquipment5: false,
+				useEquipment6: false,
+				useEquipment7: false,
+				useEquipment8: false,
+				useEquipment9: false
 			};
 		}
 
@@ -121,6 +138,16 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.specialWeaponListing = value.constructor.getListing();
 		}
 
+		get nextEquipmentSlot() {
+			for (var i = 0; i < this.ship.equipmentSlots; i++) {
+				if (!this.equipment.hasOwnProperty(i) || this.equipment[i] == null) {
+					return i;
+				}
+			}
+
+			return null;
+		}
+
 		create() {
 			if (this.NPC) {
 				this.NPCController = new NPCController(this.id);
@@ -158,30 +185,64 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			return 0;
 		}
 
+		hasEquipment(className) {
+			for (var i = 0; i < this.ship.equipmentSlots; i++) {
+				if (this.equipment.hasOwnProperty(i) && this.equipment[i] != null) {
+					if (this.equipment[i].constructor.getListing().className == className) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		swapEquipment(a, b) {
+			var storedEquipment = this.equipment[a];
+			this.equipment[a] = this.equipment[b];
+			this.equipment[b] = storedEquipment;
+
+			var storedListing = this.equipmentListings[a];
+			this.equipmentListings[a] = this.equipmentListings[b];
+			this.equipmentListings[b] = storedListing;
+
+			this.shouldNetworkEquipmentListings = true;
+		}
+
 		kill() {
 			if (this.alive) {
 				ENT.trigger(this, "death");
 				console.log("! Player " + this.name + " was destroyed!");
 
+				if (this.onDeath instanceof Function) {
+					this.onDeath();
+					this.onDeath = null;
+				}
+
 				this.ship.physicsObject.active = false;
 				this.ship.shield.physicsObject.active = false;
 				this.alive = false;
-				this.doNotNetwork = true;
 			}
 		}
 
 		controlDown(control) {
-			if (control == "firePrimary") {
+			if (control == "firePrimary" && this.primaryWeapon != undefined) {
 				this.primaryWeapon.beginFire(this.getFirePosition(), this.getFireAngle());
 			} else if (control == "fireSecondary" && this.secondaryWeapon != undefined) {
 				this.secondaryWeapon.beginFire(this.getFirePosition(), this.getFireAngle());
 			} else if (control == "fireSpecial" && this.specialWeapon != undefined) {
 				this.specialWeapon.beginFire(this.getFirePosition(), this.getFireAngle());
+			} else if (control.startsWith("useEquipment")) {
+				var slot = parseInt(control[control.length - 1]);
+
+				if (slot != NaN && this.equipment[slot] != undefined) {
+					this.equipment[slot].beginUse(this.getFirePosition(), this.getFireAngle());
+				}
 			}
 		}
 
 		controlUp(control) {
-			if (control == "firePrimary") {
+			if (control == "firePrimary" && this.primaryWeapon != undefined) {
 				this.primaryWeapon.endFire(this.getFirePosition(), this.getFireAngle());
 			} else if (control == "fireSecondary" && this.secondaryWeapon != undefined) {
 				this.secondaryWeapon.endFire(this.getFirePosition(), this.getFireAngle());
@@ -214,7 +275,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				var firePosition = this.getFirePosition();
 				var fireAngle = this.getFireAngle();
 
-				this.primaryWeapon.update(firePosition, fireAngle, timeMult);
+				if (this.primaryWeapon != undefined) {
+					this.primaryWeapon.update(firePosition, fireAngle, timeMult);
+				}
 
 				if (this.secondaryWeapon != undefined) {
 					this.secondaryWeapon.update(firePosition, fireAngle, timeMult);
@@ -329,14 +392,18 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		warp(position) {
 			var distance = this.ship.physicsObject.distanceTo(position.x, position.y);
 
-			this.warping = true;
-			this.warpPower = Math.max(this.warpPower - distance, 0);
-			this.warpStartTime = Date.now();
-			this.warpStartX = this.ship.physicsObject.x;
-			this.warpStartY = this.ship.physicsObject.y;
-			this.warpEndX = position.x;
-			this.warpEndY = position.y;
-			this.warpEndTriggered = false;
+			if (distance > this.minWarpDistance - 256 &&
+				distance < this.minWarpDistance + this.warpPower + 256) {
+
+				this.warping = true;
+				this.warpPower = Math.max(this.warpPower - distance, 0);
+				this.warpStartTime = Date.now();
+				this.warpStartX = this.ship.physicsObject.x;
+				this.warpStartY = this.ship.physicsObject.y;
+				this.warpEndX = position.x;
+				this.warpEndY = position.y;
+				this.warpEndTriggered = false;
+			}
 		}
 
 		// From http://gizma.com/easing/ Thanks :)
@@ -397,12 +464,20 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.shouldNetworkSpecialWeaponListing = false;
 			}
 
+			if (this.shouldNetworkEquipmentListings) {
+				toSend.equipmentListings = this.equipmentListings;
+				this.shouldNetworkEquipmentListings = false;
+			}
+
 			ENT.sendProperties(this, toSend);
 		}
 
 		remove() {
 			this.ship.remove();
-			this.primaryWeapon.remove();
+
+			if (this.secondaryWeapon != undefined) {
+				this.primaryWeapon.remove();
+			}
 
 			if (this.secondaryWeapon != undefined) {
 				this.secondaryWeapon.remove();

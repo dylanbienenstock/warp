@@ -21,6 +21,14 @@ class ShipBase {
 			this.physicsObject.addChild(physicsObjects[i]);
 		}
 
+		this.physicsObject.x = player.x;
+		this.physicsObject.y = player.y;
+		this.physicsObject.rotation = player.rotation;
+		this.physicsObject.velocityX = player.velocityX;
+		this.physicsObject.velocityY = player.velocityY;
+		player.velocityX = 0;
+		player.velocityY = 0;
+
 		player.physicsObject = this.physicsObject;
 
 		PHYS.create(player, this.physicsObject);

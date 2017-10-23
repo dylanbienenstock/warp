@@ -100,7 +100,7 @@ class EntityPlanet extends EntityBase {
 			this.landSprite.tilePosition.x += 0.15;
 			
 			if (this.skinInfo.hasClouds) {
-				this.landSprite.attach(this.cloudsSprite);
+				attachSprite(this.landSprite, this.cloudsSprite);
 				this.cloudsSprite.tilePosition.x += 0.2;
 			}
 

@@ -33,7 +33,8 @@ ENT.Entity = Entity;
 var Ship = require("./ship/Ship.js")(ENT, PHYS);
 var Weapon = require("./weapon/Weapon.js")(ENT, PHYS);
 var SpecialWeapon = require("./weapon/SpecialWeapon.js")(ENT, PHYS);
-var Shop = require("./Shop.js")(Ship, Weapon, SpecialWeapon);
+var Equipment = require("./equipment/Equipment.js")(ENT, PHYS);
+var Shop = require("./Shop.js")(Ship, Weapon, SpecialWeapon, Equipment);
 
 var NPCProfile = require("./entity/NPCProfile.js");
 
@@ -88,17 +89,50 @@ function acceptConnection(name, socket) {
 
 	var angle = 2 * Math.PI * Math.random();
 
+	var playerInstanceIds = [];
 	var player = ENT.new("Player", {
 		name: name,
-		socketId: socket.id,
+		socketId: socket.client.id,
+		defaultShip: "Skiff",
 		x: -Math.cos(angle) * 4094,
 		y: -Math.sin(angle) * 4096
 	});
 
-	ENT.create(player, socket);
+	ENT.create(player, socket.client.id);
+	playerInstanceIds.push(player.id);
 
 	player.ship = new Ship.Skiff(player);
 	player.primaryWeapon = new Weapon.Peashooter(player);
+
+	var onDeath = function() {
+		if (player.hasEquipment("EscapePod")) {
+			var player2 = ENT.new("Player", {
+				name: player.name,
+				socketId: socket.client.id,
+				defaultShip: "EscapePod",
+				x: player.ship.physicsObject.x,
+				y: player.ship.physicsObject.y,
+				rotation: player.ship.physicsObject.rotation,
+				velocityX: -Math.cos(player.ship.physicsObject.rotation) * 128,
+				velocityY: -Math.sin(player.ship.physicsObject.rotation) * 128
+			});
+
+			ENT.create(player2, socket.client.id);
+			playerInstanceIds.push(player2.id);
+
+			player2.ship = new Ship.EscapePod(player2);
+
+			player2.onDeath = function() {
+				onDeath();
+			}
+
+			player = player2;
+		}
+	}
+
+	player.onDeath = function() {
+		onDeath();
+	}
 
 	if (!physicsDebug) {
 		console.log("+ Player " + name + " has connected.");
@@ -149,6 +183,10 @@ function acceptConnection(name, socket) {
 		Shop.buySpecialWeapon(player, data);
 	});
 
+	socket.on("buy equipment", function(data) {
+		Shop.buyEquipment(player, data);
+	});
+
 	socket.on("chat out", function(message) {
 		io.emit("chat in", {
 			name: sanitizer.escape(player.name),
@@ -159,6 +197,10 @@ function acceptConnection(name, socket) {
 
 	socket.on("warp", function(data) {
 		player.warp(data);
+	});
+
+	socket.on("swap equipment", function(data) {
+		player.swapEquipment(data.a, data.b);
 	});
 }
 
@@ -199,54 +241,45 @@ function processName(name) {
 
 /////////////////////////////////// GAME CODE ///////////////////////////////////
 
-function setupGame() {
-	// ENT.create(ENT.new("Station", {
-	// 	x: 0,
-	// 	y: 0,
-	// 	alignment: "good"
-	// }));
+function createNPC() {
+	var angle = 2 * Math.PI * Math.random();
 
+	var npc = ENT.new("Player", {
+		name: "NPC",
+		x: -Math.cos(angle) * PHYS.boundaryRadius,
+		y: -Math.sin(angle) * PHYS.boundaryRadius,
+		NPC: true,
+		NPCProfile: NPCProfile.DEFAULT
+	});
+
+	ENT.create(npc);
+
+	var shipKeys = Object.keys(Ship)
+	var weaponKeys = Object.keys(Weapon);
+	var primaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+	var secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+
+	while (secondaryWeaponChoice == primaryWeaponChoice) {
+		secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
+	}
+
+	npc.ship = new Ship[shipKeys[shipKeys.length * Math.random() << 0]](npc);
+	npc.primaryWeapon = new Weapon[weaponKeys[primaryWeaponChoice]](npc);
+	npc.secondaryWeapon = new Weapon[weaponKeys[secondaryWeaponChoice]](npc);
+}
+
+function setupGame() {
 	var blackHole = ENT.create(ENT.new("Sun", {
 		x: 0,
 		y: 0,
-		radius: 256,
 		color: 0x7718B2,
 		isBlackHole: true
 	}));
 
 	blackHole.createUniverse();
-	
-	for (var i = 0; i < (process.env.ASTEROIDS || 0); i++) {
-		var angle = 2 * Math.PI * Math.random();
-
-		ENT.create(ENT.new("Asteroid"));
-	}
 
 	for (var i = 0; i < (process.env.NPCS || 0); i++) {
-		var angle = 2 * Math.PI * Math.random();
-
-		var npc = ENT.new("Player", {
-			name: "NPC",
-			x: -Math.cos(angle) * PHYS.boundaryRadius,
-			y: -Math.sin(angle) * PHYS.boundaryRadius,
-			NPC: true,
-			NPCProfile: NPCProfile.DEFAULT
-		});
-
-		ENT.create(npc);
-
-		var shipKeys = Object.keys(Ship)
-		var weaponKeys = Object.keys(Weapon);
-		var primaryWeaponChoice = weaponKeys.length * Math.random() << 0;
-		var secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
-
-		while (secondaryWeaponChoice == primaryWeaponChoice) {
-			secondaryWeaponChoice = weaponKeys.length * Math.random() << 0;
-		}
-
-		npc.ship = new Ship[shipKeys[shipKeys.length * Math.random() << 0]](npc);
-		npc.primaryWeapon = new Weapon[weaponKeys[primaryWeaponChoice]](npc);
-		npc.secondaryWeapon = new Weapon[weaponKeys[secondaryWeaponChoice]](npc);
+		createNPC();
 	}
 }
 
