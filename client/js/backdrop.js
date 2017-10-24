@@ -57,14 +57,8 @@ function renderBackdrop() {
 
 		backdropTilingSprites[i].width = ww;
 		backdropTilingSprites[i].height = wh;
-
-<<<<<<< HEAD
 		backdropTilingSprites[i].tilePosition.x = -ENT.stageContainer.pivot.x / backdropRatios[i];
 		backdropTilingSprites[i].tilePosition.y = -ENT.stageContainer.pivot.y / backdropRatios[i];
-=======
-		backdropTilingSprites[i].tilePosition.x = (-ENT.stageContainer.pivot.x) / backdropRatios[i];
-		backdropTilingSprites[i].tilePosition.y = (-ENT.stageContainer.pivot.y) / backdropRatios[i];
->>>>>>> equipment
 	}
 
 	backdropStarTrailGraphics.clear();
