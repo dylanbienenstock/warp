@@ -14,10 +14,7 @@ module.exports = function(io, ENT, PHYS) {
 		Tracker: require("../entity/EntityTracker.js")(EntityBase, ENT, PHYS),
 		BouncerOrb: require("../entity/EntityBouncerOrb.js")(EntityBase, ENT, PHYS),
 		BouncerAura: require("../entity/EntityBouncerAura.js")(EntityBase, ENT, PHYS),
-<<<<<<< HEAD
-		Beam: require("../entity/EntityBeam.js")(EntityBase, ENT, PHYS)
-=======
+		Beam: require("../entity/EntityBeam.js")(EntityBase, ENT, PHYS),
 		Missile: require("../entity/EntityMissile.js")(EntityBase, ENT, PHYS),
->>>>>>> e2c2ba6a68ee3c876eb8de163075812adb8c9c3d
 	};
 }

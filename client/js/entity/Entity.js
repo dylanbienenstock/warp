@@ -11,9 +11,6 @@ window.Entity = {
 	Tracker: EntityTracker,
 	BouncerOrb: EntityBouncerOrb,
 	BouncerAura: EntityBouncerAura,
-<<<<<<< HEAD
-	Beam: EntityBeam
-=======
-	Missile: EntityMissile
->>>>>>> e2c2ba6a68ee3c876eb8de163075812adb8c9c3d
+	Beam: EntityBeam,
+	Missile: EntityMissile,
 };
