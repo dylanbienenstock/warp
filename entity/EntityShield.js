@@ -86,7 +86,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					}
 				}.bind(this));
 
-				if (this.showHits && showThisHit) {
+				if (collision != undefined && this.showHits && showThisHit) {
 					ENT.trigger(this, "hit", {
 						angle: collision.angle,
 						position: collision.position
