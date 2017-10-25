@@ -171,9 +171,22 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		takeDamage(amount, entity, collision, override) {
-			if (super.takeDamage(amount, entity, collision, override)) {
+			if (super.takeDamage(amount, entity, collision, override) && this.alive) {
 				ENT.trigger(this, "hit");
 			}
+		}
+
+		killed() {
+			ENT.trigger(this, "death");
+			console.log("! Player " + this.name + " was destroyed!");
+
+			if (this.onDeath instanceof Function) {
+				this.onDeath();
+				this.onDeath = null;
+			}
+
+			this.ship.physicsObject.active = false;
+			this.ship.shield.physicsObject.active = false;
 		}
 
 		hasEquipment(className) {
@@ -198,19 +211,6 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.equipmentListings[b] = storedListing;
 
 			this.shouldNetworkEquipmentListings = true;
-		}
-
-		killed() {
-			ENT.trigger(this, "death");
-			console.log("! Player " + this.name + " was destroyed!");
-
-			if (this.onDeath instanceof Function) {
-				this.onDeath();
-				this.onDeath = null;
-			}
-
-			this.ship.physicsObject.active = false;
-			this.ship.shield.physicsObject.active = false;
 		}
 
 		controlDown(control) {
