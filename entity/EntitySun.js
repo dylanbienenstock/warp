@@ -61,7 +61,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					player.ship.physicsObject.velocityY -= Math.sin(angle) * force;
 				}
 				else if (dist < this.radius) {
-					player.kill();
+					player.ship.shield.takeDamage(5, this);
 				}
 			}
 		}
