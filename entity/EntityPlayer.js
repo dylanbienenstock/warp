@@ -6,6 +6,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super(data);
 
 			this.networkGlobally = true;
+			this.canTakeDamage = false;
 
 			this.socketId = data.socketId;
 			this.name = data.name || "Unnamed";
@@ -15,12 +16,12 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.velocityY = data.velocityY || 0;
 
 			this.credits = data.credits || 0;
-			this.shieldPower = 100;
+			this.health = 100;
+			this.shieldHealth = 100;
 			this.boost = 100;
 			this.boosting = false;
 			this.lastBoosting = false;
 			this.lastBoostTime = 0;
-			this.alive = true;
 
 			this.warping = false;
 			this.minWarpDistance = 3000;
@@ -169,20 +170,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			}
 		}
 
-		takeDamage(damage, collision) {
-			if (this.alive) {
+		takeDamage(amount, entity, collision, override) {
+			if (super.takeDamage(amount, entity, collision, override)) {
 				ENT.trigger(this, "hit");
-
-				this.ship.health = Math.max(this.ship.health - damage, 0);
-
-				if (this.ship.health == 0) {
-					this.kill();
-				}
-
-				return damage;
 			}
-
-			return 0;
 		}
 
 		hasEquipment(className) {
@@ -209,20 +200,17 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.shouldNetworkEquipmentListings = true;
 		}
 
-		kill() {
-			if (this.alive) {
-				ENT.trigger(this, "death");
-				console.log("! Player " + this.name + " was destroyed!");
+		killed() {
+			ENT.trigger(this, "death");
+			console.log("! Player " + this.name + " was destroyed!");
 
-				if (this.onDeath instanceof Function) {
-					this.onDeath();
-					this.onDeath = null;
-				}
-
-				this.ship.physicsObject.active = false;
-				this.ship.shield.physicsObject.active = false;
-				this.alive = false;
+			if (this.onDeath instanceof Function) {
+				this.onDeath();
+				this.onDeath = null;
 			}
+
+			this.ship.physicsObject.active = false;
+			this.ship.shield.physicsObject.active = false;
 		}
 
 		controlDown(control) {
@@ -321,7 +309,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					this.specialWeapon.lastFire = now;
 				}
 
-				this.shieldPower = this.ship.shield.power;
+				this.shieldHealth = this.ship.shield.health;
 
 				if (now - this.lastBoostTime >= 1000) {
 					this.boost = Math.min(this.boost + this.ship.boostRegen * timeMult, 100);
@@ -436,8 +424,8 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				credits: this.credits,
 				rotation: this.ship.physicsObject.rotation,
 				controls: this.controls,
-				health: this.ship.health,
-				shieldPower: this.shieldPower,
+				health: this.health,
+				shieldHealth: this.ship.shield.health,
 				boost: this.boost,
 				boosting: this.boosting,
 				warping: this.warping,

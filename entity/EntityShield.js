@@ -4,12 +4,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super(data);
 			
 			this.doNotNetwork = true;
+			this.canTakeDamage = true;
+
 			this.ownerId = data.ownerId;
 			this.radius = data.radius || 32;
 			this.showHits = data.showHits;
 			this.hitSize = data.hitSize || data.radius || 32;
 			this.damageFactor = data.damageFactor || 0.5;
-			this.power = 100;
+			this.health = 100;
 			this.lastDamageTime = 0;
 
 			if (this.showHits == undefined) {
@@ -30,40 +32,73 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			PHYS.create(this, this.physicsObject);
 		}
 
-		takeDamage(damage, entity, collision) {
-			if (this.ownerId != undefined) {
-				this.lastDamageTime = Date.now();
-				var owner = ENT.getById(this.ownerId);
+		// takeDamage(damage, entity, collision) {
+		// 	if (this.ownerId != undefined) {
+		// 		this.lastDamageTime = Date.now();
+		// 		var owner = ENT.getById(this.ownerId);
 
-				if (owner != undefined) {
+		// 		if (owner != undefined) {
+		// 			if (entity.ownerId != undefined) {
+		// 				owner.offend(entity.ownerId);
+		// 			}
+
+		// 			var angleDegrees = (collision.angle - owner.physicsObject.rotation) * (180 / Math.PI);
+		// 			angleDegrees = ((angleDegrees % 360) + 360) % 360;
+		// 			damage *= this.damageFactor;
+		// 			damage = Math.max(damage, 0);
+
+		// 			this.power -= damage;
+
+		// 			if (this.power < 0) {
+		// 				var hullDamage = -this.power / this.damageFactor;
+		// 				this.power = 0;
+
+		// 				return hullDamage;
+		// 			}
+		// 		}
+		// 	}
+
+		// 	if (this.showHits) {
+		// 		ENT.trigger(this, "hit", {
+		// 			angle: collision.angle,
+		// 			position: collision.position
+		// 		});
+		// 	}
+
+		// 	return 0;
+		// }
+
+		takeDamage(amount, entity, collision, override) {
+			if (super.takeDamage(amount, entity, collision, override)) {
+				this.lastDamageTime = Date.now();
+				var showThisHit = true;
+
+				ENT.getById(this.ownerId, function(owner) {
 					if (entity.ownerId != undefined) {
 						owner.offend(entity.ownerId);
 					}
 
-					var angleDegrees = (collision.angle - owner.physicsObject.rotation) * (180 / Math.PI);
-					angleDegrees = ((angleDegrees % 360) + 360) % 360;
-					damage *= this.damageFactor;
-					damage = Math.max(damage, 0);
+					var difference = this.lastHealth - amount;
 
-					this.power -= damage;
-
-					if (this.power < 0) {
-						var hullDamage = -this.power / this.damageFactor;
-						this.power = 0;
-
-						return hullDamage;
+					if (difference < 0) {
+						showThisHit = false;
+						owner.takeDamage(-difference, entity, collision, true);
 					}
+				}.bind(this));
+
+				if (this.showHits && showThisHit) {
+					ENT.trigger(this, "hit", {
+						angle: collision.angle,
+						position: collision.position
+					});
 				}
 			}
+		}
 
-			if (this.showHits) {
-				ENT.trigger(this, "hit", {
-					angle: collision.angle,
-					position: collision.position
-				});
+		scaleDamage(amount, entity, collision, override) {
+			if (this.health > amount) {
+				return amount * this.damageFactor;
 			}
-
-			return 0;
 		}
 
 		update(timeMult) {
@@ -76,14 +111,15 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				}
 
 				if (Date.now() - this.lastDamageTime >= 2500) {
-					this.power = Math.min(this.power + 0.1 * timeMult, 100);
+					this.health = Math.min(this.health + 0.1 * timeMult, 100);
+					this.alive = true;
 				}
 			}
 		}
 
 		network() {
 			ENT.sendProperties(this, {
-				power: this.power,
+				health: this.health,
 				hits: this.hits
 			});
 		}

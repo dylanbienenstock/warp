@@ -76,24 +76,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		collideWith(entity, collision) {
-			if (entity instanceof ENT.type("Shield") && entity.ownerId != this.ownerId) {
-				var damage = entity.takeDamage(this.damage, this, collision);
+			entity.takeDamage(this.damage, this, collision);
+		}
 
-				if (damage > 0) {
-					ENT.getById(entity.ownerId, function(player) {
-						player.takeDamage(damage, collision);
-					});
-				}
-
-				ENT.remove(this);
-			}
-
-			if (entity instanceof ENT.type("Asteroid")) {
-				entity.physicsObject.velocityX += this.physicsObject.totalVelocityX / 64;
-				entity.physicsObject.velocityY += this.physicsObject.totalVelocityY / 64;
-
-				ENT.remove(this);
-			}
+		giveDamage(amount, entity) {
+			ENT.remove(this);
 		}
 	}
 }

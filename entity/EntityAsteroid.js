@@ -4,11 +4,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super(data);
 
 			this.networkGlobally = true;
+			this.canTakeDamage = true;
 
-			this.radius = Math.random() * 16 + 32;
-			this.health = 150 * (this.radius / (16 + 32));
+			this.radius = Math.floor(Math.random() * 16 + 32);
+			this.health = Math.floor(150 * (this.radius / (16 + 32)));
 			this.initialHealth = this.health;
-			this.alive = true;
 			this.respawnTimeout = null;
 
 			if (Math.random() > 0.95) {
@@ -56,13 +56,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		dropCredits() {
-			if (this.alive) {
-				ENT.create(ENT.new("Credits", {
-					x: this.physicsObject.x,
-					y: this.physicsObject.y,
-					amount: this.radius * 5
-				}));
-			}
+			ENT.create(ENT.new("Credits", {
+				x: this.physicsObject.x,
+				y: this.physicsObject.y,
+				amount: this.radius * 5
+			}));
 		}
 
 		create() {
@@ -105,24 +103,20 @@ module.exports = function(EntityBase, ENT, PHYS) {
 				this.physicsObject.velocityX += Math.cos(angle) * 0.1;
 				this.physicsObject.velocityY += Math.sin(angle) * 0.1;
 			}
+		}
 
-			if (entity instanceof ENT.type("Laser") || entity instanceof ENT.type("Tracker") || entity instanceof ENT.type("Beam")) {
-				ENT.trigger(this, "hit");
+		takeDamage(amount, entity, collision, override) {
+			super.takeDamage(amount, entity, collision, override);
 
-				if (!entity instanceof ENT.type("Beam")) {
-					ENT.remove(entity);
-				}
+			ENT.trigger(this, "hit");
+			this.physicsObject.velocityX += entity.physicsObject.totalVelocityX / 48;
+			this.physicsObject.velocityY += entity.physicsObject.totalVelocityY / 48;
+		}
 
-				this.health -= entity.damage;
-				
-				if (this.health <= 0) {
-					this.dropCredits();
-					this.alive = false;
-					this.physicsObject.active = false;
-
-					setTimeout(this.resetPosition.bind(this), 5000);
-				}
-			}
+		killed(attackerId) {
+			this.dropCredits();
+			this.physicsObject.active = false;
+			setTimeout(this.resetPosition.bind(this), 5000);
 		}
 
 		network() {
