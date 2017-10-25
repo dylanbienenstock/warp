@@ -41,7 +41,9 @@ class EntityBase {
 	// entity is the projectile, attackerId is the attacking player's id
 	takeDamage(amount, entity, collision, override) {
 		// Prevent self-damage
-		var shouldTakeDamage = this.id != entity.ownerId && this.ownerId != entity.ownerId;
+		var shouldTakeDamage = (entity.ownerId == undefined) || (this.id != entity.ownerId && this.ownerId != entity.ownerId);
+
+		this.lastHealth = this.health;
 
 		if (amount > 0 &&
 			shouldTakeDamage &&
@@ -51,7 +53,6 @@ class EntityBase {
 
 			amount = this.scaleDamage(amount) || amount;
 
-			this.lastHealth = this.health;
 			this.health = Math.max(this.health - amount, 0);
 
 			if (this.health == 0) {
@@ -62,7 +63,7 @@ class EntityBase {
 
 		if (shouldTakeDamage && (this.canTakeDamage || override)) {
 			entity.giveDamage(amount, entity, collision, override);
-			
+
 			return true;
 		}
 
