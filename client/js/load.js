@@ -20,6 +20,11 @@ function loadContent(setup) {
 		.add("ship:cartel:shadow", "./img/ships/cartel/shadow.svg")
 		.add("ship:cartel:forward", "./img/ships/cartel/forward.svg")
 
+		.add("ship:stealth", "./img/ships/stealth/body.svg")
+		// .add("ship:stealth:outline", "./img/ships/stealth/outline.svg")
+		// .add("ship:stealth:shadow", "./img/ships/stealth/shadow.svg")
+		.add("ship:stealth:forward", "./img/ships/stealth/forward.svg")
+
 		.add("ship:escapepod", "./img/ships/escapepod/body.svg")
 		.add("ship:escapepod:outline", "./img/ships/escapepod/outline.svg")
 		.add("ship:escapepod:shadow", "./img/ships/escapepod/shadow.svg")
