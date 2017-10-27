@@ -35,6 +35,8 @@ class ShipSkiff extends ShipBase {
 			backwardSprite: "ship:skiff:backward"
 		});
 
+		this.boostStartColor = [ 0, 0.85, 1 ];
+		this.boostEndColor = [ 0, 0, 1 ];
 		this.boostLocalX = 8;
 		this.boostLocalY = 0;
 		this.equipmentSlots = 3;
