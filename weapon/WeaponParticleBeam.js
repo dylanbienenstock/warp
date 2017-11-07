@@ -21,6 +21,7 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 
 		static getListing() {
 			return {
+				hidden: true,
 				displayName: "Particle Beam",
 				className: "ParticleBeam",
 				price: 0,
