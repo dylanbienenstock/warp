@@ -74,7 +74,6 @@ function layoutShop() {
 	var $shopVeil = $("#shop-veil");
 	var $shopContainer = $("#shop-container");
 	var $shopClose = $("#shop-close");
-	var $shopListingInfoWeapons = $("#shop-listing-info-weapons");
 	var $shopListingStatsContainer = $(".shop-listing-stats-container");
 	var $shopBuyWeaponModal = $("#shop-buy-modal-weapons");
 	var $shopBuyWeaponModalClose = $("#shop-buy-modal-close-weapons");
@@ -115,6 +114,15 @@ function layoutShop() {
 	$shopBuyWeaponModalReceipt.css({
 		left: $shopBuyWeaponModal.width() / 2 - $shopBuyWeaponModalReceipt.width() / 2,
 		top: $shopBuyWeaponModal.height() / 2 - $shopBuyWeaponModalReceipt.height() / 2
+	});
+
+	$(".shop-pageselector-container").each(function() {
+		var parentOffset = $(this).parent().offset();
+
+		$(this).offset({
+			left: parentOffset.left + 12,
+			top: parentOffset.top + 372 + 42 / 2 - $(this).outerHeight() / 2
+		});
 	});
 }
 

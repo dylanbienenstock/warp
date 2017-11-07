@@ -395,3 +395,36 @@
 	font-size: 24px;
 	cursor: none;
 }
+
+.shop-pageselector-container {
+	position: absolute;
+	width: calc(300px - 24px);
+	text-align: center;
+	font-size: 18px;
+	line-height: 29px;
+}
+
+.shop-pageselector-button {
+	position: relative;
+	top: 7px;
+	opacity: 0.55;
+	font-size: 0;
+
+	-webkit-transition: opacity 150ms ease;
+	-moz-transition: opacity 150ms ease;
+	-ms-transition: opacity 150ms ease;
+	-o-transition: opacity 150ms ease;
+	transition: opacity 150ms ease;
+
+	cursor: pointer;
+}
+
+.shop-pageselector-button:hover {
+	opacity: 1;
+}
+
+.shop-pageselector-page {
+	display: inline;
+	margin: 0 12px 0 12px;
+	opacity: 0.7;
+}
