@@ -74,8 +74,7 @@ function updateTitleScreen(baseContainer, titleScreenContainer, gameContainer) {
 		}
 	} else {
 		baseContainer.removeChild(titleScreenContainer);
-		$("#title-container").remove();
-		$("#notes-container").remove();
+		$("#titlescreen").remove();
 		setupHUDMeters();
 		$("#chat").stop().animate({ opacity: 0.4 });
 

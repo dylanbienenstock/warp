@@ -68,32 +68,34 @@
 	</head>
 
 	<body oncontextmenu="return false;">
-		<div id="title-container">
-			<div>
-				<span id="title">WARP</span>
+		<div id="titlescreen">
+			<div id="title-container">
+				<div>
+					<span id="title">WARP</span>
+				</div>
+
+				<div style="margin-top: 12px;">
+					<span id="name-input-title">NAME: </span>
+					<input id="name-input" type="text" maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus>
+				</div>
+
+				<div style="margin-top: 12px;">
+					<span id="help-message">Press ENTER to connect.</span>
+				</div>
 			</div>
 
-			<div style="margin-top: 12px;">
-				<span id="name-input-title">NAME: </span>
-				<input id="name-input" type="text" maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus>
+			<div id="others-container">
+				<div id="controls-container">
+					<img id="controls" src="./img/controls.svg" width="400px">
+					<img id="controls-used" src="./img/controls-used.svg" width="400px">
+				</div>
 			</div>
 
-			<div style="margin-top: 12px;">
-				<span id="help-message">Press ENTER to connect.</span>
+			<div id="title-button-container">
+				<button type="button" class="title-button" id="title-button-log-in" onclick="clickTitleButton('log-in')">Log in</button>
+				<button type="button" class="title-button" id="title-button-controls" onclick="clickTitleButton('controls')">Controls</button>
+				<button type="button" class="title-button" id="title-button-donate" onclick="clickTitleButton('donate')">Donate &#x2764;&#xFE0E;</button>
 			</div>
-		</div>
-
-		<div id="others-container">
-			<div id="controls-container">
-				<img id="controls" src="./img/controls.svg" width="400px">
-				<img id="controls-used" src="./img/controls-used.svg" width="400px">
-			</div>
-		</div>
-
-		<div id="title-button-container">
-			<button type="button" class="title-button" id="title-button-log-in" onclick="clickTitleButton('log-in')">Log in</button>
-			<button type="button" class="title-button" id="title-button-controls" onclick="clickTitleButton('controls')">Controls</button>
-			<button type="button" class="title-button" id="title-button-donate" onclick="clickTitleButton('donate')">Donate &#x2764;&#xFE0E;</button>
 		</div>
 
 		<div id="interface-container">
