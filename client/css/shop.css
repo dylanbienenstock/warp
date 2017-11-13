@@ -416,11 +416,26 @@
 	-o-transition: opacity 150ms ease;
 	transition: opacity 150ms ease;
 
+	user-drag: none; 
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+
 	cursor: pointer;
 }
 
 .shop-pageselector-button:hover {
 	opacity: 1;
+}
+
+.shop-pageselector-button-disabled {
+	cursor: default;
+}
+
+.shop-pageselector-button-disabled:hover {
+	opacity: 0.55 !important;
 }
 
 .shop-pageselector-page {

@@ -65,9 +65,76 @@ function createShop(callback) {
 	window.shopCreated = true;
 
 	$("#shop-container").load("shop.html", function() {
+		setupShop();
 		layoutShop();
 		callback();
 	});
+}
+
+function setupShop() { // TO DO: Pre-load active and disabled images
+	$(".shop-pageselector-button").mousedown(function() {
+		console.log("asdasd");
+		if (!$(this).hasClass("shop-pageselector-button-disabled")) {
+			if ($(this).attr("src").includes("previous")) {
+				$(this).attr("src", "./img/shop/previous-page-active.svg");
+			} else {
+				$(this).attr("src", "./img/shop/next-page-active.svg");
+			}
+		}
+	});
+
+	$(".shop-pageselector-button").mouseup(function() {
+		if (!$(this).hasClass("shop-pageselector-button-disabled")) {
+			var section = $(this).parent().attr("id").split("-");
+			section = section[section.length - 1];
+
+			if ($(this).attr("src").includes("previous")) {
+				moveListingPage(section, -1);
+			} else {
+				moveListingPage(section, 1);
+			}
+		}
+	});
+}
+
+function moveListingPage(section, direction) {
+	console.log(section, direction);
+
+	var maxPageNumber = Math.ceil(shopListings[section].length / 6);
+	var listingPageNumberElement = document.getElementById("shop-pageselector-page-" + section);
+	var listingPageNumber = Math.max(1, Math.min(maxPageNumber, parseInt(listingPageNumberElement.innerHTML) + direction));
+	var firstListingSelected = false;
+
+	listingPageNumberElement.innerHTML = listingPageNumber;
+
+	shopListings[section].forEach(function(listing) {
+		if (listing.listingPageNumber == listingPageNumber) {
+			$(listing).show();
+
+			if (!firstListingSelected) {
+				firstListingSelected = true;
+				selectListing(listing, listing.listingData);
+			}
+		} else {
+			$(listing).hide();
+		}
+	});
+
+	if (listingPageNumber == 1) {
+		$("#shop-pageselector-button-previous-" + section).attr("src", "./img/shop/previous-page-disabled.svg");
+		$("#shop-pageselector-button-previous-" + section).addClass("shop-pageselector-button-disabled");
+	} else {
+		$("#shop-pageselector-button-previous-" + section).attr("src", "./img/shop/previous-page.svg");
+		$("#shop-pageselector-button-previous-" + section).removeClass("shop-pageselector-button-disabled");
+	}
+
+	if (listingPageNumber == maxPageNumber) {
+		$("#shop-pageselector-button-next-" + section).attr("src", "./img/shop/next-page-disabled.svg");
+		$("#shop-pageselector-button-next-" + section).addClass("shop-pageselector-button-disabled");
+	} else {
+		$("#shop-pageselector-button-next-" + section).attr("src", "./img/shop/next-page.svg");
+		$("#shop-pageselector-button-next-" + section).removeClass("shop-pageselector-button-disabled");
+	}
 }
 
 function layoutShop() {
@@ -174,6 +241,7 @@ function addShopListing(data) {
 
 	var listing = document.createElement("div");
 	listing.className = "shop-listing-inactive";
+	listing.listingData = data;
 	listing.onclick = function() {
 		selectListing(listing, data);
 	}
@@ -205,6 +273,12 @@ function addShopListing(data) {
 		shopFirstListings.push({ listing: listing, data: data });
 	} else {
 		shopListings[data.section].push(listing);
+	}
+
+	listing.listingPageNumber = Math.ceil(shopListings[data.section].length / 6);
+
+	if (listing.listingPageNumber != 1) {
+		$(listing).hide();
 	}
 }
 
