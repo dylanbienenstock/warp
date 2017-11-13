@@ -7,7 +7,8 @@ module.exports = function(PhysicsBase, __PHYS) {
 		constructor(data) {
 			super(data);
 
-			this.lines = data.lines;
+			this.rotation = data.rotation || 0;
+			this.lines = data.lines || [];
 		}
 	}
 }
