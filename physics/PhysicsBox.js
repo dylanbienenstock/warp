@@ -3,7 +3,7 @@ var PHYS;
 module.exports = function(PhysicsBase, __PHYS) {
 	PHYS = __PHYS;
 
-	return class PhysicsObject extends PhysicsBase {
+	return class PhysicsBox extends PhysicsBase {
 		constructor(data) {
 			super(data);
 

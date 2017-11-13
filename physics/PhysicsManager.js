@@ -135,6 +135,23 @@ class PhysicsManager {
 					}
 				});
 			}
+			else if (physicsObjectI instanceof this.Physics.Poly) {
+				for (var i = lines.length - 1; i >= 0; i--) {
+					var line = physicsObjectI.lines;
+
+					minX = Math.min(line.start.x, minX);
+					minY = Math.min(line.start.y, minY);
+					maxX = Math.max(line.start.x, maxX);
+					maxY = Math.max(line.start.y, maxY);
+
+					minX = Math.min(line.end.x, minX);
+					minY = Math.min(line.end.y, minY);
+					maxX = Math.max(line.end.x, maxX);
+					maxY = Math.max(line.end.y, maxY);
+
+					allLines.push(line);
+				}
+			}
 		}
 
 		return {
@@ -236,9 +253,21 @@ class PhysicsManager {
 		return null;
 	}
 
-	checkForCollisions(physicsObject) {
+	// If temporary is true, the collisions will be returned and not raise any events
+	checkForCollisions(physicsObject, temporary) { 
 		if (!physicsObject.active || physicsObject.collisionGroup == "None") {
+			if (temporary) {
+				return [];
+			}
+
 			return;
+		}
+
+		var toReturn;
+
+		if (temporary) {
+			toReturn = [];
+			physicsObject.info = this.getPhysicsInfo(physicsObject);
 		}
 
 		var likelyToCollide = this.QuadTree.retrieve(physicsObject.info.bounds);
@@ -284,16 +313,28 @@ class PhysicsManager {
 				collision.angle = Math.atan2((collision.with.info.bounds.center.y + collision.with.totalVelocityY) - (collision.physicsObject.info.bounds.center.y - collision.physicsObject.totalVelocityY), 
 								 (collision.with.info.bounds.center.x + collision.with.totalVelocityX) - (collision.physicsObject.info.bounds.center.x - collision.physicsObject.totalVelocityX));
 
-				this.collisions.push(collision);
+				if (temporary) {
+					toReturn.push(collision);
+				} else {
+					this.collisions.push(collision);
+				}
 			}
 		}
+
+		if (temporary) {
+			return toReturn;
+		}
+	}
+
+	getOwner(physicsObject) {
+		return this.physicsObjectOwners[physicsObject.id];
 	}
 
 	acknowledgeCollisions() {
 		for (var i = this.collisions.length - 1; i >= 0; i--) {
 			var collision = this.collisions[i];
-			var entity = this.physicsObjectOwners[collision.physicsObject.id];
-			var withEntity = this.physicsObjectOwners[collision.with.id];
+			var entity = this.getOwner(collision.physicsObject);
+			var withEntity = this.getOwner(collision.with);
 
 			if (entity != undefined && withEntity != undefined) {
 				entity.collideWith(withEntity, collision);
@@ -431,6 +472,10 @@ class PhysicsManager {
 			io.emit("quadtree", this.QuadTree.getDebugInfo());
 		}
 
+		//this.QuadTree.clear();
+	}
+
+	clearQuadTree() {
 		this.QuadTree.clear();
 	}
 }
