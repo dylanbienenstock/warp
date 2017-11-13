@@ -258,7 +258,7 @@ class EntityManager {
 		var physicsObjectCircle2 = PHYS.new("Circle", {
 			x: x,
 			y: y,
-			radius: radius
+			radius: 16
 		});
 
 		var polyAngle = (-0.5 * minDotProduct + 0.5) * 180 * (Math.PI / 180);
