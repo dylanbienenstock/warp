@@ -136,8 +136,8 @@ class PhysicsManager {
 				});
 			}
 			else if (physicsObjectI instanceof this.Physics.Poly) {
-				for (var i = lines.length - 1; i >= 0; i--) {
-					var line = physicsObjectI.lines;
+				for (var i = physicsObjectI.lines.length - 1; i >= 0; i--) {
+					var line = physicsObjectI.lines[i];
 
 					minX = Math.min(line.start.x, minX);
 					minY = Math.min(line.start.y, minY);
