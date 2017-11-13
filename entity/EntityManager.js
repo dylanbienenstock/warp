@@ -255,9 +255,11 @@ class EntityManager {
 			radius: radius
 		});
 
-		physicsObjectCircle.addChild(PHYS.new("Circle", {
-			radius: 16
-		}));
+		var physicsObjectCircle2 = PHYS.new("Circle", {
+			x: x,
+			y: y,
+			radius: radius
+		});
 
 		var polyAngle = (-0.5 * minDotProduct + 0.5) * 180 * (Math.PI / 180);
 
@@ -268,21 +270,32 @@ class EntityManager {
 				{
 					start: { x: 0, y: 0 },
 					end: {
-						x: Math.cos(angle + polyAngle) * radius,
-						y: Math.sin(angle + polyAngle) * radius
+						x: -Math.cos(angle + polyAngle) * radius,
+						y: -Math.sin(angle + polyAngle) * radius
 					}
 				},
 				{
 					start: { x: 0, y: 0 },
 					end: {
-						x: Math.cos(angle - polyAngle) * radius,
-						y: Math.sin(angle - polyAngle) * radius
+						x: -Math.cos(angle - polyAngle) * radius,
+						y: -Math.sin(angle - polyAngle) * radius
+					}
+				},
+				{
+					start: {
+						x: -Math.cos(angle + polyAngle) * radius,
+						y: -Math.sin(angle + polyAngle) * radius
+					},
+					end: {
+						x: -Math.cos(angle - polyAngle) * radius,
+						y: -Math.sin(angle - polyAngle) * radius
 					}
 				}
 			]
 		});
 
 		var collisionsCircle = PHYS.checkForCollisions(physicsObjectCircle, true);
+		var collisionsCircle2 = PHYS.checkForCollisions(physicsObjectCircle2, true);
 		var collisionsPoly = PHYS.checkForCollisions(physicsObjectPoly, true);
 
 		collisionsCircle = collisionsCircle.filter(function(collision) {
@@ -303,9 +316,27 @@ class EntityManager {
 			return dot >= minDotProduct;
 		});
 
-		return collisionsCircle.map(function(collision) {
+		var entities = collisionsCircle
+					   .concat(collisionsCircle2)
+					   .concat(collisionsPoly)
+					   .map(function(collision) {
+
 			return PHYS.getOwner(collision.with);
 		});
+
+		var seenIds = [];
+
+		for (var i = entities.length - 1; i >= 0; i--) {
+			var entity = entities[i];
+
+			if (seenIds.includes(entity.id)) {
+				entities.splice(i, 1);
+			} else {
+				seenIds.push(entity.id);
+			}
+		}
+
+		return entities;
 	}
 
 	getAll() {
