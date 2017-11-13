@@ -137,7 +137,9 @@ class PhysicsManager {
 			}
 			else if (physicsObjectI instanceof this.Physics.Poly) {
 				for (var i = physicsObjectI.lines.length - 1; i >= 0; i--) {
-					var line = physicsObjectI.lines[i];
+					var line = {};
+					line.start = this.rotatePoint(physicsObjectI.lines[i].start.x, physicsObjectI.lines[i].start.y, physicsObject.rotation);
+					line.end = this.rotatePoint(physicsObjectI.lines[i].end.x, physicsObjectI.lines[i].end.y, physicsObject.rotation);
 
 					minX = Math.min(line.start.x, minX);
 					minY = Math.min(line.start.y, minY);
@@ -148,6 +150,11 @@ class PhysicsManager {
 					minY = Math.min(line.end.y, minY);
 					maxX = Math.max(line.end.x, maxX);
 					maxY = Math.max(line.end.y, maxY);
+
+					line.start.x += physicsObject.x;
+					line.start.y += physicsObject.y;
+					line.end.x += physicsObject.x;
+					line.end.y += physicsObject.y;
 
 					allLines.push(line);
 				}
