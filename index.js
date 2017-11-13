@@ -26,7 +26,7 @@ var PHYS = require("./physics/PhysicsManager.js")(io, physicsDebug);
 var Physics = require("./physics/Physics.js")(PHYS);
 PHYS.Physics = Physics;
 
-var ENT = require("./entity/EntityManager.js")(io, physicsDebug);
+var ENT = require("./entity/EntityManager.js")(io, PHYS, physicsDebug);
 var Entity = require("./entity/Entity.js")(io, ENT, PHYS);
 ENT.Entity = Entity;
 
@@ -314,12 +314,14 @@ if (physicsDebug) {
 
 		ENT.update(1);
 		ENT.network();
+		PHYS.clearQuadTree();
 	}
 } else {
 	update = function() {
 		PHYS.update(1);
 		ENT.update(1);
 		ENT.network();
+		PHYS.clearQuadTree();
 	}
 }
 
