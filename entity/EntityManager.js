@@ -329,7 +329,7 @@ class EntityManager {
 		for (var i = entities.length - 1; i >= 0; i--) {
 			var entity = entities[i];
 
-			if (seenIds.includes(entity.id)) {
+			if (entity == undefined || seenIds.includes(entity.id)) {
 				entities.splice(i, 1);
 			} else {
 				seenIds.push(entity.id);

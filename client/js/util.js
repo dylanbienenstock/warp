@@ -26,6 +26,13 @@ function attachSprite(spriteParent, spriteChild, offsetX, offsetY, offsetRotatio
 	spriteChild.rotation = spriteParent.rotation + (offsetRotation || 0);
 }
 
+function getSpriteCenter(sprite) {
+	return {
+		x: -Math.cos(sprite.rotation) * (sprite.width / 2) * (1 - sprite.anchor.x) + sprite.position.x,
+		y: -Math.sin(sprite.rotation) * (sprite.height / 2) * (1 - sprite.anchor.y) + sprite.position.y
+	};
+}
+
 PIXI.Sprite.prototype.attach = function(sprite, offsetX, offsetY, offsetRotation) {
 	if (ENT.physicsDebug) {
 		console.log("PIXI.Sprite.prototype.attach is deprecated.");
