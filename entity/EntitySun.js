@@ -120,6 +120,14 @@ module.exports = function(EntityBase, ENT, PHYS) {
 					orbitSpeedDivisor: 12 * 60000
 				}));
 			}
+
+			// FOR QUADTREE EXHIBITION ONLY:
+
+			// ENT.getAll().forEach(function(entity) {
+			// 	if (entity.orbitSpeedDivisor != undefined) {
+			// 		entity.orbitSpeedDivisor /= 100;
+			// 	}
+			// });
 		}
 
 		createSolarSystem(hasAsteroidBelt) {
@@ -157,9 +165,9 @@ module.exports = function(EntityBase, ENT, PHYS) {
 						orbitEntityId: this.id,
 						orbitRadius: creationRadius,
 						orbitOffset: Math.PI * 2 * Math.random(),
-						orbitSpeedDivisor: 8 * 60000 + 
-											   ((creationRadius - initialCreationRadius) /
-											   	(this.systemRadius - initialCreationRadius) * 4 * 60000)
+						orbitSpeedDivisor: 2 * 60000 + 
+										   ((creationRadius - initialCreationRadius) /
+										   (this.systemRadius - initialCreationRadius) * 2 * 60000)
 					}));
 
 					nextObjectRadius = Math.round(Math.random() * 32 + 64);
