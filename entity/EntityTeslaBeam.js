@@ -6,10 +6,10 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			this.ownerId = data.ownerId;
 			this.active = false;
 			this.targetIds = [];
-			this.damage = data.damage || 2;
+			this.damage = data.damage || 1;
 			this.colors = data.colors || [ 0xFF0000 ];
 			this.range = data.range || 300;
-			this.cone = data.cone || 0.6;
+			this.cone = data.cone || 0.45;
 		}
 
 		create() {
@@ -17,9 +17,13 @@ module.exports = function(EntityBase, ENT, PHYS) {
 		}
 
 		findTargets(position, angle) {
-			this.targetIds = ENT.getInCone(position.x, position.y, angle, this.range, 0.6)
+			this.targetIds = ENT.getInCone(position.x, position.y, angle, this.range, 0.6);
 
-			.filter(function(entity) {
+			this.targetIds.forEach(function(entity) {
+				entity.takeDamage(this.damage, this);
+			}.bind(this));
+
+			this.targetIds = this.targetIds.filter(function(entity) {
 				return entity.canTakeDamage &&
 					   entity.id != this.ownerId &&
 					   entity.ownerId != this.ownerId;
