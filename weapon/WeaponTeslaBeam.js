@@ -4,9 +4,9 @@ module.exports = function(WeaponBase, ENT, PHYS) {
 			super(player);
 
 			this.fireInterval = 100;
-			this.damage = 2;
+			this.damage = 2.5;
 			this.range = 300;
-			this.cone = 0.6;
+			this.cone = 0.45;
 
 			this.beam = ENT.create(ENT.new("TeslaBeam", {
 				ownerId: this.ownerId,

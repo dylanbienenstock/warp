@@ -109,8 +109,11 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super.takeDamage(amount, entity, collision, override);
 
 			ENT.trigger(this, "hit");
-			this.physicsObject.velocityX += entity.physicsObject.totalVelocityX / 48;
-			this.physicsObject.velocityY += entity.physicsObject.totalVelocityY / 48;
+
+			if (entity != undefined && entity.physicsObject != undefined) {
+				this.physicsObject.velocityX += entity.physicsObject.totalVelocityX / 48;
+				this.physicsObject.velocityY += entity.physicsObject.totalVelocityY / 48;
+			}
 		}
 
 		killed(attackerId) {

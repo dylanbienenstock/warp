@@ -37,8 +37,9 @@ function openShop() {
 		$("#shop-veil").show();
 		layoutShop();
 
-		// TEMP (change 2 to 0)
+		// TEMP
 		selectShopTab(shopFirstTab, shopPageIds[2]);
+		moveListingPage("weapons", -999); // Go to first page
 
 		shopFirstListings.forEach(function(listingData) {
 			selectListing(listingData.listing, listingData.data);
@@ -73,7 +74,6 @@ function createShop(callback) {
 
 function setupShop() { // TO DO: Pre-load active and disabled images
 	$(".shop-pageselector-button").mousedown(function() {
-		console.log("asdasd");
 		if (!$(this).hasClass("shop-pageselector-button-disabled")) {
 			if ($(this).attr("src").includes("previous")) {
 				$(this).attr("src", "./img/shop/previous-page-active.svg");
@@ -98,8 +98,6 @@ function setupShop() { // TO DO: Pre-load active and disabled images
 }
 
 function moveListingPage(section, direction) {
-	console.log(section, direction);
-
 	var maxPageNumber = Math.ceil(shopListings[section].length / 6);
 	var listingPageNumberElement = document.getElementById("shop-pageselector-page-" + section);
 	var listingPageNumber = Math.max(1, Math.min(maxPageNumber, parseInt(listingPageNumberElement.innerHTML) + direction));

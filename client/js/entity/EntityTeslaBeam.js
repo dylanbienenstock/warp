@@ -85,19 +85,28 @@ class EntityTeslaBeam extends EntityBase {
 			} else {
 				for (let i = 0; i < targets.length; i++) {
 					var target = targets[i];
+					var targetX = target.x;
+					var targetY = target.y;
 					var nextTarget = targets[i + 1];
 
-					if (target == undefined || target.sprite == undefined) continue;
+					if (target == undefined) continue;
+
+					if (target.sprite == undefined) {
+						ENT.getById(target.ownerId, function(owner) {
+							targetX = owner.x;
+							targetY = owner.y;
+						});
+					}
 
 					var endPoint = {
-						x: target.x + Math.random() * maxOffset,
-						y: target.y + Math.random() * maxOffset
+						x: targetX + Math.random() * maxOffset,
+						y: targetY + Math.random() * maxOffset
 					}
 
 					if (i == targets.length - 1) {
 						endPoint = {
-							x: target.x,
-							y: target.y
+							x: targetX,
+							y: targetY
 						}
 					}
 
