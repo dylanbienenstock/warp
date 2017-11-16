@@ -395,3 +395,51 @@
 	font-size: 24px;
 	cursor: none;
 }
+
+.shop-pageselector-container {
+	position: absolute;
+	width: calc(300px - 24px);
+	text-align: center;
+	font-size: 18px;
+	line-height: 29px;
+}
+
+.shop-pageselector-button {
+	position: relative;
+	top: 7px;
+	opacity: 0.55;
+	font-size: 0;
+
+	-webkit-transition: opacity 150ms ease;
+	-moz-transition: opacity 150ms ease;
+	-ms-transition: opacity 150ms ease;
+	-o-transition: opacity 150ms ease;
+	transition: opacity 150ms ease;
+
+	user-drag: none; 
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+
+	cursor: pointer;
+}
+
+.shop-pageselector-button:hover {
+	opacity: 1;
+}
+
+.shop-pageselector-button-disabled {
+	cursor: default;
+}
+
+.shop-pageselector-button-disabled:hover {
+	opacity: 0.55 !important;
+}
+
+.shop-pageselector-page {
+	display: inline;
+	margin: 0 12px 0 12px;
+	opacity: 0.7;
+}

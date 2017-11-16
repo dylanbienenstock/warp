@@ -49,6 +49,30 @@ class EntityTracker extends EntityBase {
 	}
 
 	remove() {
+		if (this.sprite.visible) {
+			new ParticleEmitter({
+				radius: 5,
+				x: this.sprite.x,
+				y: this.sprite.y,
+				minSpeed: 0.2, 
+				maxSpeed: 0.3,
+				minLifespan: 400,
+				maxLifespan: 800,
+				startAlpha: 0.6,
+				endAlpha: 0,
+				startColor: this.color,
+				endColor: this.color,
+				minStartSize: 10,
+				maxStartSize: 12,
+				minEndSize: 4,
+				maxEndSize: 6,
+				spawnAmount: 8,
+				removeAfter: 8,
+				zIndex: 101,
+				blendMode: PIXI.BLEND_MODES.ADD
+			});
+		}
+
 		this.emitter.remove();
 		ENT.stageContainer.removeChild(this.sprite);
 		this.sprite.destroy();

@@ -1,7 +1,7 @@
 class EntityPlayer extends EntityBase {
 	constructor(data) {
 		super(data);
-
+		
 		this.triggers.changeShip = this.onChangeShip.bind(this);
 		this.triggers.hit = this.onHit.bind(this);
 		this.triggers.death = this.onDeath.bind(this);
@@ -12,7 +12,7 @@ class EntityPlayer extends EntityBase {
 		this.name = data.name;
 		this.credits = data.credits || 0;
 		this.health = 100;
-		this.shieldPower = 100;
+		this.shieldHealth = 100;
 		this.boost = 100;
 		this.boosting = false;
 		this.alive = data.alive;

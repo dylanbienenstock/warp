@@ -14,6 +14,8 @@ module.exports = function(io, ENT, PHYS) {
 		Tracker: require("../entity/EntityTracker.js")(EntityBase, ENT, PHYS),
 		BouncerOrb: require("../entity/EntityBouncerOrb.js")(EntityBase, ENT, PHYS),
 		BouncerAura: require("../entity/EntityBouncerAura.js")(EntityBase, ENT, PHYS),
+		Beam: require("../entity/EntityBeam.js")(EntityBase, ENT, PHYS),
+		TeslaBeam: require("../entity/EntityTeslaBeam.js")(EntityBase, ENT, PHYS),
 		Missile: require("../entity/EntityMissile.js")(EntityBase, ENT, PHYS),
 	};
 }

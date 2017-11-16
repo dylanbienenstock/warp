@@ -40,6 +40,14 @@ Physics will not be calculated for the entity if this property isn't present
 
 * lifespan: If set, the entity will be automatically removed after this many milliseconds
 
+* alive: True by default
+
+* health: Must be set to take damage
+
+* canTakeDamage: Must be true to take damage, projectiles will usually pass through if false
+
+* ownerId: Entity will not take damage from entities they own
+
 * createdTime: Set automatically if entity has lifespan property
 
 * networkGlobally: Entities with this property will be networked to all clients regardless of position

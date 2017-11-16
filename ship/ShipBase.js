@@ -5,9 +5,10 @@ class ShipBase {
 	constructor(player, physicsObjects) {
 		this.doNotNetwork = true;
 
+		player.health = 100;
+
 		this.ownerId = player.id;
 		this.physicsObject = physicsObjects[0];
-		this.health = 100;
 		this.speed = 6;
 		this.shield = null;
 		this.shieldRadius = 32;

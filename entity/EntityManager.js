@@ -2,8 +2,9 @@ var io;
 var PHYS;
 var physicsDebug;
 
-module.exports = function(__io, __physicsDebug) {
+module.exports = function(__io, __PHYS, __physicsDebug) {
 	io = __io;
+	PHYS = __PHYS;
 	physicsDebug = __physicsDebug;
 
 	return new EntityManager();
@@ -231,6 +232,111 @@ class EntityManager {
 		}
 
 		return found;
+	}
+
+	getInRadius(x, y, radius) {
+		var physicsObject = PHYS.new("Circle", {
+			x: x,
+			y: y,
+			radius: radius
+		});
+
+		var collisions = PHYS.checkForCollisions(physicsObject, true);
+		
+		return collisions.map(function(collision) {
+			return PHYS.getOwner(collision.with);
+		});
+	}
+
+	getInCone(x, y, angle, radius, minDotProduct) {
+		var physicsObjectCircle = PHYS.new("Circle", {
+			x: x,
+			y: y,
+			radius: radius
+		});
+
+		var physicsObjectCircle2 = PHYS.new("Circle", {
+			x: x,
+			y: y,
+			radius: 16
+		});
+
+		var polyAngle = (-0.5 * minDotProduct + 0.5) * 180 * (Math.PI / 180);
+
+		var physicsObjectPoly = PHYS.new("Poly", {
+			x: x,
+			y: y,
+			lines: [
+				{
+					start: { x: 0, y: 0 },
+					end: {
+						x: -Math.cos(angle + polyAngle) * radius,
+						y: -Math.sin(angle + polyAngle) * radius
+					}
+				},
+				{
+					start: { x: 0, y: 0 },
+					end: {
+						x: -Math.cos(angle - polyAngle) * radius,
+						y: -Math.sin(angle - polyAngle) * radius
+					}
+				},
+				{
+					start: {
+						x: -Math.cos(angle + polyAngle) * radius,
+						y: -Math.sin(angle + polyAngle) * radius
+					},
+					end: {
+						x: -Math.cos(angle - polyAngle) * radius,
+						y: -Math.sin(angle - polyAngle) * radius
+					}
+				}
+			]
+		});
+
+		var collisionsCircle = PHYS.checkForCollisions(physicsObjectCircle, true);
+		var collisionsCircle2 = PHYS.checkForCollisions(physicsObjectCircle2, true);
+		var collisionsPoly = PHYS.checkForCollisions(physicsObjectPoly, true);
+
+		collisionsCircle = collisionsCircle.filter(function(collision) {
+			var toEntityX = (x - collision.with.x);
+			var toEntityY = (y - collision.with.y);
+			var toEntityLength = Math.abs(Math.sqrt(toEntityX * toEntityX + toEntityY * toEntityY));
+			toEntityX /= toEntityLength;
+			toEntityY /= toEntityLength;
+
+			var perspectiveX = Math.cos(angle);
+			var perspectiveY = Math.sin(angle);
+			var perspectiveLength = Math.abs(Math.sqrt(perspectiveX * perspectiveX + perspectiveY * perspectiveY));
+			perspectiveX /= perspectiveLength;
+			perspectiveY /= perspectiveLength;
+
+			var dot = (toEntityX * perspectiveX) + (toEntityY * perspectiveY);
+
+			return dot >= minDotProduct;
+		});
+
+		var entities = collisionsCircle
+					   .concat(collisionsCircle2)
+					   .concat(collisionsPoly)
+					   .map(function(collision) {
+
+			return PHYS.getOwner(collision.with);
+		});
+
+		var seenIds = [];
+
+		for (var i = entities.length - 1; i >= 0; i--) {
+			var entity = entities[i];
+
+			if (entity == undefined || seenIds.includes(entity.id)) {
+				entities.splice(i, 1);
+			} else {
+				seenIds.push(entity.id);
+			}
+		}
+
+		return entities;
 	}
 
 	getAll() {

@@ -30,6 +30,7 @@ module.exports = function(EntityBase, ENT, PHYS) {
 			super(data);
 
 			this.networkGlobally = true;
+			this.canTakeDamage = true;
 			this.skinInfo = skinInfo[Math.floor(Math.random() * skinInfo.length)];
 
 			if (this.skinInfo.colorSchemes == "any") {

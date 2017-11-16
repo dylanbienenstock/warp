@@ -3,6 +3,7 @@ module.exports = function(PHYS) {
 
 	return {
 		Box: require("../physics/PhysicsBox.js")(PhysicsBase, PHYS),
-		Circle: require("../physics/PhysicsCircle.js")(PhysicsBase, PHYS)
+		Circle: require("../physics/PhysicsCircle.js")(PhysicsBase, PHYS),
+		Poly: require("../physics/PhysicsPoly.js")(PhysicsBase, PHYS),
 	};
 }

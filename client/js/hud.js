@@ -357,7 +357,7 @@ function drawMeters() {
 		meterBoost.setValue(ENT.localPlayer.alive ? ENT.localPlayer.boost : 0, 0.2);
 		meterWarp.maxValue = ENT.localPlayer.maxWarpDistance - ENT.localPlayer.minWarpDistance;
 		meterWarp.setValue(ENT.localPlayer.alive ? ENT.localPlayer.warpPower : 0, 0.2);
-		meterShield.setValue(ENT.localPlayer.alive ? ENT.localPlayer.shieldPower : 0, 0.2);
+		meterShield.setValue(ENT.localPlayer.alive ? ENT.localPlayer.shieldHealth : 0, 0.2);
 		meterHealth.setValue(ENT.localPlayer.alive ? ENT.localPlayer.health : 0, 0.2);
 	}
 }
