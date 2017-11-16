@@ -37,8 +37,9 @@ function openShop() {
 		$("#shop-veil").show();
 		layoutShop();
 
-		// TEMP (change 2 to 0)
+		// TEMP
 		selectShopTab(shopFirstTab, shopPageIds[2]);
+		moveListingPage("weapons", -999); // Go to first page
 
 		shopFirstListings.forEach(function(listingData) {
 			selectListing(listingData.listing, listingData.data);
