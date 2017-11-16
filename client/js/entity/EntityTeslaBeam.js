@@ -138,7 +138,7 @@ class EntityTeslaBeam extends EntityBase {
 	}
 
 	remove() {
-		container.removeChildren();
+		this.container.removeChildren();
 		ENT.stageContainer.removeChild(this.container);
 		this.container.destroy();
 	}
