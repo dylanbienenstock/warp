@@ -6,7 +6,6 @@ class EffectBoostTrail extends EntityBase {
 		super(data);
 
 		this.ownerId = -1;
-		this.color = 0x0000FF;
 		this.graphics = new PIXI.Graphics();
 		this.graphics.x = data.x;
 		this.graphics.y = data.y;
@@ -29,7 +28,7 @@ class EffectBoostTrail extends EntityBase {
 		if (player != undefined && player instanceof EntityPlayer && player.boosting && !player.warping) {
 			var lineEnd = player.ship.getBoostAttachmentPosition();
 
-			this.graphics.beginFill(PIXI.utils.rgb2hex([ 0, 0.85, 1 ]));
+			this.graphics.beginFill(PIXI.utils.rgb2hex(player.ship.boostStartColor));
 			this.graphics.drawCircle(lineEnd.x - this.graphics.x, lineEnd.y - this.graphics.y, boostTrailMaxLineThickness / 2);
 			this.graphics.endFill();
 
@@ -50,8 +49,12 @@ class EffectBoostTrail extends EntityBase {
 			var lineAge = Date.now() - line.time;
 			var lineProgress = ((boostTrailLineDuration - lineAge) / boostTrailLineDuration)
 			var lineThickness = Math.max(lineProgress * boostTrailMaxLineThickness, 0);
-			var lineColorMod = Math.max(lineProgress, 0);
-			var lineColor = PIXI.utils.rgb2hex([ 0, lineColorMod * 0.85, 1 ]);
+			var lineColorMod = 1 - Math.max(lineProgress, 0);
+			var lineColor = PIXI.utils.rgb2hex([
+				lerp(player.ship.boostStartColor[0], player.ship.boostEndColor[0], lineColorMod),
+				lerp(player.ship.boostStartColor[1], player.ship.boostEndColor[1], lineColorMod),
+				lerp(player.ship.boostStartColor[2], player.ship.boostEndColor[2], lineColorMod)
+			]);
 
 			if (lineProgress > 0) {
 				var angle = Math.atan2(line.end.y - line.start.y, line.end.x - line.start.x);

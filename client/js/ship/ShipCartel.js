@@ -36,6 +36,8 @@ class ShipCartel extends ShipBase {
 			backwardSprite: "ship:cartel:backward"
 		});
 
+		this.boostStartColor = [ 0, 0.85, 1 ];
+		this.boostEndColor = [ 0, 0, 1 ];
 		this.boostLocalX = 12;
 		this.boostLocalY = 0;
 		this.equipmentSlots = 4;

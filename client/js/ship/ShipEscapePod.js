@@ -27,6 +27,8 @@ class ShipEscapePod extends ShipBase {
 			}
 		});
 
+		this.boostStartColor = [ 1, 0.85, 0 ];
+		this.boostEndColor = [ 1, 0, 0 ];
 		this.boostLocalX = 10;
 		this.boostLocalY = 0;
 		this.equipmentSlots = 0;
